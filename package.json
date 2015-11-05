@@ -2,13 +2,18 @@
   "name": "promise-limiter",
   "version": "1.0.0",
   "description": "promise-based rate limiter",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha -w",
+    "lint": "eslint src test",
+    "doc": "istanbul cover ./node_modules/.bin/_mocha --test -R test && esdoc -c esdoc.json && gh-pages -d . -s '{doc,coverage}/**/*'"
   },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/endlist/promise-limiter.git"
+  },
+  "engines": {
+    "node": ">=4.0.0"
   },
   "keywords": [
     "promise",
@@ -21,5 +26,19 @@
   "bugs": {
     "url": "https://github.com/endlist/promise-limiter/issues"
   },
-  "homepage": "https://github.com/endlist/promise-limiter#readme"
+  "homepage": "https://github.com/endlist/promise-limiter#readme",
+  "devDependencies": {
+    "chai": "^3.4.0",
+    "chai-as-promised": "^5.1.0",
+    "esdoc": "^0.4.3",
+    "eslint": "^1.8.0",
+    "gh-pages": "^0.5.0",
+    "istanbul": "^0.4.0",
+    "mocha": "^2.3.3",
+    "mocha-multi": "^0.7.2",
+    "q": "^1.4.1",
+    "sinon": "^1.17.2",
+    "sinon-chai": "^2.8.0",
+    "sinon-stub-promise": "^0.1.0"
+  }
 }
