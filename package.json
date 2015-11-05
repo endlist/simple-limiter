@@ -1,0 +1,25 @@
+{
+  "name": "promise-limiter",
+  "version": "1.0.0",
+  "description": "promise-based rate limiter",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/endlist/promise-limiter.git"
+  },
+  "keywords": [
+    "promise",
+    "rate",
+    "limiting",
+    "throttle",
+    "promise-based"
+  ],
+  "author": "Li Wren",
+  "bugs": {
+    "url": "https://github.com/endlist/promise-limiter/issues"
+  },
+  "homepage": "https://github.com/endlist/promise-limiter#readme"
+}
