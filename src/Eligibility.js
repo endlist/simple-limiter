@@ -50,7 +50,7 @@ class Eligibility {
   }
 
   /**
-   * @return {bool} The current eligibility of the request
+   * @return {boolean} The current eligibility of the request
    */
   check() {
     const periodRemaining = this._getPeriodRemaining();
