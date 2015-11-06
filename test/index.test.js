@@ -11,9 +11,20 @@ chai.use(sinonChai);
 
 const expect = chai.expect;
 
-describe('lib', () => {
+// filter?
+describe('Limiter', () => {
+  let Limiter;
 
-  it('should exist', () => {
-    expect(true).to.be.true;
+  beforeEach(() => {
+    Limiter = require('../src/index.js');
   });
+
+  it('should take a config', () => {
+    const config = {
+      hi : 'yo'
+    };
+    Limiter.init(config);
+    expect(Limiter.config).to.eql(config);
+  });
+
 });
