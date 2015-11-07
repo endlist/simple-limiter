@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">test/timer.test.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <a data-ice="repoURL" href="git+ssh://git@github.com/endlist/simple-limiter.git">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Eligibility.js~Eligibility.html">Eligibility</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Limiter.html">Limiter</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">test/timer.test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
+const chai = require(&apos;chai&apos;);
+const sinon = require(&apos;sinon&apos;);
+const sinonChai = require(&apos;sinon-chai&apos;);
+const sinonStubPromise = require(&apos;sinon-stub-promise&apos;);
+const chaiAsPromised = require(&apos;chai-as-promised&apos;);
+
+sinonStubPromise(sinon);
+chai.use(chaiAsPromised);
+chai.use(sinonChai);
+
+const expect = chai.expect;
+
+describe(&apos;Eligiblility&apos;, () =&gt; {
+  let Eligibility;
+  let config;
+  let clock;
+  let eligibility;
+
+  beforeEach(() =&gt; {
+    Eligibility = require(&apos;../src/Eligibility.js&apos;);
+    config = {
+      period : 5000,
+      limit  : 20,
+    };
+    clock = sinon.useFakeTimers();
+  });
+
+  afterEach(() =&gt; {
+    clock.restore();
+  });
+
+  describe(&apos;#constructor&apos;, () =&gt; {
+
+    it(&apos;should be able to init without a config&apos;, () =&gt; {
+      expect(new Eligibility).not.to.throw;
+    });
+
+    describe(&apos;without config&apos;, () =&gt; {
+
+      beforeEach(() =&gt; {
+        eligibility = new Eligibility();
+      });
+
+      it(&apos;should return an object&apos;, () =&gt; {
+        expect(typeof(eligibility)).to.equal(&apos;object&apos;);
+      });
+
+      it(&apos;should create a limit&apos;, () =&gt; {
+        expect(eligibility._limit).to.exist;
+      });
+
+      it(&apos;should create a period&apos;, () =&gt; {
+        expect(eligibility._period).to.exist;
+      });
+
+      it(&apos;should create a startTime&apos;, () =&gt; {
+        // TODO: can check the time is accurate?
+        expect(eligibility._startTime).to.exist;
+      });
+
+      it(&apos;should create a requestCount&apos;, () =&gt; {
+        expect(eligibility._requestCount).to.exist;
+      });
+
+    });
+
+    describe(&apos;with config&apos;, () =&gt; {
+
+      beforeEach(() =&gt; {
+        eligibility = new Eligibility(config);
+      });
+
+      it(&apos;should return an object&apos;, () =&gt; {
+        expect(typeof(eligibility)).to.equal(&apos;object&apos;);
+      });
+
+      it(&apos;should create a limit&apos;, () =&gt; {
+        expect(eligibility._limit).to.exist;
+      });
+
+      it(&apos;should create a period&apos;, () =&gt; {
+        expect(eligibility._period).to.exist;
+      });
+
+      it(&apos;should create a startTime&apos;, () =&gt; {
+        // TODO: can check the time is accurate?
+        expect(eligibility._startTime).to.exist;
+      });
+
+      it(&apos;should create a requestCount&apos;, () =&gt; {
+        expect(eligibility._requestCount).to.exist;
+      });
+
+    });
+    
+  });
+
+  describe(&apos;#_getPeriodRemaining&apos;, () =&gt; {
+
+    beforeEach(() =&gt; {
+      eligibility = new Eligibility(config);
+    });
+
+    describe(&apos;when in the period&apos;, () =&gt; {
+      it(&apos;should return 3068 if 1932 ms have passed&apos;, () =&gt; {
+        clock.tick(1932);
+        expect(eligibility._getPeriodRemaining()).to.equal(3068);
+      });
+
+      it(&apos;should return 0 if 5000 ms have passed&apos;, () =&gt; {
+        clock.tick(5000);
+        expect(eligibility._getPeriodRemaining()).to.equal(0);
+      });
+
+      it(&apos;should not change the startTime&apos;, () =&gt; {
+        clock.tick(200);
+        eligibility._getPeriodRemaining();
+        expect(eligibility._startTime).to.equal(0);
+      });
+
+      it(&apos;should not reset _requestCounter&apos;, () =&gt; {
+        clock.tick(200);
+        eligibility._requestCount = 35;
+        eligibility._getPeriodRemaining();
+        expect(eligibility._requestCount).to.equal(35);
+      });
+
+    });
+
+    describe(&apos;when past the period&apos;, () =&gt; {
+      beforeEach(() =&gt; {
+        clock.tick(5001);
+      });
+
+      it(&apos;should return 5000 if 5001 ms have passed&apos;, () =&gt; {
+        expect(eligibility._getPeriodRemaining()).to.equal(5000);
+      });
+
+      it(&apos;should update startTime&apos;, () =&gt; {
+        eligibility._getPeriodRemaining();
+        expect(eligibility._startTime).to.equal((new Date()).valueOf());
+      });
+
+      it(&apos;should reset _requestCount if period is reset&apos;, () =&gt; {
+        eligibility._requestCount = 10;
+        eligibility._getPeriodRemaining();
+        expect(eligibility._requestCount).to.equal(0);
+      });
+
+    });
+
+  });
+
+  describe(&apos;check&apos;, () =&gt; {
+
+    beforeEach(() =&gt; {
+      eligibility = new Eligibility(config);
+    });
+
+    it(&apos;should call _getPeriodRemaining&apos;, () =&gt; {
+      sinon.spy(eligibility, &apos;_getPeriodRemaining&apos;);
+      eligibility.check();
+
+      expect(eligibility._getPeriodRemaining).to.have.been.called;
+    });
+
+    it(&apos;should increment _requestCount&apos;, () =&gt; {
+      expect(eligibility._requestCount).to.equal(0);
+      eligibility.check();
+      expect(eligibility._requestCount).to.equal(1);
+    });
+
+    it(&apos;should return true if _requestCount is less than _limit&apos;, () =&gt; {
+      expect(eligibility.check()).to.be.true;
+    });
+
+    it(&apos;should return false if _requestCount is higher than _limit&apos;, () =&gt; {
+      eligibility._requestCount = 20;
+      expect(eligibility.check()).to.be.false;
+    });
+
+  });
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
