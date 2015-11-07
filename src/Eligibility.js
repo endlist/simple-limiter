@@ -30,6 +30,7 @@ class Eligibility {
     this._startTime       = (new Date()).valueOf();
     this._requestCount    = 0;
 
+    console.log('uh', limit, period);
     return this;
   }
 
@@ -58,6 +59,7 @@ class Eligibility {
     const periodRemaining = this._getPeriodRemaining();
     this._requestCount++;
 
+    console.log('hi', this._requestCount);
     return (periodRemaining > 0 && this._requestCount <= this._limit);
   }
 

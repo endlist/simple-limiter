@@ -19,7 +19,7 @@ describe.only('Limiter', () => {
 
   beforeEach(() => {
     config = {
-      key    : 'usesr.id',
+      key    : 'user.id',
       limit  : 20,
       period : 5000,
     };
@@ -57,6 +57,10 @@ describe.only('Limiter', () => {
         expect(limiter._config.period).to.not.exist;
       });
 
+      it('should create _eligibility', () => {
+        expect(limiter._eligibility).to.exist;
+      });
+
     });
 
     describe('with only key in config', () => {
@@ -75,6 +79,10 @@ describe.only('Limiter', () => {
 
       it('should default config.period to null', () => {
         expect(limiter._config.period).to.not.exist;
+      });
+
+      it('should create _eligibility', () => {
+        expect(limiter._eligibility).to.exist;
       });
 
     });
@@ -101,21 +109,42 @@ describe.only('Limiter', () => {
         expect(limiter._config.period).to.equal(8000);
       });
 
+      it('should create _eligibility', () => {
+        expect(limiter._eligibility).to.exist;
+      });
+
     });
 
   });
 
   describe('#checkRequest', () => {
+    let request;
+    let response;
 
     beforeEach(() => {
       limiter = new Limiter(config);
+      request = validOpts.request;
+      response = validOpts.response;
     });
 
     it('should error if no opts are given', () => {
       expect(limiter.checkRequest).to.throw('Error');
     });
 
-    it('should ')
+    it('should register a new Eligibility model if one doesn\'t exist', () => {
+      limiter.checkRequest({ request, response })
+
+      expect(limiter._eligibility[request.user.id]).to.exist;
+      expect(limiter._eligibility[request.user.id]._requestCount).to.equal(1);
+    });
+
+    it('should not register a new Eligibility model if one exists', () => {
+      // TODO : MOCKS.
+      // expect(limiter._eligibility[request.user.id]._requestCount).to.equal(2);
+    });
+
+    it('should throw error if eligibility is false', () => {
+    });
 
   });
     

@@ -1,6 +1,7 @@
 'use strict';
 
-const _ = require('lodash');
+const _           = require('lodash');
+const Eligibility = require('./Eligibility');
 
 const DEFAULT_KEY = 'ip';
 
@@ -39,6 +40,7 @@ class Limiter {
     }
 
     this._config = { key, limit, period };
+    this._eligibility = {};
 
     // return requests left
   }
@@ -51,6 +53,15 @@ class Limiter {
 
     const request  = opts.request;
     const response = opts.response;
+    const key = _.get(request, this._config.key);
+    const limit = this._config.limit;
+    const period = this._config.period;
+
+    if (this._eligibility[key] == null) {
+      this._eligibility[key] = new Eligibility({ limit, period });
+    }
+
+    return this._eligibility[key].check();
   }
 
 }

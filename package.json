@@ -1,7 +1,7 @@
 {
-  "name": "promise-limiter",
+  "name": "simple-limiter",
   "version": "1.0.0",
-  "description": "promise-based rate limiter",
+  "description": "simple synchronous rate limiter",
   "main": "src/index.js",
   "scripts": {
     "test": "mocha -w",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/endlist/promise-limiter.git"
+    "url": "git+ssh://git@github.com/endlist/simple-limiter.git"
   },
   "engines": {
     "node": ">=4.0.0"
@@ -24,9 +24,9 @@
   ],
   "author": "Li Wren",
   "bugs": {
-    "url": "https://github.com/endlist/promise-limiter/issues"
+    "url": "https://github.com/endlist/simple-limiter/issues"
   },
-  "homepage": "https://github.com/endlist/promise-limiter#readme",
+  "homepage": "https://github.com/endlist/simple-limiter#readme",
   "devDependencies": {
     "chai": "^3.4.0",
     "chai-as-promised": "^5.1.0",
