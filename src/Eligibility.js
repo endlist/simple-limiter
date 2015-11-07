@@ -37,6 +37,8 @@ class Eligibility {
    * @return {int} Time remaining expressed as an integer of ms
    */
   _getPeriodRemaining() {
+    // convert to rolling instead of fixed buckets
+
     const dateNow = (new Date()).valueOf();
     let periodRemaining = this._period - dateNow;
 

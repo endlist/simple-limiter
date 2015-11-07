@@ -40,5 +40,8 @@
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
     "sinon-stub-promise": "^0.1.0"
+  },
+  "dependencies": {
+    "lodash": "^3.10.1"
   }
 }

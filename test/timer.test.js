@@ -11,7 +11,7 @@ chai.use(sinonChai);
 
 const expect = chai.expect;
 
-describe.only('Eligiblility', () => {
+describe('Eligiblility', () => {
   let Eligibility;
   let config;
   let clock;
