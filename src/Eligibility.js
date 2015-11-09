@@ -30,7 +30,6 @@ class Eligibility {
     this._startTime       = (new Date()).valueOf();
     this._requestCount    = 0;
 
-    console.log('uh', limit, period);
     return this;
   }
 
@@ -40,12 +39,13 @@ class Eligibility {
   _getPeriodRemaining() {
     // convert to rolling instead of fixed buckets
 
-    const dateNow = (new Date()).valueOf();
-    let periodRemaining = this._period - dateNow;
+    const timeNow = (new Date()).valueOf();
+    const elapsedTime = timeNow - this._startTime;
+    let periodRemaining = this._period - elapsedTime;
 
     if (periodRemaining < 0) {
       periodRemaining = this._period;
-      this._startTime = dateNow;
+      this._startTime = timeNow;
       this._requestCount = 0;
     }
 
@@ -59,8 +59,8 @@ class Eligibility {
     const periodRemaining = this._getPeriodRemaining();
     this._requestCount++;
 
-    console.log('hi', this._requestCount);
-    return (periodRemaining > 0 && this._requestCount <= this._limit);
+    const test = (periodRemaining > 0 && this._requestCount <= this._limit);
+    return test;
   }
 
 };

@@ -2,11 +2,8 @@
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
-const sinonStubPromise = require('sinon-stub-promise');
-const chaiAsPromised = require('chai-as-promised');
+const START_TIME = 140000;
 
-sinonStubPromise(sinon);
-chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
 const expect = chai.expect;
@@ -23,7 +20,7 @@ describe('Eligiblility', () => {
       period : 5000,
       limit  : 20,
     };
-    clock = sinon.useFakeTimers();
+    clock = sinon.useFakeTimers(START_TIME);
   });
 
   afterEach(() => {
@@ -116,7 +113,7 @@ describe('Eligiblility', () => {
       it('should not change the startTime', () => {
         clock.tick(200);
         eligibility._getPeriodRemaining();
-        expect(eligibility._startTime).to.equal(0);
+        expect(eligibility._startTime).to.equal(START_TIME);
       });
 
       it('should not reset _requestCounter', () => {
@@ -139,7 +136,7 @@ describe('Eligiblility', () => {
 
       it('should update startTime', () => {
         eligibility._getPeriodRemaining();
-        expect(eligibility._startTime).to.equal((new Date()).valueOf());
+        expect(eligibility._startTime).to.equal(START_TIME + 5001);
       });
 
       it('should reset _requestCount if period is reset', () => {
@@ -179,6 +176,10 @@ describe('Eligiblility', () => {
       eligibility._requestCount = 20;
       expect(eligibility.check()).to.be.false;
     });
+
+  });
+
+  describe('getHeaders', () => {
 
   });
 

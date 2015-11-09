@@ -1,21 +1,18 @@
 'use strict';
-const chai = require('chai');
-const sinon = require('sinon');
-const sinonChai = require('sinon-chai');
-const sinonStubPromise = require('sinon-stub-promise');
-const chaiAsPromised = require('chai-as-promised');
+const chai       = require('chai');
+const sinon      = require('sinon');
+const sinonChai  = require('sinon-chai');
 
-sinonStubPromise(sinon);
-chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
 const expect = chai.expect;
 
-describe.only('Limiter', () => {
+describe('Limiter', () => {
   let Limiter;
   let limiter;
   let config;
   let validOpts;
+  let Eligibility;
 
   beforeEach(() => {
     config = {
@@ -31,12 +28,14 @@ describe.only('Limiter', () => {
       },
       response : {},
     }
-    Limiter = require('../src/index.js');
+    Eligibility = require('./mocks/Eligibility.mock.js');
+    Limiter = require('../src/Limiter.js');
+
   });
 
   describe('#constructor', () => {
     it('should not error if not given a config', () => {
-      expect(() => { return new Limiter(); }).not.to.throw('Error');
+      expect(() => { return new Limiter(); }).not.to.throw(Error);
     });
 
     describe('without config', () => {
@@ -122,30 +121,51 @@ describe.only('Limiter', () => {
     let response;
 
     beforeEach(() => {
-      limiter = new Limiter(config);
       request = validOpts.request;
       response = validOpts.response;
     });
 
-    it('should error if no opts are given', () => {
-      expect(limiter.checkRequest).to.throw('Error');
+    describe('when request within limits', () => {
+
+      beforeEach(() => {
+        limiter = new Limiter(config);
+      });
+
+      it('should error if no opts are given', () => {
+        expect(limiter.checkRequest).to.throw('Error');
+      });
+
+      it('should register a new Eligibility model if one doesn\'t exist', () => {
+        limiter.checkRequest({ request, response })
+
+        expect(limiter._eligibility[request.user.id]).to.exist;
+        expect(limiter._eligibility[request.user.id]._requestCount).to.equal(1);
+      });
+
+      it('should use the same Eligibility instance with the same key', () => {
+        limiter.checkRequest({ request, response });
+        limiter.checkRequest({ request, response });
+        expect(limiter._eligibility[request.user.id]._requestCount).to.equal(2);
+      });
+
     });
 
-    it('should register a new Eligibility model if one doesn\'t exist', () => {
-      limiter.checkRequest({ request, response })
+    describe('when request outside of limits', () => {
 
-      expect(limiter._eligibility[request.user.id]).to.exist;
-      expect(limiter._eligibility[request.user.id]._requestCount).to.equal(1);
-    });
+      beforeEach(() => {
+        limiter = new Limiter({
+          key    : 'user.id',
+          limit  : 0,
+          period : 0,
+        });
+      });
 
-    it('should not register a new Eligibility model if one exists', () => {
-      // TODO : MOCKS.
-      // expect(limiter._eligibility[request.user.id]._requestCount).to.equal(2);
-    });
+      xit('should throw error if eligibility is false', () => {
+        expect(() => { limiter.checkRequest({ request, response }) }).to.throw(Error);
+      });
 
-    it('should throw error if eligibility is false', () => {
     });
 
   });
-    
+
 });
