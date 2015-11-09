@@ -33,7 +33,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Eligibility.js~Eligibility.html">Eligibility</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Limiter.html">Limiter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Limiter.js~Limiter.html">Limiter</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -71,7 +71,6 @@ class Eligibility {
     this._startTime       = (new Date()).valueOf();
     this._requestCount    = 0;
 
-    console.log(&apos;uh&apos;, limit, period);
     return this;
   }
 
@@ -81,12 +80,13 @@ class Eligibility {
   _getPeriodRemaining() {
     // convert to rolling instead of fixed buckets
 
-    const dateNow = (new Date()).valueOf();
-    let periodRemaining = this._period - dateNow;
+    const timeNow = (new Date()).valueOf();
+    const elapsedTime = timeNow - this._startTime;
+    let periodRemaining = this._period - elapsedTime;
 
     if (periodRemaining &lt; 0) {
       periodRemaining = this._period;
-      this._startTime = dateNow;
+      this._startTime = timeNow;
       this._requestCount = 0;
     }
 
@@ -100,8 +100,8 @@ class Eligibility {
     const periodRemaining = this._getPeriodRemaining();
     this._requestCount++;
 
-    console.log(&apos;hi&apos;, this._requestCount);
-    return (periodRemaining &gt; 0 &amp;&amp; this._requestCount &lt;= this._limit);
+    const test = (periodRemaining &gt; 0 &amp;&amp; this._requestCount &lt;= this._limit);
+    return test;
   }
 
 };

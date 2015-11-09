@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">test/Limiter.test.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <a data-ice="repoURL" href="git+ssh://git@github.com/endlist/simple-limiter.git">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Eligibility.js~Eligibility.html">Eligibility</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Limiter.js~Limiter.html">Limiter</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">test/Limiter.test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
+const chai       = require(&apos;chai&apos;);
+const sinon      = require(&apos;sinon&apos;);
+const sinonChai  = require(&apos;sinon-chai&apos;);
+
+chai.use(sinonChai);
+
+const expect = chai.expect;
+
+describe(&apos;Limiter&apos;, () =&gt; {
+  let Limiter;
+  let limiter;
+  let config;
+  let validOpts;
+
+  beforeEach(() =&gt; {
+    config = {
+      key    : &apos;user.id&apos;,
+      limit  : 20,
+      period : 5000,
+    };
+    validOpts = {
+      request : {
+        user : {
+          id : &apos;something&apos;
+        }
+      },
+      response : {},
+    }
+    Limiter = require(&apos;../src/Limiter.js&apos;);
+
+  });
+
+  describe(&apos;#constructor&apos;, () =&gt; {
+    it(&apos;should not error if not given a config&apos;, () =&gt; {
+      expect(() =&gt; { return new Limiter(); }).not.to.throw(Error);
+    });
+
+    describe(&apos;without config&apos;, () =&gt; {
+
+      beforeEach(() =&gt; {
+        limiter = new Limiter();
+      });
+
+      it(&apos;should assign DEFAULT_KEY to config.key&apos;, () =&gt; {
+        expect(limiter._config.key).to.equal(&apos;ip&apos;);
+      });
+
+      it(&apos;should default config.limit to null&apos;, () =&gt; {
+        expect(limiter._config.limit).to.not.exist;
+      });
+
+      it(&apos;should default config.period to null&apos;, () =&gt; {
+        expect(limiter._config.period).to.not.exist;
+      });
+
+      it(&apos;should create _eligibility&apos;, () =&gt; {
+        expect(limiter._eligibility).to.exist;
+      });
+
+    });
+
+    describe(&apos;with only key in config&apos;, () =&gt; {
+
+      beforeEach(() =&gt; {
+        limiter = new Limiter({ key : &apos;user&apos; });
+      });
+
+      it(&apos;should assign given key to config.key&apos;, () =&gt; {
+        expect(limiter._config.key).to.equal(&apos;user&apos;);
+      });
+
+      it(&apos;should default config.limit to null&apos;, () =&gt; {
+        expect(limiter._config.limit).to.not.exist;
+      });
+
+      it(&apos;should default config.period to null&apos;, () =&gt; {
+        expect(limiter._config.period).to.not.exist;
+      });
+
+      it(&apos;should create _eligibility&apos;, () =&gt; {
+        expect(limiter._eligibility).to.exist;
+      });
+
+    });
+
+    describe(&apos;with config&apos;, () =&gt; {
+
+      beforeEach(() =&gt; {
+        limiter = new Limiter({ 
+          key    : &apos;something.else&apos;,
+          limit  : 200,
+          period : 8000,
+        });
+      });
+
+      it(&apos;should assign given key to config.key&apos;, () =&gt; {
+        expect(limiter._config.key).to.equal(&apos;something.else&apos;);
+      });
+
+      it(&apos;should assign given period to config.limit&apos;, () =&gt; {
+        expect(limiter._config.limit).to.equal(200);
+      });
+
+      it(&apos;should assign given period to config.period&apos;, () =&gt; {
+        expect(limiter._config.period).to.equal(8000);
+      });
+
+      it(&apos;should create _eligibility&apos;, () =&gt; {
+        expect(limiter._eligibility).to.exist;
+      });
+
+    });
+
+  });
+
+  describe(&apos;#checkRequest&apos;, () =&gt; {
+    let request;
+    let response;
+
+    beforeEach(() =&gt; {
+      request = validOpts.request;
+      response = validOpts.response;
+    });
+
+    describe(&apos;when request within limits&apos;, () =&gt; {
+
+      beforeEach(() =&gt; {
+        limiter = new Limiter(config);
+      });
+
+      it(&apos;should error if no opts are given&apos;, () =&gt; {
+        expect(limiter.checkRequest).to.throw(&apos;Error&apos;);
+      });
+
+      it(&apos;should register a new Eligibility model if one doesn\&apos;t exist&apos;, () =&gt; {
+        limiter.checkRequest({ request, response })
+
+        expect(limiter._eligibility[request.user.id]).to.exist;
+        expect(limiter._eligibility[request.user.id]._requestCount).to.equal(1);
+      });
+
+      it(&apos;should use the same Eligibility instance with the same key&apos;, () =&gt; {
+        limiter.checkRequest({ request, response });
+        limiter.checkRequest({ request, response });
+        expect(limiter._eligibility[request.user.id]._requestCount).to.equal(2);
+      });
+
+    });
+
+    describe(&apos;when request outside of limits&apos;, () =&gt; {
+
+      beforeEach(() =&gt; {
+        limiter = new Limiter({
+          key    : &apos;user.id&apos;,
+          limit  : 0,
+          period : 0,
+        });
+      });
+
+      xit(&apos;should throw error if eligibility is false&apos;, () =&gt; {
+        expect(() =&gt; { limiter.checkRequest({ request, response }) }).to.throw(Error);
+      });
+
+    });
+
+  });
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

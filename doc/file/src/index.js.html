@@ -33,7 +33,7 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Eligibility.js~Eligibility.html">Eligibility</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Limiter.html">Limiter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Limiter.js~Limiter.html">Limiter</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -41,73 +41,8 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/index.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
 
-const _           = require(&apos;lodash&apos;);
-const Eligibility = require(&apos;./Eligibility&apos;);
-
-const DEFAULT_KEY = &apos;ip&apos;;
-
-/**
- * TODO: describe
- */
-class Limiter {
-
-  // it will take a request &amp; response and return either nothing or an error
-
-  // create an eligibility check (function) per key
-    // store in an object by key (e.g. eligibility[key] is the ref)
-    // don&apos;t create a new key if one already exists
-
-  // when request comes in
-    // eligibility[key].check(), throw 429 error if false, otherwise return
-
-
-  /**
-   * @param {object} config Object of values
-   * @return empty
-   */
-  constructor(config) {
-    let key = DEFAULT_KEY; 
-    let limit = null;
-    let period = null;
-
-    if (config != null) {
-
-      if (config.key != null) {
-        key = config.key;
-      }
-
-      limit  = config.limit;
-      period = config.period;
-    }
-
-    this._config = { key, limit, period };
-    this._eligibility = {};
-
-    // return requests left
-  }
-
-  checkRequest(opts) {
-
-    if (opts == null) {
-      throw new Error(&apos;Error: opts are required.&apos;);
-    }
-
-    const request  = opts.request;
-    const response = opts.response;
-    const key = _.get(request, this._config.key);
-    const limit = this._config.limit;
-    const period = this._config.period;
-
-    if (this._eligibility[key] == null) {
-      this._eligibility[key] = new Eligibility({ limit, period });
-    }
-
-    return this._eligibility[key].check();
-  }
-
-}
-module.exports = Limiter;
-
+module.exports.Limiter = require(&apos;./Limiter&apos;);
+module.exports.Eligibility = require(&apos;./Eligibility&apos;);
 </code></pre>
 
 </div>

@@ -10,7 +10,7 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\n\nconst DEFAULT_LIMIT = 20;\nconst DEFAULT_PERIOD = 5000;\n\n/**\n * Eligibility\n */\nclass Eligibility {\n\n  /**\n   * @param {object} config Object of values\n   * @return {object} An instance of the eligibility object\n   */\n  constructor(config) {\n    let limit = DEFAULT_LIMIT;\n    let period = DEFAULT_PERIOD;\n\n    if (config != null) {\n      if (config.limit != null) {\n        limit = config.limit;\n      }\n      if (config.period != null) {\n        period = config.period;\n      }\n    }\n\n    this._limit           = limit;\n    this._period          = period;\n    this._startTime       = (new Date()).valueOf();\n    this._requestCount    = 0;\n\n    console.log('uh', limit, period);\n    return this;\n  }\n\n  /**\n   * @return {int} Time remaining expressed as an integer of ms\n   */\n  _getPeriodRemaining() {\n    // convert to rolling instead of fixed buckets\n\n    const dateNow = (new Date()).valueOf();\n    let periodRemaining = this._period - dateNow;\n\n    if (periodRemaining < 0) {\n      periodRemaining = this._period;\n      this._startTime = dateNow;\n      this._requestCount = 0;\n    }\n\n    return periodRemaining;\n  }\n\n  /**\n   * @return {boolean} The current eligibility of the request\n   */\n  check() {\n    const periodRemaining = this._getPeriodRemaining();\n    this._requestCount++;\n\n    console.log('hi', this._requestCount);\n    return (periodRemaining > 0 && this._requestCount <= this._limit);\n  }\n\n};\n\nmodule.exports = Eligibility;\n"
+    "content": "'use strict';\n\nconst DEFAULT_LIMIT = 20;\nconst DEFAULT_PERIOD = 5000;\n\n/**\n * Eligibility\n */\nclass Eligibility {\n\n  /**\n   * @param {object} config Object of values\n   * @return {object} An instance of the eligibility object\n   */\n  constructor(config) {\n    let limit = DEFAULT_LIMIT;\n    let period = DEFAULT_PERIOD;\n\n    if (config != null) {\n      if (config.limit != null) {\n        limit = config.limit;\n      }\n      if (config.period != null) {\n        period = config.period;\n      }\n    }\n\n    this._limit           = limit;\n    this._period          = period;\n    this._startTime       = (new Date()).valueOf();\n    this._requestCount    = 0;\n\n    return this;\n  }\n\n  /**\n   * @return {int} Time remaining expressed as an integer of ms\n   */\n  _getPeriodRemaining() {\n    // convert to rolling instead of fixed buckets\n\n    const timeNow = (new Date()).valueOf();\n    const elapsedTime = timeNow - this._startTime;\n    let periodRemaining = this._period - elapsedTime;\n\n    if (periodRemaining < 0) {\n      periodRemaining = this._period;\n      this._startTime = timeNow;\n      this._requestCount = 0;\n    }\n\n    return periodRemaining;\n  }\n\n  /**\n   * @return {boolean} The current eligibility of the request\n   */\n  check() {\n    const periodRemaining = this._getPeriodRemaining();\n    this._requestCount++;\n\n    const test = (periodRemaining > 0 && this._requestCount <= this._limit);\n    return test;\n  }\n\n};\n\nmodule.exports = Eligibility;\n"
   },
   {
     "__docId__": 1,
@@ -185,7 +185,7 @@
     "longname": "src/Eligibility.js~Eligibility#_getPeriodRemaining",
     "access": null,
     "description": null,
-    "lineNumber": 40,
+    "lineNumber": 39,
     "params": [],
     "return": {
       "nullable": null,
@@ -260,13 +260,13 @@
     "kind": "file",
     "static": true,
     "variation": null,
-    "name": "src/index.js",
+    "name": "src/Limiter.js",
     "memberof": null,
-    "longname": "src/index.js",
+    "longname": "src/Limiter.js",
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\n\nconst _           = require('lodash');\nconst Eligibility = require('./Eligibility');\n\nconst DEFAULT_KEY = 'ip';\n\n/**\n * TODO: describe\n */\nclass Limiter {\n\n  // it will take a request & response and return either nothing or an error\n\n  // create an eligibility check (function) per key\n    // store in an object by key (e.g. eligibility[key] is the ref)\n    // don't create a new key if one already exists\n\n  // when request comes in\n    // eligibility[key].check(), throw 429 error if false, otherwise return\n\n\n  /**\n   * @param {object} config Object of values\n   * @return empty\n   */\n  constructor(config) {\n    let key = DEFAULT_KEY; \n    let limit = null;\n    let period = null;\n\n    if (config != null) {\n\n      if (config.key != null) {\n        key = config.key;\n      }\n\n      limit  = config.limit;\n      period = config.period;\n    }\n\n    this._config = { key, limit, period };\n    this._eligibility = {};\n\n    // return requests left\n  }\n\n  checkRequest(opts) {\n\n    if (opts == null) {\n      throw new Error('Error: opts are required.');\n    }\n\n    const request  = opts.request;\n    const response = opts.response;\n    const key = _.get(request, this._config.key);\n    const limit = this._config.limit;\n    const period = this._config.period;\n\n    if (this._eligibility[key] == null) {\n      this._eligibility[key] = new Eligibility({ limit, period });\n    }\n\n    return this._eligibility[key].check();\n  }\n\n}\nmodule.exports = Limiter;\n\n"
+    "content": "'use strict';\n\nconst _           = require('lodash');\nconst Eligibility = require('./Eligibility');\n\nconst DEFAULT_KEY = 'ip';\n\n/**\n * TODO: describe\n */\nclass Limiter {\n\n  /**\n   * @param {object} config Object of values\n   * @return empty\n   */\n  constructor(config) {\n    let key = DEFAULT_KEY; \n    let limit = null;\n    let period = null;\n\n    if (config != null) {\n\n      if (config.key != null) {\n        key = config.key;\n      }\n\n      limit  = config.limit;\n      period = config.period;\n    }\n\n    this._config = { key, limit, period };\n    this._eligibility = {};\n\n    // return requests left\n  }\n\n  checkRequest(opts) {\n\n    if (opts == null) {\n      throw new Error('Error: opts are required.');\n    }\n\n    const request  = opts.request;\n    const key = _.get(request, this._config.key);\n    const limit = this._config.limit;\n    const period = this._config.period;\n\n    if (this._eligibility[key] == null) {\n      this._eligibility[key] = new Eligibility({ limit, period });\n    }\n\n    // const isEligibleRequest = this._eligibility[key].check();\n\n    // if (!isEligibleRequest) {\n    //   throw new Error('429');\n    // }\n\n    const requestStatus = {\n      validity : this._eligibility[key].check(),\n      // headers  : this._eligibility[key].getHeaders(),\n    };\n\n    return requestStatus;\n\n  }\n\n}\nmodule.exports = Limiter;\n\n"
   },
   {
     "__docId__": 14,
@@ -274,11 +274,11 @@
     "static": true,
     "variation": null,
     "name": "_",
-    "memberof": "src/index.js",
-    "longname": "src/index.js~_",
+    "memberof": "src/Limiter.js",
+    "longname": "src/Limiter.js~_",
     "access": null,
     "export": false,
-    "importPath": "simple-limiter",
+    "importPath": "simple-limiter/src/Limiter.js",
     "importStyle": null,
     "description": null,
     "lineNumber": 3,
@@ -295,11 +295,11 @@
     "static": true,
     "variation": null,
     "name": "Eligibility",
-    "memberof": "src/index.js",
-    "longname": "src/index.js~Eligibility",
+    "memberof": "src/Limiter.js",
+    "longname": "src/Limiter.js~Eligibility",
     "access": null,
     "export": false,
-    "importPath": "simple-limiter",
+    "importPath": "simple-limiter/src/Limiter.js",
     "importStyle": null,
     "description": null,
     "lineNumber": 4,
@@ -316,11 +316,11 @@
     "static": true,
     "variation": null,
     "name": "DEFAULT_KEY",
-    "memberof": "src/index.js",
-    "longname": "src/index.js~DEFAULT_KEY",
+    "memberof": "src/Limiter.js",
+    "longname": "src/Limiter.js~DEFAULT_KEY",
     "access": null,
     "export": false,
-    "importPath": "simple-limiter",
+    "importPath": "simple-limiter/src/Limiter.js",
     "importStyle": null,
     "description": null,
     "lineNumber": 6,
@@ -337,11 +337,11 @@
     "static": true,
     "variation": null,
     "name": "Limiter",
-    "memberof": "src/index.js",
-    "longname": "src/index.js~Limiter",
+    "memberof": "src/Limiter.js",
+    "longname": "src/Limiter.js~Limiter",
     "access": null,
     "export": false,
-    "importPath": "simple-limiter",
+    "importPath": "simple-limiter/src/Limiter.js",
     "importStyle": null,
     "description": "TODO: describe",
     "lineNumber": 11,
@@ -353,11 +353,11 @@
     "static": false,
     "variation": null,
     "name": "constructor",
-    "memberof": "src/index.js~Limiter",
-    "longname": "src/index.js~Limiter#constructor",
+    "memberof": "src/Limiter.js~Limiter",
+    "longname": "src/Limiter.js~Limiter#constructor",
     "access": null,
     "description": null,
-    "lineNumber": 27,
+    "lineNumber": 17,
     "params": [
       {
         "nullable": null,
@@ -386,11 +386,11 @@
     "static": false,
     "variation": null,
     "name": "_config",
-    "memberof": "src/index.js~Limiter",
-    "longname": "src/index.js~Limiter#_config",
+    "memberof": "src/Limiter.js~Limiter",
+    "longname": "src/Limiter.js~Limiter#_config",
     "access": null,
     "description": null,
-    "lineNumber": 42,
+    "lineNumber": 32,
     "undocument": true,
     "type": {
       "types": [
@@ -404,11 +404,11 @@
     "static": false,
     "variation": null,
     "name": "_eligibility",
-    "memberof": "src/index.js~Limiter",
-    "longname": "src/index.js~Limiter#_eligibility",
+    "memberof": "src/Limiter.js~Limiter",
+    "longname": "src/Limiter.js~Limiter#_eligibility",
     "access": null,
     "description": null,
-    "lineNumber": 43,
+    "lineNumber": 33,
     "undocument": true,
     "type": {
       "types": [
@@ -422,11 +422,11 @@
     "static": false,
     "variation": null,
     "name": "checkRequest",
-    "memberof": "src/index.js~Limiter",
-    "longname": "src/index.js~Limiter#checkRequest",
+    "memberof": "src/Limiter.js~Limiter",
+    "longname": "src/Limiter.js~Limiter#checkRequest",
     "access": null,
     "description": null,
-    "lineNumber": 48,
+    "lineNumber": 38,
     "undocument": true,
     "params": [
       {
@@ -444,7 +444,20 @@
     "generator": false
   },
   {
-    "__docId__": 23,
+    "__docId__": 22,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/index.js",
+    "memberof": null,
+    "longname": "src/index.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "'use strict';\n\nmodule.exports.Limiter = require('./Limiter');\nmodule.exports.Eligibility = require('./Eligibility');\n"
+  },
+  {
+    "__docId__": 24,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -457,7 +470,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 24,
+    "__docId__": 25,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -470,7 +483,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 25,
+    "__docId__": 26,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -483,7 +496,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 26,
+    "__docId__": 27,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -496,7 +509,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 27,
+    "__docId__": 28,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -509,7 +522,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 28,
+    "__docId__": 29,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -522,7 +535,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 29,
+    "__docId__": 30,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -535,7 +548,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 30,
+    "__docId__": 31,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -548,7 +561,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 31,
+    "__docId__": 32,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -561,7 +574,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 32,
+    "__docId__": 33,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -574,7 +587,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 33,
+    "__docId__": 34,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -587,7 +600,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 34,
+    "__docId__": 35,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -600,7 +613,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 35,
+    "__docId__": 36,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -613,7 +626,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 36,
+    "__docId__": 37,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -626,7 +639,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 37,
+    "__docId__": 38,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -639,7 +652,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 38,
+    "__docId__": 39,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -652,7 +665,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 39,
+    "__docId__": 40,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -665,7 +678,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 40,
+    "__docId__": 41,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -678,7 +691,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 41,
+    "__docId__": 42,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -691,7 +704,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 42,
+    "__docId__": 43,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -704,7 +717,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 43,
+    "__docId__": 44,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -717,7 +730,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 44,
+    "__docId__": 45,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -730,7 +743,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 45,
+    "__docId__": 46,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -743,7 +756,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 46,
+    "__docId__": 47,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -756,7 +769,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 47,
+    "__docId__": 48,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -769,7 +782,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 48,
+    "__docId__": 49,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -782,7 +795,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 49,
+    "__docId__": 50,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -795,7 +808,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 50,
+    "__docId__": 51,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -808,7 +821,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 51,
+    "__docId__": 52,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -821,7 +834,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 52,
+    "__docId__": 53,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -834,7 +847,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 53,
+    "__docId__": 54,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -847,7 +860,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 54,
+    "__docId__": 55,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -860,7 +873,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 55,
+    "__docId__": 56,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -873,7 +886,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 56,
+    "__docId__": 57,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -886,7 +899,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 57,
+    "__docId__": 58,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -899,7 +912,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 58,
+    "__docId__": 59,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -912,7 +925,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 59,
+    "__docId__": 60,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -925,7 +938,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 60,
+    "__docId__": 61,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -938,7 +951,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 61,
+    "__docId__": 62,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -951,7 +964,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 62,
+    "__docId__": 63,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -964,7 +977,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 63,
+    "__docId__": 64,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -977,7 +990,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 64,
+    "__docId__": 65,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -990,7 +1003,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 65,
+    "__docId__": 66,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1003,7 +1016,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 66,
+    "__docId__": 67,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1016,7 +1029,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 67,
+    "__docId__": 68,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1029,7 +1042,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 68,
+    "__docId__": 69,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1042,7 +1055,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 69,
+    "__docId__": 70,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1055,7 +1068,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 71,
+    "__docId__": 72,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1068,7 +1081,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 72,
+    "__docId__": 73,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1081,7 +1094,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 73,
+    "__docId__": 74,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1094,7 +1107,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 74,
+    "__docId__": 75,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1107,7 +1120,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 75,
+    "__docId__": 76,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1120,7 +1133,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 76,
+    "__docId__": 77,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1133,7 +1146,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 77,
+    "__docId__": 78,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1146,7 +1159,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 78,
+    "__docId__": 79,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1159,366 +1172,353 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 79,
+    "__docId__": 80,
     "kind": "testFile",
     "static": true,
     "variation": null,
-    "name": "test/index.test.js",
+    "name": "test/Eligibility.test.js",
     "memberof": null,
-    "longname": "test/index.test.js",
+    "longname": "test/Eligibility.test.js",
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nconst chai = require('chai');\nconst sinon = require('sinon');\nconst sinonChai = require('sinon-chai');\nconst sinonStubPromise = require('sinon-stub-promise');\nconst chaiAsPromised = require('chai-as-promised');\n\nsinonStubPromise(sinon);\nchai.use(chaiAsPromised);\nchai.use(sinonChai);\n\nconst expect = chai.expect;\n\ndescribe.only('Limiter', () => {\n  let Limiter;\n  let limiter;\n  let config;\n  let validOpts;\n\n  beforeEach(() => {\n    config = {\n      key    : 'user.id',\n      limit  : 20,\n      period : 5000,\n    };\n    validOpts = {\n      request : {\n        user : {\n          id : 'something'\n        }\n      },\n      response : {},\n    }\n    Limiter = require('../src/index.js');\n  });\n\n  describe('#constructor', () => {\n    it('should not error if not given a config', () => {\n      expect(() => { return new Limiter(); }).not.to.throw('Error');\n    });\n\n    describe('without config', () => {\n\n      beforeEach(() => {\n        limiter = new Limiter();\n      });\n\n      it('should assign DEFAULT_KEY to config.key', () => {\n        expect(limiter._config.key).to.equal('ip');\n      });\n\n      it('should default config.limit to null', () => {\n        expect(limiter._config.limit).to.not.exist;\n      });\n\n      it('should default config.period to null', () => {\n        expect(limiter._config.period).to.not.exist;\n      });\n\n      it('should create _eligibility', () => {\n        expect(limiter._eligibility).to.exist;\n      });\n\n    });\n\n    describe('with only key in config', () => {\n\n      beforeEach(() => {\n        limiter = new Limiter({ key : 'user' });\n      });\n\n      it('should assign given key to config.key', () => {\n        expect(limiter._config.key).to.equal('user');\n      });\n\n      it('should default config.limit to null', () => {\n        expect(limiter._config.limit).to.not.exist;\n      });\n\n      it('should default config.period to null', () => {\n        expect(limiter._config.period).to.not.exist;\n      });\n\n      it('should create _eligibility', () => {\n        expect(limiter._eligibility).to.exist;\n      });\n\n    });\n\n    describe('with config', () => {\n\n      beforeEach(() => {\n        limiter = new Limiter({ \n          key    : 'something.else',\n          limit  : 200,\n          period : 8000,\n        });\n      });\n\n      it('should assign given key to config.key', () => {\n        expect(limiter._config.key).to.equal('something.else');\n      });\n\n      it('should assign given period to config.limit', () => {\n        expect(limiter._config.limit).to.equal(200);\n      });\n\n      it('should assign given period to config.period', () => {\n        expect(limiter._config.period).to.equal(8000);\n      });\n\n      it('should create _eligibility', () => {\n        expect(limiter._eligibility).to.exist;\n      });\n\n    });\n\n  });\n\n  describe('#checkRequest', () => {\n    let request;\n    let response;\n\n    beforeEach(() => {\n      limiter = new Limiter(config);\n      request = validOpts.request;\n      response = validOpts.response;\n    });\n\n    it('should error if no opts are given', () => {\n      expect(limiter.checkRequest).to.throw('Error');\n    });\n\n    it('should register a new Eligibility model if one doesn\\'t exist', () => {\n      limiter.checkRequest({ request, response })\n\n      expect(limiter._eligibility[request.user.id]).to.exist;\n      expect(limiter._eligibility[request.user.id]._requestCount).to.equal(1);\n    });\n\n    it('should not register a new Eligibility model if one exists', () => {\n      // TODO : MOCKS.\n      // expect(limiter._eligibility[request.user.id]._requestCount).to.equal(2);\n    });\n\n    it('should throw error if eligibility is false', () => {\n    });\n\n  });\n    \n});\n"
+    "content": "'use strict';\nconst chai = require('chai');\nconst sinon = require('sinon');\nconst sinonChai = require('sinon-chai');\nconst START_TIME = 140000;\n\nchai.use(sinonChai);\n\nconst expect = chai.expect;\n\ndescribe('Eligiblility', () => {\n  let Eligibility;\n  let config;\n  let clock;\n  let eligibility;\n\n  beforeEach(() => {\n    Eligibility = require('../src/Eligibility.js');\n    config = {\n      period : 5000,\n      limit  : 20,\n    };\n    clock = sinon.useFakeTimers(START_TIME);\n  });\n\n  afterEach(() => {\n    clock.restore();\n  });\n\n  describe('#constructor', () => {\n\n    it('should be able to init without a config', () => {\n      expect(new Eligibility).not.to.throw;\n    });\n\n    describe('without config', () => {\n\n      beforeEach(() => {\n        eligibility = new Eligibility();\n      });\n\n      it('should return an object', () => {\n        expect(typeof(eligibility)).to.equal('object');\n      });\n\n      it('should create a limit', () => {\n        expect(eligibility._limit).to.exist;\n      });\n\n      it('should create a period', () => {\n        expect(eligibility._period).to.exist;\n      });\n\n      it('should create a startTime', () => {\n        // TODO: can check the time is accurate?\n        expect(eligibility._startTime).to.exist;\n      });\n\n      it('should create a requestCount', () => {\n        expect(eligibility._requestCount).to.exist;\n      });\n\n    });\n\n    describe('with config', () => {\n\n      beforeEach(() => {\n        eligibility = new Eligibility(config);\n      });\n\n      it('should return an object', () => {\n        expect(typeof(eligibility)).to.equal('object');\n      });\n\n      it('should create a limit', () => {\n        expect(eligibility._limit).to.exist;\n      });\n\n      it('should create a period', () => {\n        expect(eligibility._period).to.exist;\n      });\n\n      it('should create a startTime', () => {\n        // TODO: can check the time is accurate?\n        expect(eligibility._startTime).to.exist;\n      });\n\n      it('should create a requestCount', () => {\n        expect(eligibility._requestCount).to.exist;\n      });\n\n    });\n    \n  });\n\n  describe('#_getPeriodRemaining', () => {\n\n    beforeEach(() => {\n      eligibility = new Eligibility(config);\n    });\n\n    describe('when in the period', () => {\n      it('should return 3068 if 1932 ms have passed', () => {\n        clock.tick(1932);\n        expect(eligibility._getPeriodRemaining()).to.equal(3068);\n      });\n\n      it('should return 0 if 5000 ms have passed', () => {\n        clock.tick(5000);\n        expect(eligibility._getPeriodRemaining()).to.equal(0);\n      });\n\n      it('should not change the startTime', () => {\n        clock.tick(200);\n        eligibility._getPeriodRemaining();\n        expect(eligibility._startTime).to.equal(START_TIME);\n      });\n\n      it('should not reset _requestCounter', () => {\n        clock.tick(200);\n        eligibility._requestCount = 35;\n        eligibility._getPeriodRemaining();\n        expect(eligibility._requestCount).to.equal(35);\n      });\n\n    });\n\n    describe('when past the period', () => {\n      beforeEach(() => {\n        clock.tick(5001);\n      });\n\n      it('should return 5000 if 5001 ms have passed', () => {\n        expect(eligibility._getPeriodRemaining()).to.equal(5000);\n      });\n\n      it('should update startTime', () => {\n        eligibility._getPeriodRemaining();\n        expect(eligibility._startTime).to.equal(START_TIME + 5001);\n      });\n\n      it('should reset _requestCount if period is reset', () => {\n        eligibility._requestCount = 10;\n        eligibility._getPeriodRemaining();\n        expect(eligibility._requestCount).to.equal(0);\n      });\n\n    });\n\n  });\n\n  describe('check', () => {\n\n    beforeEach(() => {\n      eligibility = new Eligibility(config);\n    });\n\n    it('should call _getPeriodRemaining', () => {\n      sinon.spy(eligibility, '_getPeriodRemaining');\n      eligibility.check();\n\n      expect(eligibility._getPeriodRemaining).to.have.been.called;\n    });\n\n    it('should increment _requestCount', () => {\n      expect(eligibility._requestCount).to.equal(0);\n      eligibility.check();\n      expect(eligibility._requestCount).to.equal(1);\n    });\n\n    it('should return true if _requestCount is less than _limit', () => {\n      expect(eligibility.check()).to.be.true;\n    });\n\n    it('should return false if _requestCount is higher than _limit', () => {\n      eligibility._requestCount = 20;\n      expect(eligibility.check()).to.be.false;\n    });\n\n  });\n\n  describe('getHeaders', () => {\n\n  });\n\n});\n"
   },
   {
-    "__docId__": 80,
+    "__docId__": 81,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
     "name": "describe0",
     "testId": 0,
-    "memberof": "test/index.test.js",
+    "memberof": "test/Eligibility.test.js",
     "testDepth": 0,
-    "longname": "test/index.test.js~describe0",
+    "longname": "test/Eligibility.test.js~describe0",
     "access": null,
-    "description": "#constructor",
-    "lineNumber": 37
-  },
-  {
-    "__docId__": 81,
-    "kind": "testIt",
-    "static": true,
-    "variation": null,
-    "name": "it1",
-    "testId": 1,
-    "memberof": "test/index.test.js~describe0",
-    "testDepth": 1,
-    "longname": "test/index.test.js~describe0.it1",
-    "access": null,
-    "description": "should not error if not given a config",
-    "lineNumber": 38
+    "description": "Eligiblility",
+    "lineNumber": 11
   },
   {
     "__docId__": 82,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "describe2",
-    "testId": 2,
-    "memberof": "test/index.test.js~describe0",
+    "name": "describe1",
+    "testId": 1,
+    "memberof": "test/Eligibility.test.js~describe0",
     "testDepth": 1,
-    "longname": "test/index.test.js~describe0.describe2",
+    "longname": "test/Eligibility.test.js~describe0.describe1",
     "access": null,
-    "description": "without config",
-    "lineNumber": 42
+    "description": "#constructor",
+    "lineNumber": 30
   },
   {
     "__docId__": 83,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it3",
-    "testId": 3,
-    "memberof": "test/index.test.js~describe0.describe2",
+    "name": "it2",
+    "testId": 2,
+    "memberof": "test/Eligibility.test.js~describe0.describe1",
     "testDepth": 2,
-    "longname": "test/index.test.js~describe0.describe2.it3",
+    "longname": "test/Eligibility.test.js~describe0.describe1.it2",
     "access": null,
-    "description": "should assign DEFAULT_KEY to config.key",
-    "lineNumber": 48
+    "description": "should be able to init without a config",
+    "lineNumber": 32
   },
   {
     "__docId__": 84,
-    "kind": "testIt",
+    "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "it4",
-    "testId": 4,
-    "memberof": "test/index.test.js~describe0.describe2",
+    "name": "describe3",
+    "testId": 3,
+    "memberof": "test/Eligibility.test.js~describe0.describe1",
     "testDepth": 2,
-    "longname": "test/index.test.js~describe0.describe2.it4",
+    "longname": "test/Eligibility.test.js~describe0.describe1.describe3",
     "access": null,
-    "description": "should default config.limit to null",
-    "lineNumber": 52
+    "description": "without config",
+    "lineNumber": 36
   },
   {
     "__docId__": 85,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it5",
-    "testId": 5,
-    "memberof": "test/index.test.js~describe0.describe2",
-    "testDepth": 2,
-    "longname": "test/index.test.js~describe0.describe2.it5",
+    "name": "it4",
+    "testId": 4,
+    "memberof": "test/Eligibility.test.js~describe0.describe1.describe3",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe1.describe3.it4",
     "access": null,
-    "description": "should default config.period to null",
-    "lineNumber": 56
+    "description": "should return an object",
+    "lineNumber": 42
   },
   {
     "__docId__": 86,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it6",
-    "testId": 6,
-    "memberof": "test/index.test.js~describe0.describe2",
-    "testDepth": 2,
-    "longname": "test/index.test.js~describe0.describe2.it6",
+    "name": "it5",
+    "testId": 5,
+    "memberof": "test/Eligibility.test.js~describe0.describe1.describe3",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe1.describe3.it5",
     "access": null,
-    "description": "should create _eligibility",
-    "lineNumber": 60
+    "description": "should create a limit",
+    "lineNumber": 46
   },
   {
     "__docId__": 87,
-    "kind": "testDescribe",
+    "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "describe7",
-    "testId": 7,
-    "memberof": "test/index.test.js~describe0",
-    "testDepth": 1,
-    "longname": "test/index.test.js~describe0.describe7",
+    "name": "it6",
+    "testId": 6,
+    "memberof": "test/Eligibility.test.js~describe0.describe1.describe3",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe1.describe3.it6",
     "access": null,
-    "description": "with only key in config",
-    "lineNumber": 66
+    "description": "should create a period",
+    "lineNumber": 50
   },
   {
     "__docId__": 88,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it8",
-    "testId": 8,
-    "memberof": "test/index.test.js~describe0.describe7",
-    "testDepth": 2,
-    "longname": "test/index.test.js~describe0.describe7.it8",
+    "name": "it7",
+    "testId": 7,
+    "memberof": "test/Eligibility.test.js~describe0.describe1.describe3",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe1.describe3.it7",
     "access": null,
-    "description": "should assign given key to config.key",
-    "lineNumber": 72
+    "description": "should create a startTime",
+    "lineNumber": 54
   },
   {
     "__docId__": 89,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it9",
-    "testId": 9,
-    "memberof": "test/index.test.js~describe0.describe7",
-    "testDepth": 2,
-    "longname": "test/index.test.js~describe0.describe7.it9",
+    "name": "it8",
+    "testId": 8,
+    "memberof": "test/Eligibility.test.js~describe0.describe1.describe3",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe1.describe3.it8",
     "access": null,
-    "description": "should default config.limit to null",
-    "lineNumber": 76
+    "description": "should create a requestCount",
+    "lineNumber": 59
   },
   {
     "__docId__": 90,
-    "kind": "testIt",
+    "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "it10",
-    "testId": 10,
-    "memberof": "test/index.test.js~describe0.describe7",
+    "name": "describe9",
+    "testId": 9,
+    "memberof": "test/Eligibility.test.js~describe0.describe1",
     "testDepth": 2,
-    "longname": "test/index.test.js~describe0.describe7.it10",
+    "longname": "test/Eligibility.test.js~describe0.describe1.describe9",
     "access": null,
-    "description": "should default config.period to null",
-    "lineNumber": 80
+    "description": "with config",
+    "lineNumber": 65
   },
   {
     "__docId__": 91,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it11",
-    "testId": 11,
-    "memberof": "test/index.test.js~describe0.describe7",
-    "testDepth": 2,
-    "longname": "test/index.test.js~describe0.describe7.it11",
+    "name": "it10",
+    "testId": 10,
+    "memberof": "test/Eligibility.test.js~describe0.describe1.describe9",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe1.describe9.it10",
     "access": null,
-    "description": "should create _eligibility",
-    "lineNumber": 84
+    "description": "should return an object",
+    "lineNumber": 71
   },
   {
     "__docId__": 92,
-    "kind": "testDescribe",
+    "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "describe12",
-    "testId": 12,
-    "memberof": "test/index.test.js~describe0",
-    "testDepth": 1,
-    "longname": "test/index.test.js~describe0.describe12",
+    "name": "it11",
+    "testId": 11,
+    "memberof": "test/Eligibility.test.js~describe0.describe1.describe9",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe1.describe9.it11",
     "access": null,
-    "description": "with config",
-    "lineNumber": 90
+    "description": "should create a limit",
+    "lineNumber": 75
   },
   {
     "__docId__": 93,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it13",
-    "testId": 13,
-    "memberof": "test/index.test.js~describe0.describe12",
-    "testDepth": 2,
-    "longname": "test/index.test.js~describe0.describe12.it13",
+    "name": "it12",
+    "testId": 12,
+    "memberof": "test/Eligibility.test.js~describe0.describe1.describe9",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe1.describe9.it12",
     "access": null,
-    "description": "should assign given key to config.key",
-    "lineNumber": 100
+    "description": "should create a period",
+    "lineNumber": 79
   },
   {
     "__docId__": 94,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it14",
-    "testId": 14,
-    "memberof": "test/index.test.js~describe0.describe12",
-    "testDepth": 2,
-    "longname": "test/index.test.js~describe0.describe12.it14",
+    "name": "it13",
+    "testId": 13,
+    "memberof": "test/Eligibility.test.js~describe0.describe1.describe9",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe1.describe9.it13",
     "access": null,
-    "description": "should assign given period to config.limit",
-    "lineNumber": 104
+    "description": "should create a startTime",
+    "lineNumber": 83
   },
   {
     "__docId__": 95,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it15",
-    "testId": 15,
-    "memberof": "test/index.test.js~describe0.describe12",
-    "testDepth": 2,
-    "longname": "test/index.test.js~describe0.describe12.it15",
+    "name": "it14",
+    "testId": 14,
+    "memberof": "test/Eligibility.test.js~describe0.describe1.describe9",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe1.describe9.it14",
     "access": null,
-    "description": "should assign given period to config.period",
-    "lineNumber": 108
+    "description": "should create a requestCount",
+    "lineNumber": 88
   },
   {
     "__docId__": 96,
-    "kind": "testIt",
+    "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "it16",
-    "testId": 16,
-    "memberof": "test/index.test.js~describe0.describe12",
-    "testDepth": 2,
-    "longname": "test/index.test.js~describe0.describe12.it16",
+    "name": "describe15",
+    "testId": 15,
+    "memberof": "test/Eligibility.test.js~describe0",
+    "testDepth": 1,
+    "longname": "test/Eligibility.test.js~describe0.describe15",
     "access": null,
-    "description": "should create _eligibility",
-    "lineNumber": 112
+    "description": "#_getPeriodRemaining",
+    "lineNumber": 96
   },
   {
     "__docId__": 97,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "describe17",
-    "testId": 17,
-    "memberof": "test/index.test.js",
-    "testDepth": 0,
-    "longname": "test/index.test.js~describe17",
+    "name": "describe16",
+    "testId": 16,
+    "memberof": "test/Eligibility.test.js~describe0.describe15",
+    "testDepth": 2,
+    "longname": "test/Eligibility.test.js~describe0.describe15.describe16",
     "access": null,
-    "description": "#checkRequest",
-    "lineNumber": 120
+    "description": "when in the period",
+    "lineNumber": 102
   },
   {
     "__docId__": 98,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it18",
-    "testId": 18,
-    "memberof": "test/index.test.js~describe17",
-    "testDepth": 1,
-    "longname": "test/index.test.js~describe17.it18",
+    "name": "it17",
+    "testId": 17,
+    "memberof": "test/Eligibility.test.js~describe0.describe15.describe16",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe15.describe16.it17",
     "access": null,
-    "description": "should error if no opts are given",
-    "lineNumber": 130
+    "description": "should return 3068 if 1932 ms have passed",
+    "lineNumber": 103
   },
   {
     "__docId__": 99,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it19",
-    "testId": 19,
-    "memberof": "test/index.test.js~describe17",
-    "testDepth": 1,
-    "longname": "test/index.test.js~describe17.it19",
+    "name": "it18",
+    "testId": 18,
+    "memberof": "test/Eligibility.test.js~describe0.describe15.describe16",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe15.describe16.it18",
     "access": null,
-    "description": "should register a new Eligibility model if one doesn't exist",
-    "lineNumber": 134
+    "description": "should return 0 if 5000 ms have passed",
+    "lineNumber": 108
   },
   {
     "__docId__": 100,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it20",
-    "testId": 20,
-    "memberof": "test/index.test.js~describe17",
-    "testDepth": 1,
-    "longname": "test/index.test.js~describe17.it20",
+    "name": "it19",
+    "testId": 19,
+    "memberof": "test/Eligibility.test.js~describe0.describe15.describe16",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe15.describe16.it19",
     "access": null,
-    "description": "should not register a new Eligibility model if one exists",
-    "lineNumber": 141
+    "description": "should not change the startTime",
+    "lineNumber": 113
   },
   {
     "__docId__": 101,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it21",
-    "testId": 21,
-    "memberof": "test/index.test.js~describe17",
-    "testDepth": 1,
-    "longname": "test/index.test.js~describe17.it21",
+    "name": "it20",
+    "testId": 20,
+    "memberof": "test/Eligibility.test.js~describe0.describe15.describe16",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe15.describe16.it20",
     "access": null,
-    "description": "should throw error if eligibility is false",
-    "lineNumber": 146
+    "description": "should not reset _requestCounter",
+    "lineNumber": 119
   },
   {
     "__docId__": 102,
-    "kind": "testFile",
+    "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "test/timer.test.js",
-    "memberof": null,
-    "longname": "test/timer.test.js",
+    "name": "describe21",
+    "testId": 21,
+    "memberof": "test/Eligibility.test.js~describe0.describe15",
+    "testDepth": 2,
+    "longname": "test/Eligibility.test.js~describe0.describe15.describe21",
     "access": null,
-    "description": null,
-    "lineNumber": 1,
-    "content": "'use strict';\nconst chai = require('chai');\nconst sinon = require('sinon');\nconst sinonChai = require('sinon-chai');\nconst sinonStubPromise = require('sinon-stub-promise');\nconst chaiAsPromised = require('chai-as-promised');\n\nsinonStubPromise(sinon);\nchai.use(chaiAsPromised);\nchai.use(sinonChai);\n\nconst expect = chai.expect;\n\ndescribe('Eligiblility', () => {\n  let Eligibility;\n  let config;\n  let clock;\n  let eligibility;\n\n  beforeEach(() => {\n    Eligibility = require('../src/Eligibility.js');\n    config = {\n      period : 5000,\n      limit  : 20,\n    };\n    clock = sinon.useFakeTimers();\n  });\n\n  afterEach(() => {\n    clock.restore();\n  });\n\n  describe('#constructor', () => {\n\n    it('should be able to init without a config', () => {\n      expect(new Eligibility).not.to.throw;\n    });\n\n    describe('without config', () => {\n\n      beforeEach(() => {\n        eligibility = new Eligibility();\n      });\n\n      it('should return an object', () => {\n        expect(typeof(eligibility)).to.equal('object');\n      });\n\n      it('should create a limit', () => {\n        expect(eligibility._limit).to.exist;\n      });\n\n      it('should create a period', () => {\n        expect(eligibility._period).to.exist;\n      });\n\n      it('should create a startTime', () => {\n        // TODO: can check the time is accurate?\n        expect(eligibility._startTime).to.exist;\n      });\n\n      it('should create a requestCount', () => {\n        expect(eligibility._requestCount).to.exist;\n      });\n\n    });\n\n    describe('with config', () => {\n\n      beforeEach(() => {\n        eligibility = new Eligibility(config);\n      });\n\n      it('should return an object', () => {\n        expect(typeof(eligibility)).to.equal('object');\n      });\n\n      it('should create a limit', () => {\n        expect(eligibility._limit).to.exist;\n      });\n\n      it('should create a period', () => {\n        expect(eligibility._period).to.exist;\n      });\n\n      it('should create a startTime', () => {\n        // TODO: can check the time is accurate?\n        expect(eligibility._startTime).to.exist;\n      });\n\n      it('should create a requestCount', () => {\n        expect(eligibility._requestCount).to.exist;\n      });\n\n    });\n    \n  });\n\n  describe('#_getPeriodRemaining', () => {\n\n    beforeEach(() => {\n      eligibility = new Eligibility(config);\n    });\n\n    describe('when in the period', () => {\n      it('should return 3068 if 1932 ms have passed', () => {\n        clock.tick(1932);\n        expect(eligibility._getPeriodRemaining()).to.equal(3068);\n      });\n\n      it('should return 0 if 5000 ms have passed', () => {\n        clock.tick(5000);\n        expect(eligibility._getPeriodRemaining()).to.equal(0);\n      });\n\n      it('should not change the startTime', () => {\n        clock.tick(200);\n        eligibility._getPeriodRemaining();\n        expect(eligibility._startTime).to.equal(0);\n      });\n\n      it('should not reset _requestCounter', () => {\n        clock.tick(200);\n        eligibility._requestCount = 35;\n        eligibility._getPeriodRemaining();\n        expect(eligibility._requestCount).to.equal(35);\n      });\n\n    });\n\n    describe('when past the period', () => {\n      beforeEach(() => {\n        clock.tick(5001);\n      });\n\n      it('should return 5000 if 5001 ms have passed', () => {\n        expect(eligibility._getPeriodRemaining()).to.equal(5000);\n      });\n\n      it('should update startTime', () => {\n        eligibility._getPeriodRemaining();\n        expect(eligibility._startTime).to.equal((new Date()).valueOf());\n      });\n\n      it('should reset _requestCount if period is reset', () => {\n        eligibility._requestCount = 10;\n        eligibility._getPeriodRemaining();\n        expect(eligibility._requestCount).to.equal(0);\n      });\n\n    });\n\n  });\n\n  describe('check', () => {\n\n    beforeEach(() => {\n      eligibility = new Eligibility(config);\n    });\n\n    it('should call _getPeriodRemaining', () => {\n      sinon.spy(eligibility, '_getPeriodRemaining');\n      eligibility.check();\n\n      expect(eligibility._getPeriodRemaining).to.have.been.called;\n    });\n\n    it('should increment _requestCount', () => {\n      expect(eligibility._requestCount).to.equal(0);\n      eligibility.check();\n      expect(eligibility._requestCount).to.equal(1);\n    });\n\n    it('should return true if _requestCount is less than _limit', () => {\n      expect(eligibility.check()).to.be.true;\n    });\n\n    it('should return false if _requestCount is higher than _limit', () => {\n      eligibility._requestCount = 20;\n      expect(eligibility.check()).to.be.false;\n    });\n\n  });\n\n});\n"
+    "description": "when past the period",
+    "lineNumber": 128
   },
   {
     "__docId__": 103,
-    "kind": "testDescribe",
+    "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "describe22",
+    "name": "it22",
     "testId": 22,
-    "memberof": "test/timer.test.js",
-    "testDepth": 0,
-    "longname": "test/timer.test.js~describe22",
+    "memberof": "test/Eligibility.test.js~describe0.describe15.describe21",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe15.describe21.it22",
     "access": null,
-    "description": "Eligiblility",
-    "lineNumber": 14
+    "description": "should return 5000 if 5001 ms have passed",
+    "lineNumber": 133
   },
   {
     "__docId__": 104,
-    "kind": "testDescribe",
+    "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "describe23",
+    "name": "it23",
     "testId": 23,
-    "memberof": "test/timer.test.js~describe22",
-    "testDepth": 1,
-    "longname": "test/timer.test.js~describe22.describe23",
+    "memberof": "test/Eligibility.test.js~describe0.describe15.describe21",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe15.describe21.it23",
     "access": null,
-    "description": "#constructor",
-    "lineNumber": 33
+    "description": "should update startTime",
+    "lineNumber": 137
   },
   {
     "__docId__": 105,
@@ -1527,12 +1527,12 @@
     "variation": null,
     "name": "it24",
     "testId": 24,
-    "memberof": "test/timer.test.js~describe22.describe23",
-    "testDepth": 2,
-    "longname": "test/timer.test.js~describe22.describe23.it24",
+    "memberof": "test/Eligibility.test.js~describe0.describe15.describe21",
+    "testDepth": 3,
+    "longname": "test/Eligibility.test.js~describe0.describe15.describe21.it24",
     "access": null,
-    "description": "should be able to init without a config",
-    "lineNumber": 35
+    "description": "should reset _requestCount if period is reset",
+    "lineNumber": 142
   },
   {
     "__docId__": 106,
@@ -1541,12 +1541,12 @@
     "variation": null,
     "name": "describe25",
     "testId": 25,
-    "memberof": "test/timer.test.js~describe22.describe23",
-    "testDepth": 2,
-    "longname": "test/timer.test.js~describe22.describe23.describe25",
+    "memberof": "test/Eligibility.test.js~describe0",
+    "testDepth": 1,
+    "longname": "test/Eligibility.test.js~describe0.describe25",
     "access": null,
-    "description": "without config",
-    "lineNumber": 39
+    "description": "check",
+    "lineNumber": 152
   },
   {
     "__docId__": 107,
@@ -1555,12 +1555,12 @@
     "variation": null,
     "name": "it26",
     "testId": 26,
-    "memberof": "test/timer.test.js~describe22.describe23.describe25",
-    "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe23.describe25.it26",
+    "memberof": "test/Eligibility.test.js~describe0.describe25",
+    "testDepth": 2,
+    "longname": "test/Eligibility.test.js~describe0.describe25.it26",
     "access": null,
-    "description": "should return an object",
-    "lineNumber": 45
+    "description": "should call _getPeriodRemaining",
+    "lineNumber": 158
   },
   {
     "__docId__": 108,
@@ -1569,12 +1569,12 @@
     "variation": null,
     "name": "it27",
     "testId": 27,
-    "memberof": "test/timer.test.js~describe22.describe23.describe25",
-    "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe23.describe25.it27",
+    "memberof": "test/Eligibility.test.js~describe0.describe25",
+    "testDepth": 2,
+    "longname": "test/Eligibility.test.js~describe0.describe25.it27",
     "access": null,
-    "description": "should create a limit",
-    "lineNumber": 49
+    "description": "should increment _requestCount",
+    "lineNumber": 165
   },
   {
     "__docId__": 109,
@@ -1583,12 +1583,12 @@
     "variation": null,
     "name": "it28",
     "testId": 28,
-    "memberof": "test/timer.test.js~describe22.describe23.describe25",
-    "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe23.describe25.it28",
+    "memberof": "test/Eligibility.test.js~describe0.describe25",
+    "testDepth": 2,
+    "longname": "test/Eligibility.test.js~describe0.describe25.it28",
     "access": null,
-    "description": "should create a period",
-    "lineNumber": 53
+    "description": "should return true if _requestCount is less than _limit",
+    "lineNumber": 171
   },
   {
     "__docId__": 110,
@@ -1597,319 +1597,374 @@
     "variation": null,
     "name": "it29",
     "testId": 29,
-    "memberof": "test/timer.test.js~describe22.describe23.describe25",
-    "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe23.describe25.it29",
+    "memberof": "test/Eligibility.test.js~describe0.describe25",
+    "testDepth": 2,
+    "longname": "test/Eligibility.test.js~describe0.describe25.it29",
     "access": null,
-    "description": "should create a startTime",
-    "lineNumber": 57
+    "description": "should return false if _requestCount is higher than _limit",
+    "lineNumber": 175
   },
   {
     "__docId__": 111,
-    "kind": "testIt",
+    "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "it30",
+    "name": "describe30",
     "testId": 30,
-    "memberof": "test/timer.test.js~describe22.describe23.describe25",
-    "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe23.describe25.it30",
+    "memberof": "test/Eligibility.test.js~describe0",
+    "testDepth": 1,
+    "longname": "test/Eligibility.test.js~describe0.describe30",
     "access": null,
-    "description": "should create a requestCount",
-    "lineNumber": 62
+    "description": "getHeaders",
+    "lineNumber": 182
   },
   {
     "__docId__": 112,
+    "kind": "testFile",
+    "static": true,
+    "variation": null,
+    "name": "test/Limiter.test.js",
+    "memberof": null,
+    "longname": "test/Limiter.test.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "'use strict';\nconst chai       = require('chai');\nconst sinon      = require('sinon');\nconst sinonChai  = require('sinon-chai');\n\nchai.use(sinonChai);\n\nconst expect = chai.expect;\n\ndescribe('Limiter', () => {\n  let Limiter;\n  let limiter;\n  let config;\n  let validOpts;\n\n  beforeEach(() => {\n    config = {\n      key    : 'user.id',\n      limit  : 20,\n      period : 5000,\n    };\n    validOpts = {\n      request : {\n        user : {\n          id : 'something'\n        }\n      },\n      response : {},\n    }\n    Limiter = require('../src/Limiter.js');\n\n  });\n\n  describe('#constructor', () => {\n    it('should not error if not given a config', () => {\n      expect(() => { return new Limiter(); }).not.to.throw(Error);\n    });\n\n    describe('without config', () => {\n\n      beforeEach(() => {\n        limiter = new Limiter();\n      });\n\n      it('should assign DEFAULT_KEY to config.key', () => {\n        expect(limiter._config.key).to.equal('ip');\n      });\n\n      it('should default config.limit to null', () => {\n        expect(limiter._config.limit).to.not.exist;\n      });\n\n      it('should default config.period to null', () => {\n        expect(limiter._config.period).to.not.exist;\n      });\n\n      it('should create _eligibility', () => {\n        expect(limiter._eligibility).to.exist;\n      });\n\n    });\n\n    describe('with only key in config', () => {\n\n      beforeEach(() => {\n        limiter = new Limiter({ key : 'user' });\n      });\n\n      it('should assign given key to config.key', () => {\n        expect(limiter._config.key).to.equal('user');\n      });\n\n      it('should default config.limit to null', () => {\n        expect(limiter._config.limit).to.not.exist;\n      });\n\n      it('should default config.period to null', () => {\n        expect(limiter._config.period).to.not.exist;\n      });\n\n      it('should create _eligibility', () => {\n        expect(limiter._eligibility).to.exist;\n      });\n\n    });\n\n    describe('with config', () => {\n\n      beforeEach(() => {\n        limiter = new Limiter({ \n          key    : 'something.else',\n          limit  : 200,\n          period : 8000,\n        });\n      });\n\n      it('should assign given key to config.key', () => {\n        expect(limiter._config.key).to.equal('something.else');\n      });\n\n      it('should assign given period to config.limit', () => {\n        expect(limiter._config.limit).to.equal(200);\n      });\n\n      it('should assign given period to config.period', () => {\n        expect(limiter._config.period).to.equal(8000);\n      });\n\n      it('should create _eligibility', () => {\n        expect(limiter._eligibility).to.exist;\n      });\n\n    });\n\n  });\n\n  describe('#checkRequest', () => {\n    let request;\n    let response;\n\n    beforeEach(() => {\n      request = validOpts.request;\n      response = validOpts.response;\n    });\n\n    describe('when request within limits', () => {\n\n      beforeEach(() => {\n        limiter = new Limiter(config);\n      });\n\n      it('should error if no opts are given', () => {\n        expect(limiter.checkRequest).to.throw('Error');\n      });\n\n      it('should register a new Eligibility model if one doesn\\'t exist', () => {\n        limiter.checkRequest({ request, response })\n\n        expect(limiter._eligibility[request.user.id]).to.exist;\n        expect(limiter._eligibility[request.user.id]._requestCount).to.equal(1);\n      });\n\n      it('should use the same Eligibility instance with the same key', () => {\n        limiter.checkRequest({ request, response });\n        limiter.checkRequest({ request, response });\n        expect(limiter._eligibility[request.user.id]._requestCount).to.equal(2);\n      });\n\n    });\n\n    describe('when request outside of limits', () => {\n\n      beforeEach(() => {\n        limiter = new Limiter({\n          key    : 'user.id',\n          limit  : 0,\n          period : 0,\n        });\n      });\n\n      xit('should throw error if eligibility is false', () => {\n        expect(() => { limiter.checkRequest({ request, response }) }).to.throw(Error);\n      });\n\n    });\n\n  });\n\n});\n"
+  },
+  {
+    "__docId__": 113,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
     "name": "describe31",
     "testId": 31,
-    "memberof": "test/timer.test.js~describe22.describe23",
-    "testDepth": 2,
-    "longname": "test/timer.test.js~describe22.describe23.describe31",
+    "memberof": "test/Limiter.test.js",
+    "testDepth": 0,
+    "longname": "test/Limiter.test.js~describe31",
     "access": null,
-    "description": "with config",
-    "lineNumber": 68
-  },
-  {
-    "__docId__": 113,
-    "kind": "testIt",
-    "static": true,
-    "variation": null,
-    "name": "it32",
-    "testId": 32,
-    "memberof": "test/timer.test.js~describe22.describe23.describe31",
-    "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe23.describe31.it32",
-    "access": null,
-    "description": "should return an object",
-    "lineNumber": 74
+    "description": "Limiter",
+    "lineNumber": 10
   },
   {
     "__docId__": 114,
-    "kind": "testIt",
+    "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "it33",
-    "testId": 33,
-    "memberof": "test/timer.test.js~describe22.describe23.describe31",
-    "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe23.describe31.it33",
+    "name": "describe32",
+    "testId": 32,
+    "memberof": "test/Limiter.test.js~describe31",
+    "testDepth": 1,
+    "longname": "test/Limiter.test.js~describe31.describe32",
     "access": null,
-    "description": "should create a limit",
-    "lineNumber": 78
+    "description": "#constructor",
+    "lineNumber": 34
   },
   {
     "__docId__": 115,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it34",
-    "testId": 34,
-    "memberof": "test/timer.test.js~describe22.describe23.describe31",
-    "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe23.describe31.it34",
+    "name": "it33",
+    "testId": 33,
+    "memberof": "test/Limiter.test.js~describe31.describe32",
+    "testDepth": 2,
+    "longname": "test/Limiter.test.js~describe31.describe32.it33",
     "access": null,
-    "description": "should create a period",
-    "lineNumber": 82
+    "description": "should not error if not given a config",
+    "lineNumber": 35
   },
   {
     "__docId__": 116,
-    "kind": "testIt",
+    "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "it35",
-    "testId": 35,
-    "memberof": "test/timer.test.js~describe22.describe23.describe31",
-    "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe23.describe31.it35",
+    "name": "describe34",
+    "testId": 34,
+    "memberof": "test/Limiter.test.js~describe31.describe32",
+    "testDepth": 2,
+    "longname": "test/Limiter.test.js~describe31.describe32.describe34",
     "access": null,
-    "description": "should create a startTime",
-    "lineNumber": 86
+    "description": "without config",
+    "lineNumber": 39
   },
   {
     "__docId__": 117,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it36",
-    "testId": 36,
-    "memberof": "test/timer.test.js~describe22.describe23.describe31",
+    "name": "it35",
+    "testId": 35,
+    "memberof": "test/Limiter.test.js~describe31.describe32.describe34",
     "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe23.describe31.it36",
+    "longname": "test/Limiter.test.js~describe31.describe32.describe34.it35",
     "access": null,
-    "description": "should create a requestCount",
-    "lineNumber": 91
+    "description": "should assign DEFAULT_KEY to config.key",
+    "lineNumber": 45
   },
   {
     "__docId__": 118,
-    "kind": "testDescribe",
+    "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "describe37",
-    "testId": 37,
-    "memberof": "test/timer.test.js~describe22",
-    "testDepth": 1,
-    "longname": "test/timer.test.js~describe22.describe37",
+    "name": "it36",
+    "testId": 36,
+    "memberof": "test/Limiter.test.js~describe31.describe32.describe34",
+    "testDepth": 3,
+    "longname": "test/Limiter.test.js~describe31.describe32.describe34.it36",
     "access": null,
-    "description": "#_getPeriodRemaining",
-    "lineNumber": 99
+    "description": "should default config.limit to null",
+    "lineNumber": 49
   },
   {
     "__docId__": 119,
-    "kind": "testDescribe",
+    "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "describe38",
-    "testId": 38,
-    "memberof": "test/timer.test.js~describe22.describe37",
-    "testDepth": 2,
-    "longname": "test/timer.test.js~describe22.describe37.describe38",
+    "name": "it37",
+    "testId": 37,
+    "memberof": "test/Limiter.test.js~describe31.describe32.describe34",
+    "testDepth": 3,
+    "longname": "test/Limiter.test.js~describe31.describe32.describe34.it37",
     "access": null,
-    "description": "when in the period",
-    "lineNumber": 105
+    "description": "should default config.period to null",
+    "lineNumber": 53
   },
   {
     "__docId__": 120,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it39",
-    "testId": 39,
-    "memberof": "test/timer.test.js~describe22.describe37.describe38",
+    "name": "it38",
+    "testId": 38,
+    "memberof": "test/Limiter.test.js~describe31.describe32.describe34",
     "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe37.describe38.it39",
+    "longname": "test/Limiter.test.js~describe31.describe32.describe34.it38",
     "access": null,
-    "description": "should return 3068 if 1932 ms have passed",
-    "lineNumber": 106
+    "description": "should create _eligibility",
+    "lineNumber": 57
   },
   {
     "__docId__": 121,
-    "kind": "testIt",
+    "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "it40",
-    "testId": 40,
-    "memberof": "test/timer.test.js~describe22.describe37.describe38",
-    "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe37.describe38.it40",
+    "name": "describe39",
+    "testId": 39,
+    "memberof": "test/Limiter.test.js~describe31.describe32",
+    "testDepth": 2,
+    "longname": "test/Limiter.test.js~describe31.describe32.describe39",
     "access": null,
-    "description": "should return 0 if 5000 ms have passed",
-    "lineNumber": 111
+    "description": "with only key in config",
+    "lineNumber": 63
   },
   {
     "__docId__": 122,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it41",
-    "testId": 41,
-    "memberof": "test/timer.test.js~describe22.describe37.describe38",
+    "name": "it40",
+    "testId": 40,
+    "memberof": "test/Limiter.test.js~describe31.describe32.describe39",
     "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe37.describe38.it41",
+    "longname": "test/Limiter.test.js~describe31.describe32.describe39.it40",
     "access": null,
-    "description": "should not change the startTime",
-    "lineNumber": 116
+    "description": "should assign given key to config.key",
+    "lineNumber": 69
   },
   {
     "__docId__": 123,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it42",
-    "testId": 42,
-    "memberof": "test/timer.test.js~describe22.describe37.describe38",
+    "name": "it41",
+    "testId": 41,
+    "memberof": "test/Limiter.test.js~describe31.describe32.describe39",
     "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe37.describe38.it42",
+    "longname": "test/Limiter.test.js~describe31.describe32.describe39.it41",
     "access": null,
-    "description": "should not reset _requestCounter",
-    "lineNumber": 122
+    "description": "should default config.limit to null",
+    "lineNumber": 73
   },
   {
     "__docId__": 124,
-    "kind": "testDescribe",
+    "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "describe43",
-    "testId": 43,
-    "memberof": "test/timer.test.js~describe22.describe37",
-    "testDepth": 2,
-    "longname": "test/timer.test.js~describe22.describe37.describe43",
+    "name": "it42",
+    "testId": 42,
+    "memberof": "test/Limiter.test.js~describe31.describe32.describe39",
+    "testDepth": 3,
+    "longname": "test/Limiter.test.js~describe31.describe32.describe39.it42",
     "access": null,
-    "description": "when past the period",
-    "lineNumber": 131
+    "description": "should default config.period to null",
+    "lineNumber": 77
   },
   {
     "__docId__": 125,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it44",
-    "testId": 44,
-    "memberof": "test/timer.test.js~describe22.describe37.describe43",
+    "name": "it43",
+    "testId": 43,
+    "memberof": "test/Limiter.test.js~describe31.describe32.describe39",
     "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe37.describe43.it44",
+    "longname": "test/Limiter.test.js~describe31.describe32.describe39.it43",
     "access": null,
-    "description": "should return 5000 if 5001 ms have passed",
-    "lineNumber": 136
+    "description": "should create _eligibility",
+    "lineNumber": 81
   },
   {
     "__docId__": 126,
-    "kind": "testIt",
+    "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "it45",
-    "testId": 45,
-    "memberof": "test/timer.test.js~describe22.describe37.describe43",
-    "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe37.describe43.it45",
+    "name": "describe44",
+    "testId": 44,
+    "memberof": "test/Limiter.test.js~describe31.describe32",
+    "testDepth": 2,
+    "longname": "test/Limiter.test.js~describe31.describe32.describe44",
     "access": null,
-    "description": "should update startTime",
-    "lineNumber": 140
+    "description": "with config",
+    "lineNumber": 87
   },
   {
     "__docId__": 127,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it46",
-    "testId": 46,
-    "memberof": "test/timer.test.js~describe22.describe37.describe43",
+    "name": "it45",
+    "testId": 45,
+    "memberof": "test/Limiter.test.js~describe31.describe32.describe44",
     "testDepth": 3,
-    "longname": "test/timer.test.js~describe22.describe37.describe43.it46",
+    "longname": "test/Limiter.test.js~describe31.describe32.describe44.it45",
     "access": null,
-    "description": "should reset _requestCount if period is reset",
-    "lineNumber": 145
+    "description": "should assign given key to config.key",
+    "lineNumber": 97
   },
   {
     "__docId__": 128,
-    "kind": "testDescribe",
+    "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "describe47",
-    "testId": 47,
-    "memberof": "test/timer.test.js~describe22",
-    "testDepth": 1,
-    "longname": "test/timer.test.js~describe22.describe47",
+    "name": "it46",
+    "testId": 46,
+    "memberof": "test/Limiter.test.js~describe31.describe32.describe44",
+    "testDepth": 3,
+    "longname": "test/Limiter.test.js~describe31.describe32.describe44.it46",
     "access": null,
-    "description": "check",
-    "lineNumber": 155
+    "description": "should assign given period to config.limit",
+    "lineNumber": 101
   },
   {
     "__docId__": 129,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it48",
-    "testId": 48,
-    "memberof": "test/timer.test.js~describe22.describe47",
-    "testDepth": 2,
-    "longname": "test/timer.test.js~describe22.describe47.it48",
+    "name": "it47",
+    "testId": 47,
+    "memberof": "test/Limiter.test.js~describe31.describe32.describe44",
+    "testDepth": 3,
+    "longname": "test/Limiter.test.js~describe31.describe32.describe44.it47",
     "access": null,
-    "description": "should call _getPeriodRemaining",
-    "lineNumber": 161
+    "description": "should assign given period to config.period",
+    "lineNumber": 105
   },
   {
     "__docId__": 130,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it49",
-    "testId": 49,
-    "memberof": "test/timer.test.js~describe22.describe47",
-    "testDepth": 2,
-    "longname": "test/timer.test.js~describe22.describe47.it49",
+    "name": "it48",
+    "testId": 48,
+    "memberof": "test/Limiter.test.js~describe31.describe32.describe44",
+    "testDepth": 3,
+    "longname": "test/Limiter.test.js~describe31.describe32.describe44.it48",
     "access": null,
-    "description": "should increment _requestCount",
-    "lineNumber": 168
+    "description": "should create _eligibility",
+    "lineNumber": 109
   },
   {
     "__docId__": 131,
-    "kind": "testIt",
+    "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "it50",
-    "testId": 50,
-    "memberof": "test/timer.test.js~describe22.describe47",
-    "testDepth": 2,
-    "longname": "test/timer.test.js~describe22.describe47.it50",
+    "name": "describe49",
+    "testId": 49,
+    "memberof": "test/Limiter.test.js~describe31",
+    "testDepth": 1,
+    "longname": "test/Limiter.test.js~describe31.describe49",
     "access": null,
-    "description": "should return true if _requestCount is less than _limit",
-    "lineNumber": 174
+    "description": "#checkRequest",
+    "lineNumber": 117
   },
   {
     "__docId__": 132,
+    "kind": "testDescribe",
+    "static": true,
+    "variation": null,
+    "name": "describe50",
+    "testId": 50,
+    "memberof": "test/Limiter.test.js~describe31.describe49",
+    "testDepth": 2,
+    "longname": "test/Limiter.test.js~describe31.describe49.describe50",
+    "access": null,
+    "description": "when request within limits",
+    "lineNumber": 126
+  },
+  {
+    "__docId__": 133,
     "kind": "testIt",
     "static": true,
     "variation": null,
     "name": "it51",
     "testId": 51,
-    "memberof": "test/timer.test.js~describe22.describe47",
-    "testDepth": 2,
-    "longname": "test/timer.test.js~describe22.describe47.it51",
+    "memberof": "test/Limiter.test.js~describe31.describe49.describe50",
+    "testDepth": 3,
+    "longname": "test/Limiter.test.js~describe31.describe49.describe50.it51",
     "access": null,
-    "description": "should return false if _requestCount is higher than _limit",
-    "lineNumber": 178
+    "description": "should error if no opts are given",
+    "lineNumber": 132
+  },
+  {
+    "__docId__": 134,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it52",
+    "testId": 52,
+    "memberof": "test/Limiter.test.js~describe31.describe49.describe50",
+    "testDepth": 3,
+    "longname": "test/Limiter.test.js~describe31.describe49.describe50.it52",
+    "access": null,
+    "description": "should register a new Eligibility model if one doesn't exist",
+    "lineNumber": 136
+  },
+  {
+    "__docId__": 135,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it53",
+    "testId": 53,
+    "memberof": "test/Limiter.test.js~describe31.describe49.describe50",
+    "testDepth": 3,
+    "longname": "test/Limiter.test.js~describe31.describe49.describe50.it53",
+    "access": null,
+    "description": "should use the same Eligibility instance with the same key",
+    "lineNumber": 143
+  },
+  {
+    "__docId__": 136,
+    "kind": "testDescribe",
+    "static": true,
+    "variation": null,
+    "name": "describe54",
+    "testId": 54,
+    "memberof": "test/Limiter.test.js~describe31.describe49",
+    "testDepth": 2,
+    "longname": "test/Limiter.test.js~describe31.describe49.describe54",
+    "access": null,
+    "description": "when request outside of limits",
+    "lineNumber": 151
   }
 ]

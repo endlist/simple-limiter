@@ -1,146 +1,14 @@
 window.esdocSearchIndex = [
   [
-    "",
-    "test-file/test/index.test.js.html#lineNumber120",
-    "#checkRequest",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber130",
-    "#checkRequest should error if no opts are given",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber141",
-    "#checkRequest should not register a new Eligibility model if one exists",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber134",
-    "#checkRequest should register a new Eligibility model if one doesn't exist",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber146",
-    "#checkRequest should throw error if eligibility is false",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber37",
-    "#constructor",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber38",
-    "#constructor should not error if not given a config",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber90",
-    "#constructor with config",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber100",
-    "#constructor with config should assign given key to config.key",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber104",
-    "#constructor with config should assign given period to config.limit",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber108",
-    "#constructor with config should assign given period to config.period",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber112",
-    "#constructor with config should create _eligibility",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber66",
-    "#constructor with only key in config",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber72",
-    "#constructor with only key in config should assign given key to config.key",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber84",
-    "#constructor with only key in config should create _eligibility",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber76",
-    "#constructor with only key in config should default config.limit to null",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber80",
-    "#constructor with only key in config should default config.period to null",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber42",
-    "#constructor without config",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber48",
-    "#constructor without config should assign DEFAULT_KEY to config.key",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber60",
-    "#constructor without config should create _eligibility",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber52",
-    "#constructor without config should default config.limit to null",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/index.test.js.html#lineNumber56",
-    "#constructor without config should default config.period to null",
-    "test"
-  ],
-  [
     "simple-limiter/src/eligibility.js~eligibility",
     "class/src/Eligibility.js~Eligibility.html",
     "<span>Eligibility</span> <span class=\"search-result-import-path\">simple-limiter/src/Eligibility.js</span>",
     "class"
   ],
   [
-    "simple-limiter~limiter",
-    "class/src/index.js~Limiter.html",
-    "<span>Limiter</span> <span class=\"search-result-import-path\">simple-limiter</span>",
+    "simple-limiter/src/limiter.js~limiter",
+    "class/src/Limiter.js~Limiter.html",
+    "<span>Limiter</span> <span class=\"search-result-import-path\">simple-limiter/src/Limiter.js</span>",
     "class"
   ],
   [
@@ -475,182 +343,332 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber14",
+    "test-file/test/Eligibility.test.js.html#lineNumber11",
     "Eligiblility",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber99",
+    "test-file/test/Eligibility.test.js.html#lineNumber96",
     "Eligiblility #_getPeriodRemaining",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber105",
+    "test-file/test/Eligibility.test.js.html#lineNumber102",
     "Eligiblility #_getPeriodRemaining when in the period",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber116",
+    "test-file/test/Eligibility.test.js.html#lineNumber113",
     "Eligiblility #_getPeriodRemaining when in the period should not change the startTime",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber122",
+    "test-file/test/Eligibility.test.js.html#lineNumber119",
     "Eligiblility #_getPeriodRemaining when in the period should not reset _requestCounter",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber111",
+    "test-file/test/Eligibility.test.js.html#lineNumber108",
     "Eligiblility #_getPeriodRemaining when in the period should return 0 if 5000 ms have passed",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber106",
+    "test-file/test/Eligibility.test.js.html#lineNumber103",
     "Eligiblility #_getPeriodRemaining when in the period should return 3068 if 1932 ms have passed",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber131",
+    "test-file/test/Eligibility.test.js.html#lineNumber128",
     "Eligiblility #_getPeriodRemaining when past the period",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber145",
+    "test-file/test/Eligibility.test.js.html#lineNumber142",
     "Eligiblility #_getPeriodRemaining when past the period should reset _requestCount if period is reset",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber136",
+    "test-file/test/Eligibility.test.js.html#lineNumber133",
     "Eligiblility #_getPeriodRemaining when past the period should return 5000 if 5001 ms have passed",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber140",
+    "test-file/test/Eligibility.test.js.html#lineNumber137",
     "Eligiblility #_getPeriodRemaining when past the period should update startTime",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber33",
+    "test-file/test/Eligibility.test.js.html#lineNumber30",
     "Eligiblility #constructor",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber35",
+    "test-file/test/Eligibility.test.js.html#lineNumber32",
     "Eligiblility #constructor should be able to init without a config",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber68",
+    "test-file/test/Eligibility.test.js.html#lineNumber65",
     "Eligiblility #constructor with config",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber78",
+    "test-file/test/Eligibility.test.js.html#lineNumber75",
     "Eligiblility #constructor with config should create a limit",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber82",
+    "test-file/test/Eligibility.test.js.html#lineNumber79",
     "Eligiblility #constructor with config should create a period",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber91",
+    "test-file/test/Eligibility.test.js.html#lineNumber88",
     "Eligiblility #constructor with config should create a requestCount",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber86",
+    "test-file/test/Eligibility.test.js.html#lineNumber83",
     "Eligiblility #constructor with config should create a startTime",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber74",
+    "test-file/test/Eligibility.test.js.html#lineNumber71",
     "Eligiblility #constructor with config should return an object",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber39",
+    "test-file/test/Eligibility.test.js.html#lineNumber36",
     "Eligiblility #constructor without config",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber49",
+    "test-file/test/Eligibility.test.js.html#lineNumber46",
     "Eligiblility #constructor without config should create a limit",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber53",
+    "test-file/test/Eligibility.test.js.html#lineNumber50",
     "Eligiblility #constructor without config should create a period",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber62",
+    "test-file/test/Eligibility.test.js.html#lineNumber59",
     "Eligiblility #constructor without config should create a requestCount",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber57",
+    "test-file/test/Eligibility.test.js.html#lineNumber54",
     "Eligiblility #constructor without config should create a startTime",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber45",
+    "test-file/test/Eligibility.test.js.html#lineNumber42",
     "Eligiblility #constructor without config should return an object",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber155",
+    "test-file/test/Eligibility.test.js.html#lineNumber152",
     "Eligiblility check",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber161",
+    "test-file/test/Eligibility.test.js.html#lineNumber158",
     "Eligiblility check should call _getPeriodRemaining",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber168",
+    "test-file/test/Eligibility.test.js.html#lineNumber165",
     "Eligiblility check should increment _requestCount",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber178",
+    "test-file/test/Eligibility.test.js.html#lineNumber175",
     "Eligiblility check should return false if _requestCount is higher than _limit",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.test.js.html#lineNumber174",
+    "test-file/test/Eligibility.test.js.html#lineNumber171",
     "Eligiblility check should return true if _requestCount is less than _limit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Eligibility.test.js.html#lineNumber182",
+    "Eligiblility getHeaders",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber10",
+    "Limiter",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber117",
+    "Limiter #checkRequest",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber151",
+    "Limiter #checkRequest when request outside of limits",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber126",
+    "Limiter #checkRequest when request within limits",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber132",
+    "Limiter #checkRequest when request within limits should error if no opts are given",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber136",
+    "Limiter #checkRequest when request within limits should register a new Eligibility model if one doesn't exist",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber143",
+    "Limiter #checkRequest when request within limits should use the same Eligibility instance with the same key",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber34",
+    "Limiter #constructor",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber35",
+    "Limiter #constructor should not error if not given a config",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber87",
+    "Limiter #constructor with config",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber97",
+    "Limiter #constructor with config should assign given key to config.key",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber101",
+    "Limiter #constructor with config should assign given period to config.limit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber105",
+    "Limiter #constructor with config should assign given period to config.period",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber109",
+    "Limiter #constructor with config should create _eligibility",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber63",
+    "Limiter #constructor with only key in config",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber69",
+    "Limiter #constructor with only key in config should assign given key to config.key",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber81",
+    "Limiter #constructor with only key in config should create _eligibility",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber73",
+    "Limiter #constructor with only key in config should default config.limit to null",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber77",
+    "Limiter #constructor with only key in config should default config.period to null",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber39",
+    "Limiter #constructor without config",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber45",
+    "Limiter #constructor without config should assign DEFAULT_KEY to config.key",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber57",
+    "Limiter #constructor without config should create _eligibility",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber49",
+    "Limiter #constructor without config should default config.limit to null",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber53",
+    "Limiter #constructor without config should default config.period to null",
     "test"
   ],
   [
@@ -672,27 +690,33 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/limiter.js",
+    "file/src/Limiter.js.html",
+    "src/Limiter.js",
+    "file"
+  ],
+  [
+    "src/limiter.js~limiter#constructor",
+    "class/src/Limiter.js~Limiter.html#instance-constructor-constructor",
+    "src/Limiter.js~Limiter#constructor",
+    "method"
+  ],
+  [
     "src/index.js",
     "file/src/index.js.html",
     "src/index.js",
     "file"
   ],
   [
-    "src/index.js~limiter#constructor",
-    "class/src/index.js~Limiter.html#instance-constructor-constructor",
-    "src/index.js~Limiter#constructor",
-    "method"
-  ],
-  [
-    "test/index.test.js",
-    "test-file/test/index.test.js.html",
-    "test/index.test.js",
+    "test/eligibility.test.js",
+    "test-file/test/Eligibility.test.js.html",
+    "test/Eligibility.test.js",
     "testFile"
   ],
   [
-    "test/timer.test.js",
-    "test-file/test/timer.test.js.html",
-    "test/timer.test.js",
+    "test/limiter.test.js",
+    "test-file/test/Limiter.test.js.html",
+    "test/Limiter.test.js",
     "testFile"
   ]
 ]
