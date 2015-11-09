@@ -11,26 +11,15 @@ describe('Limiter', () => {
   let Limiter;
   let limiter;
   let config;
-  let validOpts;
-  let Eligibility;
+  let key;
 
   beforeEach(() => {
     config = {
-      key    : 'user.id',
-      limit  : 20,
-      period : 5000,
+      limit     : 20,
+      period    : 5000,
+      increment : 2,
     };
-    validOpts = {
-      request : {
-        user : {
-          id : 'something'
-        }
-      },
-      response : {},
-    }
-    Eligibility = require('./mocks/Eligibility.mock.js');
     Limiter = require('../src/Limiter.js');
-
   });
 
   describe('#constructor', () => {
@@ -44,10 +33,6 @@ describe('Limiter', () => {
         limiter = new Limiter();
       });
 
-      it('should assign DEFAULT_KEY to config.key', () => {
-        expect(limiter._config.key).to.equal('ip');
-      });
-
       it('should default config.limit to null', () => {
         expect(limiter._config.limit).to.not.exist;
       });
@@ -56,32 +41,12 @@ describe('Limiter', () => {
         expect(limiter._config.period).to.not.exist;
       });
 
-      it('should create _eligibility', () => {
-        expect(limiter._eligibility).to.exist;
+      it('should default config.increment to null', () => {
+        expect(limiter._config.increment).to.not.exist;
       });
 
-    });
-
-    describe('with only key in config', () => {
-
-      beforeEach(() => {
-        limiter = new Limiter({ key : 'user' });
-      });
-
-      it('should assign given key to config.key', () => {
-        expect(limiter._config.key).to.equal('user');
-      });
-
-      it('should default config.limit to null', () => {
-        expect(limiter._config.limit).to.not.exist;
-      });
-
-      it('should default config.period to null', () => {
-        expect(limiter._config.period).to.not.exist;
-      });
-
-      it('should create _eligibility', () => {
-        expect(limiter._eligibility).to.exist;
+      it('should create _requestCounters', () => {
+        expect(limiter._requestCounters).to.exist;
       });
 
     });
@@ -89,63 +54,136 @@ describe('Limiter', () => {
     describe('with config', () => {
 
       beforeEach(() => {
-        limiter = new Limiter({ 
-          key    : 'something.else',
-          limit  : 200,
-          period : 8000,
-        });
-      });
-
-      it('should assign given key to config.key', () => {
-        expect(limiter._config.key).to.equal('something.else');
+        config = {
+          limit     : 200,
+          period    : 8000,
+          increment : 2,
+        };
+        limiter = new Limiter(config);
       });
 
       it('should assign given period to config.limit', () => {
-        expect(limiter._config.limit).to.equal(200);
+        expect(limiter._config.limit).to.equal(config.limit);
       });
 
       it('should assign given period to config.period', () => {
-        expect(limiter._config.period).to.equal(8000);
+        expect(limiter._config.period).to.equal(config.period);
       });
 
-      it('should create _eligibility', () => {
-        expect(limiter._eligibility).to.exist;
+      it('should assign given period to config.increment', () => {
+        expect(limiter._config.increment).to.equal(config.increment);
+      });
+
+      it('should create _requestCounters', () => {
+        expect(limiter._requestCounters).to.exist;
       });
 
     });
 
   });
 
-  describe('#checkRequest', () => {
-    let request;
-    let response;
+  describe('#_errorCheckForKey', () => {
+
+    it('should error if no key is given', () => {
+      expect(() => { limiter._errorCheckForKey(); }).to.throw(Error);
+    });
+
+    it('should do nothing if a key is given', () => {
+      expect(() => { limiter._errorCheckForKey('anything'); }).to.not.throw(Error);
+    });
+
+  });
+
+  describe('#_createRequestCounter', () => {
 
     beforeEach(() => {
-      request = validOpts.request;
-      response = validOpts.response;
+      limiter = new Limiter(config);
+      key = 'test';
     });
+
+    it('should call _errorCheckForKey', () => {
+      sinon.spy(limiter, '_errorCheckForKey');
+      limiter.getRemainingRequests(key);
+      expect(limiter._errorCheckForKey).to.have.been.called;
+    });
+
+    it('should register a new RequestCounter model if one doesn\'t exist', () => {
+      limiter._createRequestCounter(key);
+
+      expect(limiter._requestCounters[key]).to.exist;
+    });
+
+    it('should use the same RequestCounter instance with the same key', () => {
+      limiter._createRequestCounter(key);
+      limiter._requestCounters[key]._limit = config.limit - 2;
+      limiter._createRequestCounter(key);
+
+      expect(limiter._requestCounters[key]._limit).to.equal(config.limit - 2);
+    });
+
+  });
+
+  describe('#addRequest', () => {
+
+    beforeEach(() => {
+      limiter = new Limiter(config);
+      key = 'test';
+    });
+
+    it('should call _errorCheckForKey', () => {
+      sinon.spy(limiter, '_errorCheckForKey');
+      limiter.getRemainingRequests(key);
+      expect(limiter._errorCheckForKey).to.have.been.called;
+    });
+
+    it('should call _createRequestCounter', () => {
+      sinon.spy(limiter, '_createRequestCounter');
+      limiter.getRemainingRequests(key);
+      expect(limiter._createRequestCounter).to.have.been.called;
+    });
+
+    it('should return the altered limit after a request', () => {
+      let result;
+      result = limiter.addRequest(key);
+      expect(result).to.equal(config.limit - 1);
+
+      limiter.addRequest(key);
+      result = limiter.addRequest(key);
+      expect(result).to.equal(config.limit - 3);
+    });
+
+  });
+
+  describe('#getRemainingRequests', () => {
 
     describe('when request within limits', () => {
 
       beforeEach(() => {
         limiter = new Limiter(config);
+        key = 'test';
       });
 
-      it('should error if no opts are given', () => {
-        expect(limiter.checkRequest).to.throw('Error');
+      it('should call _errorCheckForKey', () => {
+        sinon.spy(limiter, '_errorCheckForKey');
+        limiter.getRemainingRequests(key);
+        expect(limiter._errorCheckForKey).to.have.been.called;
       });
 
-      it('should register a new Eligibility model if one doesn\'t exist', () => {
-        limiter.checkRequest({ request, response })
-
-        expect(limiter._eligibility[request.user.id]).to.exist;
-        expect(limiter._eligibility[request.user.id]._requestCount).to.equal(1);
+      it('should call _createRequestCounter', () => {
+        sinon.spy(limiter, '_createRequestCounter');
+        limiter.getRemainingRequests(key);
+        expect(limiter._createRequestCounter).to.have.been.called;
       });
 
-      it('should use the same Eligibility instance with the same key', () => {
-        limiter.checkRequest({ request, response });
-        limiter.checkRequest({ request, response });
-        expect(limiter._eligibility[request.user.id]._requestCount).to.equal(2);
+      it('should return limit minus the number of requests', () => {
+        let request;
+        request = limiter.getRemainingRequests(key);
+        expect(request).to.equal(config.limit);
+
+        limiter.addRequest(key);
+        limiter.addRequest(key);
+        request = limiter.getRemainingRequests(key);
+        expect(request).to.equal(config.limit - 2);
       });
 
     });
@@ -154,14 +192,16 @@ describe('Limiter', () => {
 
       beforeEach(() => {
         limiter = new Limiter({
-          key    : 'user.id',
           limit  : 0,
           period : 0,
         });
+        key = 'test';
+        limiter.addRequest(key);
+        limiter._requestCounters[key]._limit = 0;
       });
 
-      xit('should throw error if eligibility is false', () => {
-        expect(() => { limiter.checkRequest({ request, response }) }).to.throw(Error);
+      it('should return 0 if request limit is reached', () => {
+        expect(limiter.getRemainingRequests(key)).to.equal(0);
       });
 
     });
