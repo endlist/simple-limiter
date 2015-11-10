@@ -32,8 +32,8 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Eligibility.js~Eligibility.html">Eligibility</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Limiter.js~Limiter.html">Limiter</a></span></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Limiter.js~Limiter.html">Limiter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/RequestCounter.js~RequestCounter.html">RequestCounter</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -50,7 +50,223 @@
 
   <tbody data-ice="tests">
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="0">
-  <td data-ice="testDescription" style="padding-left: 10px"><span class="toggle closed"></span><span><a href="test-file/test/Eligibility.test.js.html#lineNumber11"><p>Eligiblility</p>
+  <td data-ice="testDescription" style="padding-left: 10px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber10"><p>Limiter</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">21</td>
+</tr>
+
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber25"><p>#constructor</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">9</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber26"><p>should not error if not given a config</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber30"><p>without config</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">4</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber36"><p>should default config.limit to null</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber40"><p>should default config.period to null</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber44"><p>should default config.increment to null</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber48"><p>should create _requestCounters</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber54"><p>with config</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">4</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber65"><p>should assign given period to config.limit</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber69"><p>should assign given period to config.period</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber73"><p>should assign given period to config.increment</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber77"><p>should create _requestCounters</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber85"><p>#_errorCheckForKey</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">2</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber87"><p>should error if no key is given</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber91"><p>should do nothing if a key is given</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber97"><p>#_createRequestCounter</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">3</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber104"><p>should call _errorCheckForKey</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber110"><p>should register a new RequestCounter model if one doesn&apos;t exist</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber116"><p>should use the same RequestCounter instance with the same key</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber126"><p>#addRequest</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">3</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber133"><p>should call _errorCheckForKey</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber139"><p>should call _createRequestCounter</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber145"><p>should return the altered limit after a request</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber157"><p>#getRemainingRequests</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">4</td>
+</tr>
+
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber159"><p>when request within limits</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">3</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber166"><p>should call _errorCheckForKey</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber172"><p>should call _createRequestCounter</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber178"><p>should return limit minus the number of requests</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber191"><p>when request outside of limits</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">1</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber203"><p>should return 0 if request limit is reached</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="0">
+  <td data-ice="testDescription" style="padding-left: 10px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber11"><p>RequestCounter</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td data-ice="testCount">22</td>
@@ -59,14 +275,14 @@
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Eligibility.test.js.html#lineNumber30"><p>#constructor</p>
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber31"><p>#constructor</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">11</td>
+  <td data-ice="testCount">15</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber32"><p>should be able to init without a config</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber33"><p>should be able to init without a config</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
@@ -74,146 +290,164 @@
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Eligibility.test.js.html#lineNumber36"><p>without config</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">5</td>
-</tr>
-
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber42"><p>should return an object</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber46"><p>should create a limit</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber50"><p>should create a period</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber54"><p>should create a startTime</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber59"><p>should create a requestCount</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Eligibility.test.js.html#lineNumber65"><p>with config</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">5</td>
-</tr>
-
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber71"><p>should return an object</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber75"><p>should create a limit</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber79"><p>should create a period</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber83"><p>should create a startTime</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber88"><p>should create a requestCount</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Eligibility.test.js.html#lineNumber96"><p>#_getPeriodRemaining</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber37"><p>without config</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td data-ice="testCount">7</td>
 </tr>
 
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber48"><p>should return an object</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber52"><p>should create maxLimit</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber56"><p>should create limit</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber60"><p>should create a period</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber64"><p>should create a increment</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber68"><p>should create a startTime</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber73"><p>should set up an interval calling incrementLimit</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Eligibility.test.js.html#lineNumber102"><p>when in the period</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber80"><p>with config</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">4</td>
+  <td data-ice="testCount">7</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber103"><p>should return 3068 if 1932 ms have passed</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber91"><p>should return an object</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber108"><p>should return 0 if 5000 ms have passed</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber95"><p>should create maxLimit</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber113"><p>should not change the startTime</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber99"><p>should create limit</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber119"><p>should not reset _requestCounter</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber103"><p>should create a period</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber107"><p>should create a increment</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber111"><p>should create a startTime</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber116"><p>should set up an interval calling incrementLimit</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 
 
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Eligibility.test.js.html#lineNumber128"><p>when past the period</p>
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber128"><p>#destroy</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">1</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber135"><p>should destroy the interval</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber141"><p>#incrementLimit</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">2</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber151"><p>should increment _currentLimit if not at _maxLimit</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber157"><p>should not increment _currentLimit past _maxLimit</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber164"><p>#add</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td data-ice="testCount">3</td>
 </tr>
 
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber133"><p>should return 5000 if 5001 ms have passed</p>
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber174"><p>should decrement limit when below limit</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber137"><p>should update startTime</p>
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber179"><p>should not decrement limit if already at limit</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber142"><p>should reset _requestCount if period is reset</p>
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber185"><p>should reset at the end of the period</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
@@ -221,213 +455,18 @@
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Eligibility.test.js.html#lineNumber152"><p>check</p>
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber193"><p>#getRemaining</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">4</td>
+  <td data-ice="testCount">1</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber158"><p>should call _getPeriodRemaining</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber203"><p>should return the limit</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber165"><p>should increment _requestCount</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber171"><p>should return true if _requestCount is less than _limit</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Eligibility.test.js.html#lineNumber175"><p>should return false if _requestCount is higher than _limit</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Eligibility.test.js.html#lineNumber182"><p>getHeaders</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  
-</tr>
-
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="0">
-  <td data-ice="testDescription" style="padding-left: 10px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber10"><p>Limiter</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">16</td>
-</tr>
-
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber34"><p>#constructor</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">13</td>
-</tr>
-
-<tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber35"><p>should not error if not given a config</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber39"><p>without config</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">4</td>
-</tr>
-
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber45"><p>should assign DEFAULT_KEY to config.key</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber49"><p>should default config.limit to null</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber53"><p>should default config.period to null</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber57"><p>should create _eligibility</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber63"><p>with only key in config</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">4</td>
-</tr>
-
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber69"><p>should assign given key to config.key</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber73"><p>should default config.limit to null</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber77"><p>should default config.period to null</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber81"><p>should create _eligibility</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber87"><p>with config</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">4</td>
-</tr>
-
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber97"><p>should assign given key to config.key</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber101"><p>should assign given period to config.limit</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber105"><p>should assign given period to config.period</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber109"><p>should create _eligibility</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber117"><p>#checkRequest</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">3</td>
-</tr>
-
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber126"><p>when request within limits</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">3</td>
-</tr>
-
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber132"><p>should error if no opts are given</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber136"><p>should register a new Eligibility model if one doesn&apos;t exist</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber143"><p>should use the same Eligibility instance with the same key</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber151"><p>when request outside of limits</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  
-</tr>
-
 
 </tbody>
 </table>

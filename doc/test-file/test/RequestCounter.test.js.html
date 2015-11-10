@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">test/RequestCounter.test.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <a data-ice="repoURL" href="git+ssh://git@github.com/endlist/simple-limiter.git">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Limiter.js~Limiter.html">Limiter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/RequestCounter.js~RequestCounter.html">RequestCounter</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">test/RequestCounter.test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
+const chai = require(&apos;chai&apos;);
+const sinon = require(&apos;sinon&apos;);
+const sinonChai = require(&apos;sinon-chai&apos;);
+const START_TIME = 140000;
+
+chai.use(sinonChai);
+
+const expect = chai.expect;
+
+describe(&apos;RequestCounter&apos;, () =&gt; {
+  let RequestCounter;
+  let config;
+  let clock;
+  let requestCounter;
+
+  beforeEach(() =&gt; {
+    RequestCounter = require(&apos;../src/RequestCounter.js&apos;);
+    config = {
+      period    : 500,
+      limit     : 20,
+      increment : 1,
+    };
+    clock = sinon.useFakeTimers(START_TIME);
+  });
+
+  afterEach(() =&gt; {
+    clock.restore();
+  });
+
+  describe(&apos;#constructor&apos;, () =&gt; {
+
+    it(&apos;should be able to init without a config&apos;, () =&gt; {
+      expect(new RequestCounter).not.to.throw;
+    });
+
+    describe(&apos;without config&apos;, () =&gt; {
+
+      beforeEach(() =&gt; {
+        requestCounter = new RequestCounter();
+        sinon.spy(requestCounter, &apos;incrementLimit&apos;);
+      });
+
+      afterEach(() =&gt; {
+        requestCounter.destroy();
+      });
+
+      it(&apos;should return an object&apos;, () =&gt; {
+        expect(typeof(requestCounter)).to.equal(&apos;object&apos;);
+      });
+
+      it(&apos;should create maxLimit&apos;, () =&gt; {
+        expect(requestCounter._maxLimit).to.exist;
+      });
+
+      it(&apos;should create limit&apos;, () =&gt; {
+        expect(requestCounter._limit).to.exist;
+      });
+
+      it(&apos;should create a period&apos;, () =&gt; {
+        expect(requestCounter._period).to.exist;
+      });
+
+      it(&apos;should create a increment&apos;, () =&gt; {
+        expect(requestCounter._increment).to.exist;
+      });
+
+      it(&apos;should create a startTime&apos;, () =&gt; {
+        // TODO: can check the time is accurate?
+        expect(requestCounter._startTime).to.exist;
+      });
+
+      it(&apos;should set up an interval calling incrementLimit&apos;, () =&gt; {
+        clock.tick(config.period + 1);
+        expect(requestCounter.incrementLimit).to.have.been.called;
+      });
+
+    });
+
+    describe(&apos;with config&apos;, () =&gt; {
+
+      beforeEach(() =&gt; {
+        requestCounter = new RequestCounter(config);
+        sinon.spy(requestCounter, &apos;incrementLimit&apos;);
+      });
+
+      afterEach(() =&gt; {
+        requestCounter.destroy();
+      });
+
+      it(&apos;should return an object&apos;, () =&gt; {
+        expect(typeof(requestCounter)).to.equal(&apos;object&apos;);
+      });
+
+      it(&apos;should create maxLimit&apos;, () =&gt; {
+        expect(requestCounter._maxLimit).to.exist;
+      });
+
+      it(&apos;should create limit&apos;, () =&gt; {
+        expect(requestCounter._limit).to.exist;
+      });
+
+      it(&apos;should create a period&apos;, () =&gt; {
+        expect(requestCounter._period).to.exist;
+      });
+
+      it(&apos;should create a increment&apos;, () =&gt; {
+        expect(requestCounter._increment).to.exist;
+      });
+
+      it(&apos;should create a startTime&apos;, () =&gt; {
+        // TODO: can check the time is accurate?
+        expect(requestCounter._startTime).to.exist;
+      });
+
+      it(&apos;should set up an interval calling incrementLimit&apos;, () =&gt; {
+        clock.tick(config.period + 1);
+        expect(requestCounter.incrementLimit).to.have.been.calledOnce;
+
+        clock.tick(config.period);
+        expect(requestCounter.incrementLimit).to.have.been.calledTwice;
+      });
+
+    });
+
+  });
+
+  describe(&apos;#destroy&apos;, () =&gt; {
+
+    beforeEach(() =&gt; {
+      requestCounter = new RequestCounter();
+      requestCounter.destroy();
+    });
+
+    it(&apos;should destroy the interval&apos;, () =&gt; {
+      expect(requestCounter.interval).to.not.exist;
+    });
+
+  });
+
+  describe(&apos;#incrementLimit&apos;, () =&gt; {
+
+    beforeEach(() =&gt; {
+      requestCounter = new RequestCounter(config);
+    });
+
+    afterEach(() =&gt; {
+      requestCounter.destroy();
+    });
+
+    it(&apos;should increment _currentLimit if not at _maxLimit&apos;, () =&gt; {
+      requestCounter._limit = 0;
+      requestCounter.incrementLimit();
+      expect(requestCounter._limit).to.equal(1);
+    });
+
+    it(&apos;should not increment _currentLimit past _maxLimit&apos;, () =&gt; {
+      requestCounter.incrementLimit();
+      expect(requestCounter._limit).to.equal(config.limit);
+    });
+
+  });
+
+  describe(&apos;#add&apos;, () =&gt; {
+
+    beforeEach(() =&gt; {
+      requestCounter = new RequestCounter(config);
+    });
+
+    afterEach(() =&gt; {
+      requestCounter.destroy();
+    });
+
+    it(&apos;should decrement limit when below limit&apos;, () =&gt; {
+      requestCounter.add();
+      expect(requestCounter._limit).to.equal(config.limit - 1);
+    });
+
+    it(&apos;should not decrement limit if already at limit&apos;, () =&gt; {
+      requestCounter._limit = 0;
+      requestCounter.add();
+      expect(requestCounter._limit).to.equal(0);
+    });
+
+    it(&apos;should reset at the end of the period&apos;, () =&gt; {
+      requestCounter.add();
+      clock.tick(config.period + 1);
+      expect(requestCounter._limit).to.equal(config.limit);
+    });
+
+  });
+
+  describe(&apos;#getRemaining&apos;, () =&gt; {
+
+    beforeEach(() =&gt; {
+      requestCounter = new RequestCounter(config);
+    });
+
+    afterEach(() =&gt; {
+      requestCounter.destroy();
+    });
+
+    it(&apos;should return the limit&apos;, () =&gt; {
+      expect(requestCounter.getRemaining()).to.equal(requestCounter._limit);
+    });
+
+  });
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

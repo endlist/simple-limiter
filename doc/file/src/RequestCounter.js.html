@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
-  <title data-ice="title">src/Limiter.js | API Document</title>
+  <title data-ice="title">src/RequestCounter.js | API Document</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -38,86 +38,89 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><h1 data-ice="title">src/Limiter.js</h1>
+<div class="content" data-ice="content"><h1 data-ice="title">src/RequestCounter.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
 
-const RequestCounter = require(&apos;./RequestCounter&apos;);
+const DEFAULT_LIMIT     = 25;
+const DEFAULT_PERIOD    = 500;
+const DEFAULT_INCREMENT = 1;
 
 /**
- * Limiter
+ * RequestCounter
  */
-class Limiter {
+class RequestCounter {
 
   /**
    * @param {object} config Object of values
-   * @return empty
+   * @return {object} An instance of the request counter object
    */
   constructor(config) {
-    let limit = null;
-    let period = null;
-    let increment = null;
+    let limit     = DEFAULT_LIMIT;
+    let period    = DEFAULT_PERIOD;
+    let increment = DEFAULT_INCREMENT;
 
     if (config != null) {
-      limit     = config.limit;
-      period    = config.period;
-      increment = config.increment;
+      if (config.limit != null) {
+        limit = config.limit;
+      }
+      if (config.period != null) {
+        period = config.period;
+      }
+      if (config.increment != null) {
+        increment = config.increment;
+      }
     }
 
-    this._config = { limit, period, increment };
-    this._requestCounters = {};
+    this._maxLimit  = this._limit             = limit;
+    this._period    = period;
+    this._increment = increment;
+    this._startTime = (new Date()).valueOf();
+
+    this.interval = setInterval(() =&gt; {
+      this.incrementLimit();
+    }, period);
+
+    return this;
   }
 
   /**
-   * @param {key} key The identifier for the request
    * @return empty
    */
-  _errorCheckForKey(key) {
-    if (key == null) {
-      throw new Error(&apos;Error: key is required.&apos;);
-    }
+  destroy() {
+    clearInterval(this.interval);
+    this.interval = null;
   }
 
   /**
-   * @param {string} key The identifier for the request
    * @return empty
    */
-  _createRequestCounter(key) {
-    this._errorCheckForKey(key);
-
-    if (this._requestCounters[key] == null) {
-      const limit = this._config.limit;
-      const period = this._config.period;
-
-      this._requestCounters[key] = new RequestCounter({ limit, period });
+  incrementLimit() {
+    if (this._limit &lt; this._maxLimit) {
+      this._limit += this._increment;
     }
   }
 
   /**
-   * @param {string} key The identifier for the request
-   * @return {integer} Remaining request count
+   * @return {int} The remaining available requests for the identifier
    */
-  addRequest(key) {
-    this._errorCheckForKey(key);
-    this._createRequestCounter(key);
-    this._requestCounters[key].add();
+  add() {
+    if (this._limit &gt; 0) {
+      this._limit--;
+    }
 
-    return this._requestCounters[key].getRemaining();
+    return this._limit; 
   }
 
   /**
-   * @param {string} key The identifier for the request
-   * @return {integer} Remaining request count
+   * @return {int} The remaining available requests for the identifier
    */
-  getRemainingRequests(key) {
-    this._errorCheckForKey(key);
-    this._createRequestCounter(key);
-
-    return this._requestCounters[key].getRemaining();
+  getRemaining() {
+    return this._limit;
   }
 
-}
-module.exports = Limiter;
+};
 
+module.exports = RequestCounter;
 </code></pre>
 
 </div>

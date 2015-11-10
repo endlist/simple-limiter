@@ -1,14 +1,14 @@
 window.esdocSearchIndex = [
   [
-    "simple-limiter/src/eligibility.js~eligibility",
-    "class/src/Eligibility.js~Eligibility.html",
-    "<span>Eligibility</span> <span class=\"search-result-import-path\">simple-limiter/src/Eligibility.js</span>",
-    "class"
-  ],
-  [
     "simple-limiter/src/limiter.js~limiter",
     "class/src/Limiter.js~Limiter.html",
     "<span>Limiter</span> <span class=\"search-result-import-path\">simple-limiter/src/Limiter.js</span>",
+    "class"
+  ],
+  [
+    "simple-limiter/src/requestcounter.js~requestcounter",
+    "class/src/RequestCounter.js~RequestCounter.html",
+    "<span>RequestCounter</span> <span class=\"search-result-import-path\">simple-limiter/src/RequestCounter.js</span>",
     "class"
   ],
   [
@@ -343,351 +343,369 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/Eligibility.test.js.html#lineNumber11",
-    "Eligiblility",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber96",
-    "Eligiblility #_getPeriodRemaining",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber102",
-    "Eligiblility #_getPeriodRemaining when in the period",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber113",
-    "Eligiblility #_getPeriodRemaining when in the period should not change the startTime",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber119",
-    "Eligiblility #_getPeriodRemaining when in the period should not reset _requestCounter",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber108",
-    "Eligiblility #_getPeriodRemaining when in the period should return 0 if 5000 ms have passed",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber103",
-    "Eligiblility #_getPeriodRemaining when in the period should return 3068 if 1932 ms have passed",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber128",
-    "Eligiblility #_getPeriodRemaining when past the period",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber142",
-    "Eligiblility #_getPeriodRemaining when past the period should reset _requestCount if period is reset",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber133",
-    "Eligiblility #_getPeriodRemaining when past the period should return 5000 if 5001 ms have passed",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber137",
-    "Eligiblility #_getPeriodRemaining when past the period should update startTime",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber30",
-    "Eligiblility #constructor",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber32",
-    "Eligiblility #constructor should be able to init without a config",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber65",
-    "Eligiblility #constructor with config",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber75",
-    "Eligiblility #constructor with config should create a limit",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber79",
-    "Eligiblility #constructor with config should create a period",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber88",
-    "Eligiblility #constructor with config should create a requestCount",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber83",
-    "Eligiblility #constructor with config should create a startTime",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber71",
-    "Eligiblility #constructor with config should return an object",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber36",
-    "Eligiblility #constructor without config",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber46",
-    "Eligiblility #constructor without config should create a limit",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber50",
-    "Eligiblility #constructor without config should create a period",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber59",
-    "Eligiblility #constructor without config should create a requestCount",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber54",
-    "Eligiblility #constructor without config should create a startTime",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber42",
-    "Eligiblility #constructor without config should return an object",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber152",
-    "Eligiblility check",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber158",
-    "Eligiblility check should call _getPeriodRemaining",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber165",
-    "Eligiblility check should increment _requestCount",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber175",
-    "Eligiblility check should return false if _requestCount is higher than _limit",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber171",
-    "Eligiblility check should return true if _requestCount is less than _limit",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Eligibility.test.js.html#lineNumber182",
-    "Eligiblility getHeaders",
-    "test"
-  ],
-  [
-    "",
     "test-file/test/Limiter.test.js.html#lineNumber10",
     "Limiter",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber117",
-    "Limiter #checkRequest",
+    "test-file/test/Limiter.test.js.html#lineNumber97",
+    "Limiter #_createRequestCounter",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber151",
-    "Limiter #checkRequest when request outside of limits",
+    "test-file/test/Limiter.test.js.html#lineNumber104",
+    "Limiter #_createRequestCounter should call _errorCheckForKey",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber126",
-    "Limiter #checkRequest when request within limits",
+    "test-file/test/Limiter.test.js.html#lineNumber110",
+    "Limiter #_createRequestCounter should register a new RequestCounter model if one doesn't exist",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber132",
-    "Limiter #checkRequest when request within limits should error if no opts are given",
+    "test-file/test/Limiter.test.js.html#lineNumber116",
+    "Limiter #_createRequestCounter should use the same RequestCounter instance with the same key",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber136",
-    "Limiter #checkRequest when request within limits should register a new Eligibility model if one doesn't exist",
+    "test-file/test/Limiter.test.js.html#lineNumber85",
+    "Limiter #_errorCheckForKey",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber143",
-    "Limiter #checkRequest when request within limits should use the same Eligibility instance with the same key",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Limiter.test.js.html#lineNumber34",
-    "Limiter #constructor",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Limiter.test.js.html#lineNumber35",
-    "Limiter #constructor should not error if not given a config",
+    "test-file/test/Limiter.test.js.html#lineNumber91",
+    "Limiter #_errorCheckForKey should do nothing if a key is given",
     "test"
   ],
   [
     "",
     "test-file/test/Limiter.test.js.html#lineNumber87",
+    "Limiter #_errorCheckForKey should error if no key is given",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber126",
+    "Limiter #addRequest",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber139",
+    "Limiter #addRequest should call _createRequestCounter",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber133",
+    "Limiter #addRequest should call _errorCheckForKey",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber145",
+    "Limiter #addRequest should return the altered limit after a request",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber25",
+    "Limiter #constructor",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber26",
+    "Limiter #constructor should not error if not given a config",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber54",
     "Limiter #constructor with config",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber97",
-    "Limiter #constructor with config should assign given key to config.key",
+    "test-file/test/Limiter.test.js.html#lineNumber73",
+    "Limiter #constructor with config should assign given period to config.increment",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber101",
+    "test-file/test/Limiter.test.js.html#lineNumber65",
     "Limiter #constructor with config should assign given period to config.limit",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber105",
+    "test-file/test/Limiter.test.js.html#lineNumber69",
     "Limiter #constructor with config should assign given period to config.period",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber109",
-    "Limiter #constructor with config should create _eligibility",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Limiter.test.js.html#lineNumber63",
-    "Limiter #constructor with only key in config",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Limiter.test.js.html#lineNumber69",
-    "Limiter #constructor with only key in config should assign given key to config.key",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Limiter.test.js.html#lineNumber81",
-    "Limiter #constructor with only key in config should create _eligibility",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/Limiter.test.js.html#lineNumber73",
-    "Limiter #constructor with only key in config should default config.limit to null",
-    "test"
-  ],
-  [
-    "",
     "test-file/test/Limiter.test.js.html#lineNumber77",
-    "Limiter #constructor with only key in config should default config.period to null",
+    "Limiter #constructor with config should create _requestCounters",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber39",
+    "test-file/test/Limiter.test.js.html#lineNumber30",
     "Limiter #constructor without config",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber45",
-    "Limiter #constructor without config should assign DEFAULT_KEY to config.key",
+    "test-file/test/Limiter.test.js.html#lineNumber48",
+    "Limiter #constructor without config should create _requestCounters",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber57",
-    "Limiter #constructor without config should create _eligibility",
+    "test-file/test/Limiter.test.js.html#lineNumber44",
+    "Limiter #constructor without config should default config.increment to null",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber49",
+    "test-file/test/Limiter.test.js.html#lineNumber36",
     "Limiter #constructor without config should default config.limit to null",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber53",
+    "test-file/test/Limiter.test.js.html#lineNumber40",
     "Limiter #constructor without config should default config.period to null",
     "test"
   ],
   [
-    "src/eligibility.js",
-    "file/src/Eligibility.js.html",
-    "src/Eligibility.js",
-    "file"
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber157",
+    "Limiter #getRemainingRequests",
+    "test"
   ],
   [
-    "src/eligibility.js~eligibility#check",
-    "class/src/Eligibility.js~Eligibility.html#instance-method-check",
-    "src/Eligibility.js~Eligibility#check",
-    "method"
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber191",
+    "Limiter #getRemainingRequests when request outside of limits",
+    "test"
   ],
   [
-    "src/eligibility.js~eligibility#constructor",
-    "class/src/Eligibility.js~Eligibility.html#instance-constructor-constructor",
-    "src/Eligibility.js~Eligibility#constructor",
-    "method"
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber203",
+    "Limiter #getRemainingRequests when request outside of limits should return 0 if request limit is reached",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber159",
+    "Limiter #getRemainingRequests when request within limits",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber172",
+    "Limiter #getRemainingRequests when request within limits should call _createRequestCounter",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber166",
+    "Limiter #getRemainingRequests when request within limits should call _errorCheckForKey",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/Limiter.test.js.html#lineNumber178",
+    "Limiter #getRemainingRequests when request within limits should return limit minus the number of requests",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber11",
+    "RequestCounter",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber164",
+    "RequestCounter #add",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber174",
+    "RequestCounter #add should decrement limit when below limit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber179",
+    "RequestCounter #add should not decrement limit if already at limit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber185",
+    "RequestCounter #add should reset at the end of the period",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber31",
+    "RequestCounter #constructor",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber33",
+    "RequestCounter #constructor should be able to init without a config",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber80",
+    "RequestCounter #constructor with config",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber107",
+    "RequestCounter #constructor with config should create a increment",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber103",
+    "RequestCounter #constructor with config should create a period",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber111",
+    "RequestCounter #constructor with config should create a startTime",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber99",
+    "RequestCounter #constructor with config should create limit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber95",
+    "RequestCounter #constructor with config should create maxLimit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber91",
+    "RequestCounter #constructor with config should return an object",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber116",
+    "RequestCounter #constructor with config should set up an interval calling incrementLimit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber37",
+    "RequestCounter #constructor without config",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber64",
+    "RequestCounter #constructor without config should create a increment",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber60",
+    "RequestCounter #constructor without config should create a period",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber68",
+    "RequestCounter #constructor without config should create a startTime",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber56",
+    "RequestCounter #constructor without config should create limit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber52",
+    "RequestCounter #constructor without config should create maxLimit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber48",
+    "RequestCounter #constructor without config should return an object",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber73",
+    "RequestCounter #constructor without config should set up an interval calling incrementLimit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber128",
+    "RequestCounter #destroy",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber135",
+    "RequestCounter #destroy should destroy the interval",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber193",
+    "RequestCounter #getRemaining",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber203",
+    "RequestCounter #getRemaining should return the limit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber141",
+    "RequestCounter #incrementLimit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber151",
+    "RequestCounter #incrementLimit should increment _currentLimit if not at _maxLimit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RequestCounter.test.js.html#lineNumber157",
+    "RequestCounter #incrementLimit should not increment _currentLimit past _maxLimit",
+    "test"
   ],
   [
     "src/limiter.js",
@@ -696,9 +714,57 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/limiter.js~limiter#addrequest",
+    "class/src/Limiter.js~Limiter.html#instance-method-addRequest",
+    "src/Limiter.js~Limiter#addRequest",
+    "method"
+  ],
+  [
     "src/limiter.js~limiter#constructor",
     "class/src/Limiter.js~Limiter.html#instance-constructor-constructor",
     "src/Limiter.js~Limiter#constructor",
+    "method"
+  ],
+  [
+    "src/limiter.js~limiter#getremainingrequests",
+    "class/src/Limiter.js~Limiter.html#instance-method-getRemainingRequests",
+    "src/Limiter.js~Limiter#getRemainingRequests",
+    "method"
+  ],
+  [
+    "src/requestcounter.js",
+    "file/src/RequestCounter.js.html",
+    "src/RequestCounter.js",
+    "file"
+  ],
+  [
+    "src/requestcounter.js~requestcounter#add",
+    "class/src/RequestCounter.js~RequestCounter.html#instance-method-add",
+    "src/RequestCounter.js~RequestCounter#add",
+    "method"
+  ],
+  [
+    "src/requestcounter.js~requestcounter#constructor",
+    "class/src/RequestCounter.js~RequestCounter.html#instance-constructor-constructor",
+    "src/RequestCounter.js~RequestCounter#constructor",
+    "method"
+  ],
+  [
+    "src/requestcounter.js~requestcounter#destroy",
+    "class/src/RequestCounter.js~RequestCounter.html#instance-method-destroy",
+    "src/RequestCounter.js~RequestCounter#destroy",
+    "method"
+  ],
+  [
+    "src/requestcounter.js~requestcounter#getremaining",
+    "class/src/RequestCounter.js~RequestCounter.html#instance-method-getRemaining",
+    "src/RequestCounter.js~RequestCounter#getRemaining",
+    "method"
+  ],
+  [
+    "src/requestcounter.js~requestcounter#incrementlimit",
+    "class/src/RequestCounter.js~RequestCounter.html#instance-method-incrementLimit",
+    "src/RequestCounter.js~RequestCounter#incrementLimit",
     "method"
   ],
   [
@@ -708,15 +774,15 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "test/eligibility.test.js",
-    "test-file/test/Eligibility.test.js.html",
-    "test/Eligibility.test.js",
-    "testFile"
-  ],
-  [
     "test/limiter.test.js",
     "test-file/test/Limiter.test.js.html",
     "test/Limiter.test.js",
+    "testFile"
+  ],
+  [
+    "test/requestcounter.test.js",
+    "test-file/test/RequestCounter.test.js.html",
+    "test/RequestCounter.test.js",
     "testFile"
   ]
 ]
