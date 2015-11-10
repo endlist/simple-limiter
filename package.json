@@ -1,7 +1,7 @@
 {
   "name": "simple-limiter",
   "version": "1.0.0",
-  "description": "simple synchronous rate limiter",
+  "description": "simple synchronous rate limiter using the token-bucket algorithm",
   "main": "src/index.js",
   "scripts": {
     "test": "mocha",
