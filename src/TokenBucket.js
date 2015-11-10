@@ -18,9 +18,9 @@ class TokenBucket {
    * Creates a TokenBucket object.
    *
    * @param {object} config configuration values
-   * @property {integer} [limit=25] The max amount of tokens per period.
-   * @property {integer} [period=5000] The time in ms before tokens will increment.
-   * @property {integer} [increment=1] The amount of tokens that will increment each period.
+   * @param {integer} [config.limit=25] The max amount of tokens per period.
+   * @param {integer} [config.period=5000] The time in ms before tokens will increment.
+   * @param {integer} [config.increment=1] The amount of tokens that will increment each period.
    */
   constructor(config) {
     config = config || {};
