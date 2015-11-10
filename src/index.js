@@ -1,4 +1,4 @@
 'use strict';
 
-module.exports.Limiter = require('./Limiter');
-module.exports.Eligibility = require('./Eligibility');
+module.exports.RateLimiter = require('./RateLimiter');
+module.exports.TokenBucket = require('./TokenBucket');
