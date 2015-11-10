@@ -32,8 +32,8 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Limiter.js~Limiter.html">Limiter</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/RequestCounter.js~RequestCounter.html">RequestCounter</a></span></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/RateLimiter.js~RateLimiter.html">RateLimiter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/TokenBucket.js~TokenBucket.html">TokenBucket</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -50,23 +50,23 @@
 
   <tbody data-ice="tests">
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="0">
-  <td data-ice="testDescription" style="padding-left: 10px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber10"><p>Limiter</p>
+  <td data-ice="testDescription" style="padding-left: 10px"><span class="toggle closed"></span><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber12"><p>RateLimiter</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">21</td>
+  <td data-ice="testCount">30</td>
 </tr>
 
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber25"><p>#constructor</p>
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber35"><p>#constructor</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">9</td>
+  <td data-ice="testCount">11</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber26"><p>should not error if not given a config</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber36"><p>should not error if not given a config</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
@@ -74,32 +74,38 @@
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber30"><p>without config</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber40"><p>without config</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">4</td>
+  <td data-ice="testCount">5</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber36"><p>should default config.limit to null</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber50"><p>should return an object</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber40"><p>should default config.period to null</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber54"><p>should default config.limit to null</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber44"><p>should default config.increment to null</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber58"><p>should default config.period to null</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber48"><p>should create _requestCounters</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber62"><p>should default config.increment to null</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber66"><p>should create tokenBuckets</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
@@ -107,32 +113,38 @@
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber54"><p>with config</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber72"><p>with config</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">4</td>
+  <td data-ice="testCount">5</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber65"><p>should assign given period to config.limit</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber87"><p>should return an object</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber69"><p>should assign given period to config.period</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber91"><p>should assign given period to config.limit</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber73"><p>should assign given period to config.increment</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber95"><p>should assign given period to config.period</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber77"><p>should create _requestCounters</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber99"><p>should assign given period to config.increment</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber103"><p>should create tokenBuckets</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
@@ -140,20 +152,20 @@
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber85"><p>#_errorCheckForKey</p>
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber111"><p>#destroy</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td data-ice="testCount">2</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber87"><p>should error if no key is given</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber128"><p>should call destroy() on each key in tokenBuckets</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber91"><p>should do nothing if a key is given</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber134"><p>should null out the objects</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
@@ -161,89 +173,32 @@
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber97"><p>#_createRequestCounter</p>
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber142"><p>#decrementTokens</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">3</td>
+  <td data-ice="testCount">9</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber104"><p>should call _errorCheckForKey</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber110"><p>should register a new RequestCounter model if one doesn&apos;t exist</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber183"><p>should call TokenBucket if the key is new</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber116"><p>should use the same RequestCounter instance with the same key</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber126"><p>#addRequest</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">3</td>
-</tr>
-
-<tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber133"><p>should call _errorCheckForKey</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber188"><p>should not call TokenBucket if the key already exists</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber139"><p>should call _createRequestCounter</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber196"><p>should call decrementTokens on TokenBucket instance</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber145"><p>should return the altered limit after a request</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber157"><p>#getRemainingRequests</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">4</td>
-</tr>
-
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber159"><p>when request within limits</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">3</td>
-</tr>
-
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber166"><p>should call _errorCheckForKey</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber172"><p>should call _createRequestCounter</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber178"><p>should return limit minus the number of requests</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber201"><p>should call decrementTokens with an amount if given one</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
@@ -251,14 +206,131 @@
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/Limiter.test.js.html#lineNumber191"><p>when request outside of limits</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber155"><p>key validation</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">1</td>
+  <td data-ice="testCount">5</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/Limiter.test.js.html#lineNumber203"><p>should return 0 if request limit is reached</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber157"><p>should error if nothing is given</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber177"><p>should not error on valid key</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span class="toggle closed"></span><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber161"><p>when key is not on an object</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">3</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="4">
+  <td data-ice="testDescription" style="padding-left: 50px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber163"><p>should error on int</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="4">
+  <td data-ice="testDescription" style="padding-left: 50px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber167"><p>should error on function</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="4">
+  <td data-ice="testDescription" style="padding-left: 50px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber171"><p>should error on object</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber208"><p>#getTokensRemaining</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">8</td>
+</tr>
+
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber210"><p>when request within limits</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">8</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber249"><p>should call TokenBucket if the key is new</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber254"><p>should not call TokenBucket if the key already exists</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber262"><p>should call getTokensRemaining on TokenBucket instance</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="3">
+  <td data-ice="testDescription" style="padding-left: 40px"><span class="toggle closed"></span><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber221"><p>key validation</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">5</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="4">
+  <td data-ice="testDescription" style="padding-left: 50px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber223"><p>should error if no key is given</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="4">
+  <td data-ice="testDescription" style="padding-left: 50px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber243"><p>should do nothing if a key is given</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="4">
+  <td data-ice="testDescription" style="padding-left: 50px"><span class="toggle closed"></span><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber227"><p>when key is not a string</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">3</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="5">
+  <td data-ice="testDescription" style="padding-left: 60px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber229"><p>should error on int</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="5">
+  <td data-ice="testDescription" style="padding-left: 60px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber233"><p>should error on function</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="5">
+  <td data-ice="testDescription" style="padding-left: 60px"><span><a href="test-file/test/RateLimiter.test.js.html#lineNumber237"><p>should error on object</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
@@ -266,23 +338,23 @@
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="0">
-  <td data-ice="testDescription" style="padding-left: 10px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber11"><p>RequestCounter</p>
+  <td data-ice="testDescription" style="padding-left: 10px"><span class="toggle closed"></span><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber11"><p>TokenBucket</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">22</td>
+  <td data-ice="testCount">20</td>
 </tr>
 
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber31"><p>#constructor</p>
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber31"><p>#constructor</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">15</td>
+  <td data-ice="testCount">11</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber33"><p>should be able to init without a config</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber33"><p>should not error if not given a config</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
@@ -290,50 +362,38 @@
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber37"><p>without config</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber37"><p>without config</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">7</td>
+  <td data-ice="testCount">5</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber48"><p>should return an object</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber48"><p>should return an object</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber52"><p>should create maxLimit</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber52"><p>should create maxLimit</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber56"><p>should create limit</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber56"><p>should create limit</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber60"><p>should create a period</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber60"><p>should create a increment</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber64"><p>should create a increment</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber68"><p>should create a startTime</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber73"><p>should set up an interval calling incrementLimit</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber64"><p>should set up an interval calling _incrementTokens</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
@@ -341,50 +401,38 @@
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber80"><p>with config</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span class="toggle closed"></span><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber71"><p>with config</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">7</td>
+  <td data-ice="testCount">5</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber91"><p>should return an object</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber82"><p>should return an object</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber95"><p>should create maxLimit</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber86"><p>should create maxLimit</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber99"><p>should create limit</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber90"><p>should create limit</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber103"><p>should create a period</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber94"><p>should create a increment</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber107"><p>should create a increment</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber111"><p>should create a startTime</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="3">
-  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber116"><p>should set up an interval calling incrementLimit</p>
+  <td data-ice="testDescription" style="padding-left: 40px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber98"><p>should set up an interval calling _incrementTokens</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
@@ -392,35 +440,20 @@
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber128"><p>#destroy</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">1</td>
-</tr>
-
-<tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber135"><p>should destroy the interval</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-
-
-<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber141"><p>#incrementLimit</p>
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber110"><p>#destroy</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td data-ice="testCount">2</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber151"><p>should increment _currentLimit if not at _maxLimit</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber119"><p>should clear the interval</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber157"><p>should not increment _currentLimit past _maxLimit</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber124"><p>should destroy the interval</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
@@ -428,26 +461,20 @@
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber164"><p>#add</p>
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber130"><p>#_incrementTokens</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
-  <td data-ice="testCount">3</td>
+  <td data-ice="testCount">2</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber174"><p>should decrement limit when below limit</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber140"><p>should increment _currentLimit if not at limit</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
 </tr>
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber179"><p>should not decrement limit if already at limit</p>
-</a></span></td>
-  <td data-ice="testTarget" class="test-target">-</td>
-  <td></td>
-</tr>
-<tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber185"><p>should reset at the end of the period</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber146"><p>should not increment _currentLimit past limit</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>
@@ -455,14 +482,47 @@
 
 
 <tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
-  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber193"><p>#getRemaining</p>
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber153"><p>#decrementTokens</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td data-ice="testCount">4</td>
+</tr>
+
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber163"><p>should decrement limit when below limit</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber168"><p>should not decrement limit if already at limit</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber174"><p>should reset at the end of the period</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+<tr data-ice="testIt" style="display: none;" data-test-depth="2">
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber180"><p>should take an amount</p>
+</a></span></td>
+  <td data-ice="testTarget" class="test-target">-</td>
+  <td></td>
+</tr>
+
+
+<tr class="test-describe" data-ice="testDescribe" style="display: none;" data-test-depth="1">
+  <td data-ice="testDescription" style="padding-left: 20px"><span class="toggle closed"></span><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber187"><p>#getTokensRemaining</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td data-ice="testCount">1</td>
 </tr>
 
 <tr data-ice="testIt" style="display: none;" data-test-depth="2">
-  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/RequestCounter.test.js.html#lineNumber203"><p>should return the limit</p>
+  <td data-ice="testDescription" style="padding-left: 30px"><span><a href="test-file/test/TokenBucket.test.js.html#lineNumber197"><p>should return the limit</p>
 </a></span></td>
   <td data-ice="testTarget" class="test-target">-</td>
   <td></td>

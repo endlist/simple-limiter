@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">test/RateLimiter.test.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <a data-ice="repoURL" href="git+ssh://git@github.com/endlist/simple-limiter.git">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/RateLimiter.js~RateLimiter.html">RateLimiter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/TokenBucket.js~TokenBucket.html">TokenBucket</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">test/RateLimiter.test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
+const chai       = require(&apos;chai&apos;);
+const sinon      = require(&apos;sinon&apos;);
+const sinonChai  = require(&apos;sinon-chai&apos;);
+const proxyquire = require(&apos;proxyquire&apos;);
+const _          = require(&apos;lodash&apos;);
+
+chai.use(sinonChai);
+
+const expect = chai.expect;
+
+describe(&apos;RateLimiter&apos;, () =&gt; {
+  let RateLimiter;
+  let rateLimiter;
+  let config;
+  let key;
+  let TokenBucketStub;
+  let sandbox;
+
+  beforeEach(() =&gt; {
+    config = {
+      limit     : 20,
+      period    : 5000,
+      increment : 2,
+    };
+    const TokenBucket = require(&apos;../src/TokenBucket.js&apos;);
+    const mockTokenBucket = sinon.createStubInstance(TokenBucket);
+    TokenBucketStub = sinon.stub().returns(mockTokenBucket);
+
+    RateLimiter = proxyquire(&apos;../src/RateLimiter.js&apos;, {
+      &apos;./TokenBucket&apos;: TokenBucketStub,
+    });
+  });
+
+  describe(&apos;#constructor&apos;, () =&gt; {
+    it(&apos;should not error if not given a config&apos;, () =&gt; {
+      expect(() =&gt; { return new RateLimiter(); }).not.to.throw(Error);
+    });
+
+    describe(&apos;without config&apos;, () =&gt; {
+
+      beforeEach(() =&gt; {
+        rateLimiter = new RateLimiter();
+      });
+
+      afterEach(() =&gt; {
+        rateLimiter.destroy();
+      });
+
+      it(&apos;should return an object&apos;, () =&gt; {
+        expect(rateLimiter).to.be.an(&apos;object&apos;);
+      });
+
+      it(&apos;should default config.limit to null&apos;, () =&gt; {
+        expect(rateLimiter.config.limit).to.not.exist;
+      });
+
+      it(&apos;should default config.period to null&apos;, () =&gt; {
+        expect(rateLimiter.config.period).to.not.exist;
+      });
+
+      it(&apos;should default config.increment to null&apos;, () =&gt; {
+        expect(rateLimiter.config.increment).to.not.exist;
+      });
+
+      it(&apos;should create tokenBuckets&apos;, () =&gt; {
+        expect(rateLimiter.tokenBuckets).to.exist;
+      });
+
+    });
+
+    describe(&apos;with config&apos;, () =&gt; {
+
+      beforeEach(() =&gt; {
+        config = {
+          limit     : 200,
+          period    : 8000,
+          increment : 2,
+        };
+        rateLimiter = new RateLimiter(config);
+      });
+
+      afterEach(() =&gt; {
+        rateLimiter.destroy();
+      });
+
+      it(&apos;should return an object&apos;, () =&gt; {
+        expect(rateLimiter).to.be.an(&apos;object&apos;);
+      });
+
+      it(&apos;should assign given period to config.limit&apos;, () =&gt; {
+        expect(rateLimiter.config.limit).to.equal(config.limit);
+      });
+
+      it(&apos;should assign given period to config.period&apos;, () =&gt; {
+        expect(rateLimiter.config.period).to.equal(config.period);
+      });
+
+      it(&apos;should assign given period to config.increment&apos;, () =&gt; {
+        expect(rateLimiter.config.increment).to.equal(config.increment);
+      });
+
+      it(&apos;should create tokenBuckets&apos;, () =&gt; {
+        expect(rateLimiter.tokenBuckets).to.exist;
+      });
+
+    });
+
+  });
+
+  describe(&apos;#destroy&apos;, () =&gt; {
+    let destroyOne;
+    let destroyTwo;
+    let destroyThree;
+    let sandbox;
+
+    beforeEach(() =&gt; {
+      rateLimiter = new RateLimiter(config);
+      rateLimiter.getTokensRemaining(&apos;one&apos;);
+      rateLimiter.getTokensRemaining(&apos;two&apos;);
+      rateLimiter.getTokensRemaining(&apos;three&apos;);
+      destroyOne = rateLimiter.tokenBuckets.one.destroy;
+      destroyTwo = rateLimiter.tokenBuckets.two.destroy;
+      destroyThree = rateLimiter.tokenBuckets.three.destroy;
+      rateLimiter.destroy();
+    });
+
+    it(&apos;should call destroy() on each key in tokenBuckets&apos;, () =&gt; {
+      expect(destroyOne).to.have.been.called;
+      expect(destroyTwo).to.have.been.called;
+      expect(destroyThree).to.have.been.called;
+    });
+
+    it(&apos;should null out the objects&apos;, () =&gt; {
+      expect(rateLimiter.tokenBuckets.one).to.not.exist;
+      expect(rateLimiter.tokenBuckets.two).to.not.exist;
+      expect(rateLimiter.tokenBuckets.three).to.not.exist;
+    });
+
+  });
+
+  describe(&apos;#decrementTokens&apos;, () =&gt; {
+    let amount;
+
+    beforeEach(() =&gt; {
+      rateLimiter = new RateLimiter(config);
+      key = &apos;testorama&apos;;
+      amount = 5;
+    });
+
+    afterEach(() =&gt; {
+      rateLimiter.destroy();
+    });
+
+    describe(&apos;key validation&apos;, () =&gt; {
+
+      it(&apos;should error if nothing is given&apos;, () =&gt; {
+        expect(() =&gt; { rateLimiter.decrementTokens(); }).to.throw(Error);
+      });
+
+      describe(&apos;when key is not on an object&apos;, () =&gt; {
+
+        it(&apos;should error on int&apos;, () =&gt; {
+          expect(() =&gt; { rateLimiter.decrementTokens(3); }).to.throw(Error);
+        });
+
+        it(&apos;should error on function&apos;, () =&gt; {
+          expect(() =&gt; { rateLimiter.decrementTokens(() =&gt; {}); }).to.throw(Error);
+        });
+
+        it(&apos;should error on object&apos;, () =&gt; {
+          expect(() =&gt; { rateLimiter.decrementTokens({ key }); }).to.throw(Error);
+        });
+
+      });
+
+      it(&apos;should not error on valid key&apos;, () =&gt; {
+        expect(() =&gt; { rateLimiter.decrementTokens(key); }).to.not.throw(Error);
+      });
+
+    });
+
+    it(&apos;should call TokenBucket if the key is new&apos;, () =&gt; {
+      rateLimiter.decrementTokens(key);
+      expect(TokenBucketStub).to.have.been.called;
+    });
+
+    it(&apos;should not call TokenBucket if the key already exists&apos;, () =&gt; {
+      rateLimiter.decrementTokens(key);
+      rateLimiter.decrementTokens(key);
+      rateLimiter.decrementTokens(key);
+      rateLimiter.decrementTokens(key);
+      expect(TokenBucketStub).to.have.been.calledOnce;
+    });
+
+    it(&apos;should call decrementTokens on TokenBucket instance&apos;, () =&gt; {
+      rateLimiter.decrementTokens(key);
+      expect(rateLimiter.tokenBuckets[key].decrementTokens).to.have.been.called;
+    });
+
+    it(&apos;should call decrementTokens with an amount if given one&apos;, () =&gt; {
+      rateLimiter.decrementTokens(key, 5);
+      expect(rateLimiter.tokenBuckets[key].decrementTokens).to.have.been.calledWith(5);
+    });
+
+  });
+
+  describe(&apos;#getTokensRemaining&apos;, () =&gt; {
+
+    describe(&apos;when request within limits&apos;, () =&gt; {
+
+      beforeEach(() =&gt; {
+        rateLimiter = new RateLimiter(config);
+        key = &apos;test&apos;;
+      });
+
+      afterEach(() =&gt; {
+        rateLimiter.destroy();
+      });
+
+      describe(&apos;key validation&apos;, () =&gt; {
+
+        it(&apos;should error if no key is given&apos;, () =&gt; {
+          expect(() =&gt; { rateLimiter.getTokensRemaining(); }).to.throw(Error);
+        });
+
+        describe(&apos;when key is not a string&apos;, () =&gt; {
+
+          it(&apos;should error on int&apos;, () =&gt; {
+            expect(() =&gt; { rateLimiter.getTokensRemaining(3); }).to.throw(Error);
+          });
+
+          it(&apos;should error on function&apos;, () =&gt; {
+            expect(() =&gt; { rateLimiter.getTokensRemaining(() =&gt; {}); }).to.throw(Error);
+          });
+
+          it(&apos;should error on object&apos;, () =&gt; {
+            expect(() =&gt; { rateLimiter.getTokensRemaining({ test: &apos;object&apos; }) }).to.throw(Error);
+          });
+
+        });
+
+        it(&apos;should do nothing if a key is given&apos;, () =&gt; {
+          expect(() =&gt; { rateLimiter.getTokensRemaining(&apos;anything&apos;); }).to.not.throw(Error);
+        });
+
+      });
+
+      it(&apos;should call TokenBucket if the key is new&apos;, () =&gt; {
+        rateLimiter.getTokensRemaining(key);
+        expect(TokenBucketStub).to.have.been.called;
+      });
+
+      it(&apos;should not call TokenBucket if the key already exists&apos;, () =&gt; {
+        rateLimiter.getTokensRemaining(key);
+        rateLimiter.getTokensRemaining(key);
+        rateLimiter.getTokensRemaining(key);
+        rateLimiter.getTokensRemaining(key);
+        expect(TokenBucketStub).to.have.been.calledOnce;
+      });
+
+      it(&apos;should call getTokensRemaining on TokenBucket instance&apos;, () =&gt; {
+        rateLimiter.getTokensRemaining(key);
+        expect(rateLimiter.tokenBuckets[key].getTokensRemaining).to.have.been.called;
+      });
+
+    });
+
+  });
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

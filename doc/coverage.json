@@ -3,14 +3,14 @@
   "expectCount": 10,
   "actualCount": 10,
   "files": {
-    "src/Limiter.js": {
-      "expectCount": 4,
-      "actualCount": 4,
+    "src/RateLimiter.js": {
+      "expectCount": 5,
+      "actualCount": 5,
       "undocumentLines": []
     },
-    "src/RequestCounter.js": {
-      "expectCount": 6,
-      "actualCount": 6,
+    "src/TokenBucket.js": {
+      "expectCount": 5,
+      "actualCount": 5,
       "undocumentLines": []
     }
   }

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">test/TokenBucket.test.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <a data-ice="repoURL" href="git+ssh://git@github.com/endlist/simple-limiter.git">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/RateLimiter.js~RateLimiter.html">RateLimiter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/TokenBucket.js~TokenBucket.html">TokenBucket</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">test/TokenBucket.test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
+const chai       = require(&apos;chai&apos;);
+const sinon      = require(&apos;sinon&apos;);
+const sinonChai  = require(&apos;sinon-chai&apos;);
+const START_TIME = 140000;
+
+chai.use(sinonChai);
+
+const expect = chai.expect;
+
+describe(&apos;TokenBucket&apos;, () =&gt; {
+  let TokenBucket;
+  let config;
+  let clock;
+  let tokenBucket;
+
+  beforeEach(() =&gt; {
+    TokenBucket = require(&apos;../src/TokenBucket.js&apos;);
+    config = { // default config
+      period    : 5000,
+      limit     : 25,
+      increment : 1,
+    };
+    clock = sinon.useFakeTimers(START_TIME);
+  });
+
+  afterEach(() =&gt; {
+    clock.restore();
+  });
+
+  describe(&apos;#constructor&apos;, () =&gt; {
+
+    it(&apos;should not error if not given a config&apos;, () =&gt; {
+      expect(() =&gt; { return new TokenBucket(); }).not.to.throw(Error);
+    });
+
+    describe(&apos;without config&apos;, () =&gt; {
+
+      beforeEach(() =&gt; {
+        tokenBucket = new TokenBucket();
+        sinon.spy(tokenBucket, &apos;_incrementTokens&apos;);
+      });
+
+      afterEach(() =&gt; {
+        tokenBucket.destroy();
+      });
+
+      it(&apos;should return an object&apos;, () =&gt; {
+        expect(tokenBucket).to.be.an(&apos;object&apos;);
+      });
+
+      it(&apos;should create maxLimit&apos;, () =&gt; {
+        expect(tokenBucket.limit).to.exist;
+      });
+
+      it(&apos;should create limit&apos;, () =&gt; {
+        expect(tokenBucket.tokens).to.exist;
+      });
+
+      it(&apos;should create a increment&apos;, () =&gt; {
+        expect(tokenBucket.increment).to.exist;
+      });
+
+      it(&apos;should set up an interval calling _incrementTokens&apos;, () =&gt; {
+        clock.tick(config.period + 1);
+        expect(tokenBucket._incrementTokens).to.have.been.called;
+      });
+
+    });
+
+    describe(&apos;with config&apos;, () =&gt; {
+
+      beforeEach(() =&gt; {
+        tokenBucket = new TokenBucket(config);
+        sinon.spy(tokenBucket, &apos;_incrementTokens&apos;);
+      });
+
+      afterEach(() =&gt; {
+        tokenBucket.destroy();
+      });
+
+      it(&apos;should return an object&apos;, () =&gt; {
+        expect(tokenBucket).to.be.an(&apos;object&apos;);
+      });
+
+      it(&apos;should create maxLimit&apos;, () =&gt; {
+        expect(tokenBucket.limit).to.exist;
+      });
+
+      it(&apos;should create limit&apos;, () =&gt; {
+        expect(tokenBucket.tokens).to.exist;
+      });
+
+      it(&apos;should create a increment&apos;, () =&gt; {
+        expect(tokenBucket.increment).to.exist;
+      });
+
+      it(&apos;should set up an interval calling _incrementTokens&apos;, () =&gt; {
+        clock.tick(config.period + 1);
+        expect(tokenBucket._incrementTokens).to.have.been.calledOnce;
+
+        clock.tick(config.period);
+        expect(tokenBucket._incrementTokens).to.have.been.calledTwice;
+      });
+
+    });
+
+  });
+
+  describe(&apos;#destroy&apos;, () =&gt; {
+    let destroyToken;
+
+    beforeEach(() =&gt; {
+      tokenBucket = new TokenBucket();
+      destroyToken = sinon.spy(tokenBucket, &apos;_incrementTokens&apos;);
+      tokenBucket.destroy();
+    });
+
+    it(&apos;should clear the interval&apos;, () =&gt; {
+      clock.tick(config.period + 1);
+      expect(tokenBucket._incrementTokens).to.not.be.called;
+    });
+
+    it(&apos;should destroy the interval&apos;, () =&gt; {
+      expect(tokenBucket.interval).to.not.exist;
+    });
+
+  });
+
+  describe(&apos;#_incrementTokens&apos;, () =&gt; {
+
+    beforeEach(() =&gt; {
+      tokenBucket = new TokenBucket(config);
+    });
+
+    afterEach(() =&gt; {
+      tokenBucket.destroy();
+    });
+
+    it(&apos;should increment _currentLimit if not at limit&apos;, () =&gt; {
+      tokenBucket.tokens = 0;
+      tokenBucket._incrementTokens();
+      expect(tokenBucket.tokens).to.equal(1);
+    });
+
+    it(&apos;should not increment _currentLimit past limit&apos;, () =&gt; {
+      tokenBucket._incrementTokens();
+      expect(tokenBucket.tokens).to.equal(config.limit);
+    });
+
+  });
+
+  describe(&apos;#decrementTokens&apos;, () =&gt; {
+
+    beforeEach(() =&gt; {
+      tokenBucket = new TokenBucket(config);
+    });
+
+    afterEach(() =&gt; {
+      tokenBucket.destroy();
+    });
+
+    it(&apos;should decrement limit when below limit&apos;, () =&gt; {
+      tokenBucket.decrementTokens();
+      expect(tokenBucket.tokens).to.equal(config.limit - 1);
+    });
+
+    it(&apos;should not decrement limit if already at limit&apos;, () =&gt; {
+      tokenBucket.tokens = 0;
+      tokenBucket.decrementTokens();
+      expect(tokenBucket.tokens).to.equal(0);
+    });
+
+    it(&apos;should reset at the end of the period&apos;, () =&gt; {
+      tokenBucket.decrementTokens();
+      clock.tick(config.period + 1);
+      expect(tokenBucket.tokens).to.equal(config.limit);
+    });
+
+    it(&apos;should take an amount&apos;, () =&gt; {
+      tokenBucket.decrementTokens(5);
+      expect(tokenBucket.tokens).to.equal(config.limit - 5);
+    });
+
+  });
+
+  describe(&apos;#getTokensRemaining&apos;, () =&gt; {
+
+    beforeEach(() =&gt; {
+      tokenBucket = new TokenBucket(config);
+    });
+
+    afterEach(() =&gt; {
+      tokenBucket.destroy();
+    });
+
+    it(&apos;should return the limit&apos;, () =&gt; {
+      expect(tokenBucket.getTokensRemaining()).to.equal(tokenBucket.tokens);
+    });
+
+  });
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

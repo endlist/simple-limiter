@@ -1,14 +1,14 @@
 window.esdocSearchIndex = [
   [
-    "simple-limiter/src/limiter.js~limiter",
-    "class/src/Limiter.js~Limiter.html",
-    "<span>Limiter</span> <span class=\"search-result-import-path\">simple-limiter/src/Limiter.js</span>",
+    "simple-limiter/src/ratelimiter.js~ratelimiter",
+    "class/src/RateLimiter.js~RateLimiter.html",
+    "<span>RateLimiter</span> <span class=\"search-result-import-path\">simple-limiter/src/RateLimiter.js</span>",
     "class"
   ],
   [
-    "simple-limiter/src/requestcounter.js~requestcounter",
-    "class/src/RequestCounter.js~RequestCounter.html",
-    "<span>RequestCounter</span> <span class=\"search-result-import-path\">simple-limiter/src/RequestCounter.js</span>",
+    "simple-limiter/src/tokenbucket.js~tokenbucket",
+    "class/src/TokenBucket.js~TokenBucket.html",
+    "<span>TokenBucket</span> <span class=\"search-result-import-path\">simple-limiter/src/TokenBucket.js</span>",
     "class"
   ],
   [
@@ -343,428 +343,482 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber10",
-    "Limiter",
+    "test-file/test/RateLimiter.test.js.html#lineNumber12",
+    "RateLimiter",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber97",
-    "Limiter #_createRequestCounter",
+    "test-file/test/RateLimiter.test.js.html#lineNumber35",
+    "RateLimiter #constructor",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber104",
-    "Limiter #_createRequestCounter should call _errorCheckForKey",
+    "test-file/test/RateLimiter.test.js.html#lineNumber36",
+    "RateLimiter #constructor should not error if not given a config",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber110",
-    "Limiter #_createRequestCounter should register a new RequestCounter model if one doesn't exist",
+    "test-file/test/RateLimiter.test.js.html#lineNumber72",
+    "RateLimiter #constructor with config",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber116",
-    "Limiter #_createRequestCounter should use the same RequestCounter instance with the same key",
+    "test-file/test/RateLimiter.test.js.html#lineNumber99",
+    "RateLimiter #constructor with config should assign given period to config.increment",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber85",
-    "Limiter #_errorCheckForKey",
+    "test-file/test/RateLimiter.test.js.html#lineNumber91",
+    "RateLimiter #constructor with config should assign given period to config.limit",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber91",
-    "Limiter #_errorCheckForKey should do nothing if a key is given",
+    "test-file/test/RateLimiter.test.js.html#lineNumber95",
+    "RateLimiter #constructor with config should assign given period to config.period",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber87",
-    "Limiter #_errorCheckForKey should error if no key is given",
+    "test-file/test/RateLimiter.test.js.html#lineNumber103",
+    "RateLimiter #constructor with config should create tokenBuckets",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber126",
-    "Limiter #addRequest",
+    "test-file/test/RateLimiter.test.js.html#lineNumber87",
+    "RateLimiter #constructor with config should return an object",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber139",
-    "Limiter #addRequest should call _createRequestCounter",
+    "test-file/test/RateLimiter.test.js.html#lineNumber40",
+    "RateLimiter #constructor without config",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber133",
-    "Limiter #addRequest should call _errorCheckForKey",
+    "test-file/test/RateLimiter.test.js.html#lineNumber66",
+    "RateLimiter #constructor without config should create tokenBuckets",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber145",
-    "Limiter #addRequest should return the altered limit after a request",
+    "test-file/test/RateLimiter.test.js.html#lineNumber62",
+    "RateLimiter #constructor without config should default config.increment to null",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber25",
-    "Limiter #constructor",
+    "test-file/test/RateLimiter.test.js.html#lineNumber54",
+    "RateLimiter #constructor without config should default config.limit to null",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber26",
-    "Limiter #constructor should not error if not given a config",
+    "test-file/test/RateLimiter.test.js.html#lineNumber58",
+    "RateLimiter #constructor without config should default config.period to null",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber54",
-    "Limiter #constructor with config",
+    "test-file/test/RateLimiter.test.js.html#lineNumber50",
+    "RateLimiter #constructor without config should return an object",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber73",
-    "Limiter #constructor with config should assign given period to config.increment",
+    "test-file/test/RateLimiter.test.js.html#lineNumber142",
+    "RateLimiter #decrementTokens",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber65",
-    "Limiter #constructor with config should assign given period to config.limit",
+    "test-file/test/RateLimiter.test.js.html#lineNumber155",
+    "RateLimiter #decrementTokens key validation",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber69",
-    "Limiter #constructor with config should assign given period to config.period",
+    "test-file/test/RateLimiter.test.js.html#lineNumber157",
+    "RateLimiter #decrementTokens key validation should error if nothing is given",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber77",
-    "Limiter #constructor with config should create _requestCounters",
+    "test-file/test/RateLimiter.test.js.html#lineNumber177",
+    "RateLimiter #decrementTokens key validation should not error on valid key",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber30",
-    "Limiter #constructor without config",
+    "test-file/test/RateLimiter.test.js.html#lineNumber161",
+    "RateLimiter #decrementTokens key validation when key is not on an object",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber48",
-    "Limiter #constructor without config should create _requestCounters",
+    "test-file/test/RateLimiter.test.js.html#lineNumber167",
+    "RateLimiter #decrementTokens key validation when key is not on an object should error on function",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber44",
-    "Limiter #constructor without config should default config.increment to null",
+    "test-file/test/RateLimiter.test.js.html#lineNumber163",
+    "RateLimiter #decrementTokens key validation when key is not on an object should error on int",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber36",
-    "Limiter #constructor without config should default config.limit to null",
+    "test-file/test/RateLimiter.test.js.html#lineNumber171",
+    "RateLimiter #decrementTokens key validation when key is not on an object should error on object",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber40",
-    "Limiter #constructor without config should default config.period to null",
+    "test-file/test/RateLimiter.test.js.html#lineNumber183",
+    "RateLimiter #decrementTokens should call TokenBucket if the key is new",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber157",
-    "Limiter #getRemainingRequests",
+    "test-file/test/RateLimiter.test.js.html#lineNumber196",
+    "RateLimiter #decrementTokens should call decrementTokens on TokenBucket instance",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber191",
-    "Limiter #getRemainingRequests when request outside of limits",
+    "test-file/test/RateLimiter.test.js.html#lineNumber201",
+    "RateLimiter #decrementTokens should call decrementTokens with an amount if given one",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber203",
-    "Limiter #getRemainingRequests when request outside of limits should return 0 if request limit is reached",
+    "test-file/test/RateLimiter.test.js.html#lineNumber188",
+    "RateLimiter #decrementTokens should not call TokenBucket if the key already exists",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber159",
-    "Limiter #getRemainingRequests when request within limits",
+    "test-file/test/RateLimiter.test.js.html#lineNumber111",
+    "RateLimiter #destroy",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber172",
-    "Limiter #getRemainingRequests when request within limits should call _createRequestCounter",
+    "test-file/test/RateLimiter.test.js.html#lineNumber128",
+    "RateLimiter #destroy should call destroy() on each key in tokenBuckets",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber166",
-    "Limiter #getRemainingRequests when request within limits should call _errorCheckForKey",
+    "test-file/test/RateLimiter.test.js.html#lineNumber134",
+    "RateLimiter #destroy should null out the objects",
     "test"
   ],
   [
     "",
-    "test-file/test/Limiter.test.js.html#lineNumber178",
-    "Limiter #getRemainingRequests when request within limits should return limit minus the number of requests",
+    "test-file/test/RateLimiter.test.js.html#lineNumber208",
+    "RateLimiter #getTokensRemaining",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber11",
-    "RequestCounter",
+    "test-file/test/RateLimiter.test.js.html#lineNumber210",
+    "RateLimiter #getTokensRemaining when request within limits",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber164",
-    "RequestCounter #add",
+    "test-file/test/RateLimiter.test.js.html#lineNumber221",
+    "RateLimiter #getTokensRemaining when request within limits key validation",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber174",
-    "RequestCounter #add should decrement limit when below limit",
+    "test-file/test/RateLimiter.test.js.html#lineNumber243",
+    "RateLimiter #getTokensRemaining when request within limits key validation should do nothing if a key is given",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber179",
-    "RequestCounter #add should not decrement limit if already at limit",
+    "test-file/test/RateLimiter.test.js.html#lineNumber223",
+    "RateLimiter #getTokensRemaining when request within limits key validation should error if no key is given",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber185",
-    "RequestCounter #add should reset at the end of the period",
+    "test-file/test/RateLimiter.test.js.html#lineNumber227",
+    "RateLimiter #getTokensRemaining when request within limits key validation when key is not a string",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber31",
-    "RequestCounter #constructor",
+    "test-file/test/RateLimiter.test.js.html#lineNumber233",
+    "RateLimiter #getTokensRemaining when request within limits key validation when key is not a string should error on function",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber33",
-    "RequestCounter #constructor should be able to init without a config",
+    "test-file/test/RateLimiter.test.js.html#lineNumber229",
+    "RateLimiter #getTokensRemaining when request within limits key validation when key is not a string should error on int",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber80",
-    "RequestCounter #constructor with config",
+    "test-file/test/RateLimiter.test.js.html#lineNumber237",
+    "RateLimiter #getTokensRemaining when request within limits key validation when key is not a string should error on object",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber107",
-    "RequestCounter #constructor with config should create a increment",
+    "test-file/test/RateLimiter.test.js.html#lineNumber249",
+    "RateLimiter #getTokensRemaining when request within limits should call TokenBucket if the key is new",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber103",
-    "RequestCounter #constructor with config should create a period",
+    "test-file/test/RateLimiter.test.js.html#lineNumber262",
+    "RateLimiter #getTokensRemaining when request within limits should call getTokensRemaining on TokenBucket instance",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber111",
-    "RequestCounter #constructor with config should create a startTime",
+    "test-file/test/RateLimiter.test.js.html#lineNumber254",
+    "RateLimiter #getTokensRemaining when request within limits should not call TokenBucket if the key already exists",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber99",
-    "RequestCounter #constructor with config should create limit",
+    "test-file/test/TokenBucket.test.js.html#lineNumber11",
+    "TokenBucket",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber95",
-    "RequestCounter #constructor with config should create maxLimit",
+    "test-file/test/TokenBucket.test.js.html#lineNumber130",
+    "TokenBucket #_incrementTokens",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber91",
-    "RequestCounter #constructor with config should return an object",
+    "test-file/test/TokenBucket.test.js.html#lineNumber140",
+    "TokenBucket #_incrementTokens should increment _currentLimit if not at limit",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber116",
-    "RequestCounter #constructor with config should set up an interval calling incrementLimit",
+    "test-file/test/TokenBucket.test.js.html#lineNumber146",
+    "TokenBucket #_incrementTokens should not increment _currentLimit past limit",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber37",
-    "RequestCounter #constructor without config",
+    "test-file/test/TokenBucket.test.js.html#lineNumber31",
+    "TokenBucket #constructor",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber64",
-    "RequestCounter #constructor without config should create a increment",
+    "test-file/test/TokenBucket.test.js.html#lineNumber33",
+    "TokenBucket #constructor should not error if not given a config",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber60",
-    "RequestCounter #constructor without config should create a period",
+    "test-file/test/TokenBucket.test.js.html#lineNumber71",
+    "TokenBucket #constructor with config",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber68",
-    "RequestCounter #constructor without config should create a startTime",
+    "test-file/test/TokenBucket.test.js.html#lineNumber94",
+    "TokenBucket #constructor with config should create a increment",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber56",
-    "RequestCounter #constructor without config should create limit",
+    "test-file/test/TokenBucket.test.js.html#lineNumber90",
+    "TokenBucket #constructor with config should create limit",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber52",
-    "RequestCounter #constructor without config should create maxLimit",
+    "test-file/test/TokenBucket.test.js.html#lineNumber86",
+    "TokenBucket #constructor with config should create maxLimit",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber48",
-    "RequestCounter #constructor without config should return an object",
+    "test-file/test/TokenBucket.test.js.html#lineNumber82",
+    "TokenBucket #constructor with config should return an object",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber73",
-    "RequestCounter #constructor without config should set up an interval calling incrementLimit",
+    "test-file/test/TokenBucket.test.js.html#lineNumber98",
+    "TokenBucket #constructor with config should set up an interval calling _incrementTokens",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber128",
-    "RequestCounter #destroy",
+    "test-file/test/TokenBucket.test.js.html#lineNumber37",
+    "TokenBucket #constructor without config",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber135",
-    "RequestCounter #destroy should destroy the interval",
+    "test-file/test/TokenBucket.test.js.html#lineNumber60",
+    "TokenBucket #constructor without config should create a increment",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber193",
-    "RequestCounter #getRemaining",
+    "test-file/test/TokenBucket.test.js.html#lineNumber56",
+    "TokenBucket #constructor without config should create limit",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber203",
-    "RequestCounter #getRemaining should return the limit",
+    "test-file/test/TokenBucket.test.js.html#lineNumber52",
+    "TokenBucket #constructor without config should create maxLimit",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber141",
-    "RequestCounter #incrementLimit",
+    "test-file/test/TokenBucket.test.js.html#lineNumber48",
+    "TokenBucket #constructor without config should return an object",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber151",
-    "RequestCounter #incrementLimit should increment _currentLimit if not at _maxLimit",
+    "test-file/test/TokenBucket.test.js.html#lineNumber64",
+    "TokenBucket #constructor without config should set up an interval calling _incrementTokens",
     "test"
   ],
   [
     "",
-    "test-file/test/RequestCounter.test.js.html#lineNumber157",
-    "RequestCounter #incrementLimit should not increment _currentLimit past _maxLimit",
+    "test-file/test/TokenBucket.test.js.html#lineNumber153",
+    "TokenBucket #decrementTokens",
     "test"
   ],
   [
-    "src/limiter.js",
-    "file/src/Limiter.js.html",
-    "src/Limiter.js",
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber163",
+    "TokenBucket #decrementTokens should decrement limit when below limit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber168",
+    "TokenBucket #decrementTokens should not decrement limit if already at limit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber174",
+    "TokenBucket #decrementTokens should reset at the end of the period",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber180",
+    "TokenBucket #decrementTokens should take an amount",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber110",
+    "TokenBucket #destroy",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber119",
+    "TokenBucket #destroy should clear the interval",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber124",
+    "TokenBucket #destroy should destroy the interval",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber187",
+    "TokenBucket #getTokensRemaining",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber197",
+    "TokenBucket #getTokensRemaining should return the limit",
+    "test"
+  ],
+  [
+    "src/ratelimiter.js",
+    "file/src/RateLimiter.js.html",
+    "src/RateLimiter.js",
     "file"
   ],
   [
-    "src/limiter.js~limiter#addrequest",
-    "class/src/Limiter.js~Limiter.html#instance-method-addRequest",
-    "src/Limiter.js~Limiter#addRequest",
+    "src/ratelimiter.js~ratelimiter#constructor",
+    "class/src/RateLimiter.js~RateLimiter.html#instance-constructor-constructor",
+    "src/RateLimiter.js~RateLimiter#constructor",
     "method"
   ],
   [
-    "src/limiter.js~limiter#constructor",
-    "class/src/Limiter.js~Limiter.html#instance-constructor-constructor",
-    "src/Limiter.js~Limiter#constructor",
+    "src/ratelimiter.js~ratelimiter#decrementtokens",
+    "class/src/RateLimiter.js~RateLimiter.html#instance-method-decrementTokens",
+    "src/RateLimiter.js~RateLimiter#decrementTokens",
     "method"
   ],
   [
-    "src/limiter.js~limiter#getremainingrequests",
-    "class/src/Limiter.js~Limiter.html#instance-method-getRemainingRequests",
-    "src/Limiter.js~Limiter#getRemainingRequests",
+    "src/ratelimiter.js~ratelimiter#destroy",
+    "class/src/RateLimiter.js~RateLimiter.html#instance-method-destroy",
+    "src/RateLimiter.js~RateLimiter#destroy",
     "method"
   ],
   [
-    "src/requestcounter.js",
-    "file/src/RequestCounter.js.html",
-    "src/RequestCounter.js",
+    "src/ratelimiter.js~ratelimiter#gettokensremaining",
+    "class/src/RateLimiter.js~RateLimiter.html#instance-method-getTokensRemaining",
+    "src/RateLimiter.js~RateLimiter#getTokensRemaining",
+    "method"
+  ],
+  [
+    "src/tokenbucket.js",
+    "file/src/TokenBucket.js.html",
+    "src/TokenBucket.js",
     "file"
   ],
   [
-    "src/requestcounter.js~requestcounter#add",
-    "class/src/RequestCounter.js~RequestCounter.html#instance-method-add",
-    "src/RequestCounter.js~RequestCounter#add",
+    "src/tokenbucket.js~tokenbucket#constructor",
+    "class/src/TokenBucket.js~TokenBucket.html#instance-constructor-constructor",
+    "src/TokenBucket.js~TokenBucket#constructor",
     "method"
   ],
   [
-    "src/requestcounter.js~requestcounter#constructor",
-    "class/src/RequestCounter.js~RequestCounter.html#instance-constructor-constructor",
-    "src/RequestCounter.js~RequestCounter#constructor",
+    "src/tokenbucket.js~tokenbucket#decrementtokens",
+    "class/src/TokenBucket.js~TokenBucket.html#instance-method-decrementTokens",
+    "src/TokenBucket.js~TokenBucket#decrementTokens",
     "method"
   ],
   [
-    "src/requestcounter.js~requestcounter#destroy",
-    "class/src/RequestCounter.js~RequestCounter.html#instance-method-destroy",
-    "src/RequestCounter.js~RequestCounter#destroy",
+    "src/tokenbucket.js~tokenbucket#destroy",
+    "class/src/TokenBucket.js~TokenBucket.html#instance-method-destroy",
+    "src/TokenBucket.js~TokenBucket#destroy",
     "method"
   ],
   [
-    "src/requestcounter.js~requestcounter#getremaining",
-    "class/src/RequestCounter.js~RequestCounter.html#instance-method-getRemaining",
-    "src/RequestCounter.js~RequestCounter#getRemaining",
-    "method"
-  ],
-  [
-    "src/requestcounter.js~requestcounter#incrementlimit",
-    "class/src/RequestCounter.js~RequestCounter.html#instance-method-incrementLimit",
-    "src/RequestCounter.js~RequestCounter#incrementLimit",
+    "src/tokenbucket.js~tokenbucket#gettokensremaining",
+    "class/src/TokenBucket.js~TokenBucket.html#instance-method-getTokensRemaining",
+    "src/TokenBucket.js~TokenBucket#getTokensRemaining",
     "method"
   ],
   [
@@ -774,15 +828,15 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "test/limiter.test.js",
-    "test-file/test/Limiter.test.js.html",
-    "test/Limiter.test.js",
+    "test/ratelimiter.test.js",
+    "test-file/test/RateLimiter.test.js.html",
+    "test/RateLimiter.test.js",
     "testFile"
   ],
   [
-    "test/requestcounter.test.js",
-    "test-file/test/RequestCounter.test.js.html",
-    "test/RequestCounter.test.js",
+    "test/tokenbucket.test.js",
+    "test-file/test/TokenBucket.test.js.html",
+    "test/TokenBucket.test.js",
     "testFile"
   ]
 ]
