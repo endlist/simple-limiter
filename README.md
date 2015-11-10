@@ -1,9 +1,8 @@
 # simple-limiter
 
-[Code Coverage Report](http://endlist.github.io/simple-limiter/coverage/lcov-report/)
-
+[Code Coverage Report](http://endlist.github.io/simple-limiter/coverage/lcov-report/)  
 [Documentation](http://endlist.github.io/simple-limiter/doc/)
 
-simple synchronous library to limit rate by an ip/api key/id and throw 429 Too Many Requests error
+simple synchronous library to limit rate by any key in a token-bucket style regenerative algorithm and return headers / errors to be handled by the app
 
-works with [super-router](http://github.com/autoric/super-router) or any other router setup that handles thrown errors
+made to work with [super-router](http://github.com/autoric/super-router)

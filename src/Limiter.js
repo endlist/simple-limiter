@@ -1,12 +1,9 @@
 'use strict';
 
-const _           = require('lodash');
-const Eligibility = require('./Eligibility');
-
-const DEFAULT_KEY = 'ip';
+const RequestCounter = require('./RequestCounter');
 
 /**
- * TODO: describe
+ * Limiter
  */
 class Limiter {
 
@@ -15,54 +12,66 @@ class Limiter {
    * @return empty
    */
   constructor(config) {
-    let key = DEFAULT_KEY; 
     let limit = null;
     let period = null;
+    let increment = null;
 
     if (config != null) {
-
-      if (config.key != null) {
-        key = config.key;
-      }
-
-      limit  = config.limit;
-      period = config.period;
+      limit     = config.limit;
+      period    = config.period;
+      increment = config.increment;
     }
 
-    this._config = { key, limit, period };
-    this._eligibility = {};
-
-    // return requests left
+    this._config = { limit, period, increment };
+    this._requestCounters = {};
   }
 
-  checkRequest(opts) {
-
-    if (opts == null) {
-      throw new Error('Error: opts are required.');
+  /**
+   * @param {key} key The identifier for the request
+   * @return empty
+   */
+  _errorCheckForKey(key) {
+    if (key == null) {
+      throw new Error('Error: key is required.');
     }
+  }
 
-    const request  = opts.request;
-    const key = _.get(request, this._config.key);
-    const limit = this._config.limit;
-    const period = this._config.period;
+  /**
+   * @param {string} key The identifier for the request
+   * @return empty
+   */
+  _createRequestCounter(key) {
+    this._errorCheckForKey(key);
 
-    if (this._eligibility[key] == null) {
-      this._eligibility[key] = new Eligibility({ limit, period });
+    if (this._requestCounters[key] == null) {
+      const limit = this._config.limit;
+      const period = this._config.period;
+
+      this._requestCounters[key] = new RequestCounter({ limit, period });
     }
+  }
 
-    // const isEligibleRequest = this._eligibility[key].check();
+  /**
+   * @param {string} key The identifier for the request
+   * @return {integer} Remaining request count
+   */
+  addRequest(key) {
+    this._errorCheckForKey(key);
+    this._createRequestCounter(key);
+    this._requestCounters[key].add();
 
-    // if (!isEligibleRequest) {
-    //   throw new Error('429');
-    // }
+    return this._requestCounters[key].getRemaining();
+  }
 
-    const requestStatus = {
-      validity : this._eligibility[key].check(),
-      // headers  : this._eligibility[key].getHeaders(),
-    };
+  /**
+   * @param {string} key The identifier for the request
+   * @return {integer} Remaining request count
+   */
+  getRemainingRequests(key) {
+    this._errorCheckForKey(key);
+    this._createRequestCounter(key);
 
-    return requestStatus;
-
+    return this._requestCounters[key].getRemaining();
   }
 
 }
