@@ -4,7 +4,7 @@
   "description": "simple synchronous rate limiter",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha -w",
+    "test": "mocha",
     "lint": "eslint src test",
     "doc": "istanbul cover ./node_modules/.bin/_mocha --test -R test && esdoc -c esdoc.json && gh-pages -d . -s '{doc,coverage}/**/*'"
   },

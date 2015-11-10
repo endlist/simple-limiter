@@ -1,4 +1,5 @@
 # simple-limiter
+[![Build Status](https://travis-ci.org/endlist/simple-limiter.svg)](https://travis-ci.org/endlist/simple-limiter)
 
 [Code Coverage Report](http://endlist.github.io/simple-limiter/coverage/lcov-report/)  
 [Documentation](http://endlist.github.io/simple-limiter/doc/)
