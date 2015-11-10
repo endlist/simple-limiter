@@ -10,7 +10,7 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\n\nconst TokenBucket = require('./TokenBucket');\nconst _           = require('lodash');\n\n/**\n * RateLimiter Class\n *\n * Handles creation and destruction of TokenBuckets by key.\n */\nclass RateLimiter {\n\n  /**\n   * Creates a RateLimiter object.\n   *\n   * @param {object} config configuration values\n   * @property {integer} limit The max amount of tokens per period.\n   * @property {integer} period The time in ms before tokens will increment.\n   * @property {integer} increment The amount of tokens that will increment each period.\n   */\n  constructor(config) {\n    let limit     = null;\n    let period    = null;\n    let increment = null;\n\n    if (config != null) {\n      limit     = config.limit;\n      period    = config.period;\n      increment = config.increment;\n    }\n\n    this.config = { limit, period, increment };\n    this.tokenBuckets = {};\n  }\n\n  /**\n   * Cleans up each TokenBucket and nulls the array.\n   */\n  destroy() {\n    _.each(this.tokenBuckets, (value, key) => {\n      this.tokenBuckets[key].destroy();\n      delete this.tokenBuckets[key];\n    });\n  }\n\n  /**\n   * Helper to throw an error if the key is invalid.\n   *\n   * @param {key} key The identifier for the request\n   * @throws {Error} throw error when key is invalid\n   * @private\n   */\n  _errorCheckForKey(key) {\n    if (key == null || typeof(key) != 'string') {\n      throw new Error('Error: key is required.');\n    }\n  }\n\n  /**\n   * Helper to create a new TokenBucket if needed.\n   *\n   * @param {string} key The identifier for the request\n   * @private\n   */\n  _createTokenBucket(key) {\n    this._errorCheckForKey(key);\n\n    if (this.tokenBuckets[key] == null) {\n      const limit = this.config.limit;\n      const period = this.config.period;\n\n      this.tokenBuckets[key] = new TokenBucket({ limit, period });\n    }\n  }\n\n  /**\n   * Appropriately decrements the remaining token availability\n   * when called and returns the remainder.\n   *\n   * @param {string} key The identifier for the request\n   * @param {integer} [amount] The number to decrement by\n   * @return {integer} Remaining request count\n   */\n  decrementTokens(key, amount) {\n    this._errorCheckForKey(key);\n    this._createTokenBucket(key);\n    this.tokenBuckets[key].decrementTokens(amount);\n\n    return this.tokenBuckets[key].getTokensRemaining();\n  }\n\n  /**\n   * Returns the remaining request count for the given key.\n   * If the key doesn't already exist, it will create it.\n   *\n   * @param {string} key The identifier for the request\n   * @return {integer} Remaining request count\n   */\n  getTokensRemaining(key) {\n    this._errorCheckForKey(key);\n    this._createTokenBucket(key);\n\n    return this.tokenBuckets[key].getTokensRemaining();\n  }\n\n}\n\nmodule.exports = RateLimiter;\n"
+    "content": "'use strict';\n\nconst TokenBucket = require('./TokenBucket');\nconst _           = require('lodash');\n\n/**\n * RateLimiter Class\n *\n * Handles creation and destruction of TokenBuckets by key.\n */\nclass RateLimiter {\n\n  /**\n   * Creates a RateLimiter object.\n   *\n   * @param {object} config configuration values\n   * @param {integer} config.limit The max amount of tokens per period.\n   * @param {integer} config.period The time in ms before tokens will increment.\n   * @param {integer} config.increment The amount of tokens that will increment each period.\n   */\n  constructor(config) {\n    let limit     = null;\n    let period    = null;\n    let increment = null;\n\n    if (config != null) {\n      limit     = config.limit;\n      period    = config.period;\n      increment = config.increment;\n    }\n\n    this.config = { limit, period, increment };\n    this.tokenBuckets = {};\n  }\n\n  /**\n   * Cleans up each TokenBucket and nulls the array.\n   */\n  destroy() {\n    _.each(this.tokenBuckets, (value, key) => {\n      this.tokenBuckets[key].destroy();\n      delete this.tokenBuckets[key];\n    });\n  }\n\n  /**\n   * Helper to throw an error if the key is invalid.\n   *\n   * @param {key} key The identifier for the request\n   * @throws {Error} throw error when key is invalid\n   * @private\n   */\n  _errorCheckForKey(key) {\n    if (key == null || typeof(key) != 'string') {\n      throw new Error('Error: key is required.');\n    }\n  }\n\n  /**\n   * Helper to create a new TokenBucket if needed.\n   *\n   * @param {string} key The identifier for the request\n   * @private\n   */\n  _createTokenBucket(key) {\n    this._errorCheckForKey(key);\n\n    if (this.tokenBuckets[key] == null) {\n      const limit = this.config.limit;\n      const period = this.config.period;\n\n      this.tokenBuckets[key] = new TokenBucket({ limit, period });\n    }\n  }\n\n  /**\n   * Appropriately decrements the remaining token availability\n   * when called and returns the remainder.\n   *\n   * @param {string} key The identifier for the request\n   * @param {integer} [amount] The number to decrement by\n   * @return {integer} Remaining request count\n   */\n  decrementTokens(key, amount) {\n    this._errorCheckForKey(key);\n    this._createTokenBucket(key);\n    this.tokenBuckets[key].decrementTokens(amount);\n\n    return this.tokenBuckets[key].getTokensRemaining();\n  }\n\n  /**\n   * Returns the remaining request count for the given key.\n   * If the key doesn't already exist, it will create it.\n   *\n   * @param {string} key The identifier for the request\n   * @return {integer} Remaining request count\n   */\n  getTokensRemaining(key) {\n    this._errorCheckForKey(key);\n    this._createTokenBucket(key);\n\n    return this.tokenBuckets[key].getTokensRemaining();\n  }\n\n}\n\nmodule.exports = RateLimiter;\n"
   },
   {
     "__docId__": 1,
@@ -91,9 +91,7 @@
         "optional": false,
         "name": "config",
         "description": "configuration values"
-      }
-    ],
-    "properties": [
+      },
       {
         "nullable": null,
         "types": [
@@ -101,7 +99,7 @@
         ],
         "spread": false,
         "optional": false,
-        "name": "limit",
+        "name": "config.limit",
         "description": "The max amount of tokens per period."
       },
       {
@@ -111,7 +109,7 @@
         ],
         "spread": false,
         "optional": false,
-        "name": "period",
+        "name": "config.period",
         "description": "The time in ms before tokens will increment."
       },
       {
@@ -121,7 +119,7 @@
         ],
         "spread": false,
         "optional": false,
-        "name": "increment",
+        "name": "config.increment",
         "description": "The amount of tokens that will increment each period."
       }
     ],
@@ -322,7 +320,7 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\n\nconst DEFAULT_LIMIT     = 25;\nconst DEFAULT_PERIOD    = 5000;\nconst DEFAULT_INCREMENT = 1;\n\n/**\n * TokenBucket\n *\n * Handles how many tokens are available at any given time based on\n * the configuration set and the token bucket algorithm.\n *\n * @see https://en.wikipedia.org/wiki/Token_bucket\n */\nclass TokenBucket {\n\n  /**\n   * Creates a TokenBucket object.\n   *\n   * @param {object} config configuration values\n   * @property {integer} [limit=25] The max amount of tokens per period.\n   * @property {integer} [period=5000] The time in ms before tokens will increment.\n   * @property {integer} [increment=1] The amount of tokens that will increment each period.\n   */\n  constructor(config) {\n    config = config || {};\n\n    const period    = config.period || DEFAULT_PERIOD;\n\n    this.limit = this.tokens = config.limit || DEFAULT_LIMIT;\n    this.increment = config.increment || DEFAULT_INCREMENT;\n\n    this._interval = setInterval(() => {\n      this._incrementTokens();\n    }, period);\n  }\n\n  /**\n   * Cleans up the interval set by the constructor.\n   */\n  destroy() {\n    clearInterval(this._interval);\n    this._interval = null;\n  }\n\n  /**\n   * Helper to increment tokens on the interval.\n   *\n   * @private\n   */\n  _incrementTokens() {\n    if (this.tokens < this.limit) {\n      this.tokens += this.increment;\n    }\n  }\n\n  /**\n   * Decrements the amount of tokens available based on amount\n   * and returns the value.\n   *\n   * @param {integer} [amount=1] The number to decrement by\n   * @return {integer} The remaining available requests for the identifier\n   */\n  decrementTokens(amount) {\n    amount = amount || 1;\n\n    if (this.tokens > 0) {\n      this.tokens -= amount;\n    }\n\n    return this.tokens; \n  }\n\n  /**\n   * Returns the currently available tokens.\n   *\n   * @return {integer} The remaining available requests for the identifier\n   */\n  getTokensRemaining() {\n    return this.tokens;\n  }\n\n};\n\nmodule.exports = TokenBucket;\n"
+    "content": "'use strict';\n\nconst DEFAULT_LIMIT     = 25;\nconst DEFAULT_PERIOD    = 5000;\nconst DEFAULT_INCREMENT = 1;\n\n/**\n * TokenBucket\n *\n * Handles how many tokens are available at any given time based on\n * the configuration set and the token bucket algorithm.\n *\n * @see https://en.wikipedia.org/wiki/Token_bucket\n */\nclass TokenBucket {\n\n  /**\n   * Creates a TokenBucket object.\n   *\n   * @param {object} config configuration values\n   * @param {integer} [config.limit=25] The max amount of tokens per period.\n   * @param {integer} [config.period=5000] The time in ms before tokens will increment.\n   * @param {integer} [config.increment=1] The amount of tokens that will increment each period.\n   */\n  constructor(config) {\n    config = config || {};\n\n    const period    = config.period || DEFAULT_PERIOD;\n\n    this.limit = this.tokens = config.limit || DEFAULT_LIMIT;\n    this.increment = config.increment || DEFAULT_INCREMENT;\n\n    this._interval = setInterval(() => {\n      this._incrementTokens();\n    }, period);\n  }\n\n  /**\n   * Cleans up the interval set by the constructor.\n   */\n  destroy() {\n    clearInterval(this._interval);\n    this._interval = null;\n  }\n\n  /**\n   * Helper to increment tokens on the interval.\n   *\n   * @private\n   */\n  _incrementTokens() {\n    if (this.tokens < this.limit) {\n      this.tokens += this.increment;\n    }\n  }\n\n  /**\n   * Decrements the amount of tokens available based on amount\n   * and returns the value.\n   *\n   * @param {integer} [amount=1] The number to decrement by\n   * @return {integer} The remaining available requests for the identifier\n   */\n  decrementTokens(amount) {\n    amount = amount || 1;\n\n    if (this.tokens > 0) {\n      this.tokens -= amount;\n    }\n\n    return this.tokens; \n  }\n\n  /**\n   * Returns the currently available tokens.\n   *\n   * @return {integer} The remaining available requests for the identifier\n   */\n  getTokensRemaining() {\n    return this.tokens;\n  }\n\n};\n\nmodule.exports = TokenBucket;\n"
   },
   {
     "__docId__": 13,
@@ -427,9 +425,7 @@
         "optional": false,
         "name": "config",
         "description": "configuration values"
-      }
-    ],
-    "properties": [
+      },
       {
         "nullable": null,
         "types": [
@@ -439,7 +435,7 @@
         "optional": true,
         "defaultValue": "25",
         "defaultRaw": 25,
-        "name": "limit",
+        "name": "config.limit",
         "description": "The max amount of tokens per period."
       },
       {
@@ -451,7 +447,7 @@
         "optional": true,
         "defaultValue": "5000",
         "defaultRaw": 5000,
-        "name": "period",
+        "name": "config.period",
         "description": "The time in ms before tokens will increment."
       },
       {
@@ -463,7 +459,7 @@
         "optional": true,
         "defaultValue": "1",
         "defaultRaw": 1,
-        "name": "increment",
+        "name": "config.increment",
         "description": "The amount of tokens that will increment each period."
       }
     ],
