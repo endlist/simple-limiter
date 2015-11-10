@@ -14,9 +14,9 @@ class RateLimiter {
    * Creates a RateLimiter object.
    *
    * @param {object} config configuration values
-   * @property {integer} limit The max amount of tokens per period.
-   * @property {integer} period The time in ms before tokens will increment.
-   * @property {integer} increment The amount of tokens that will increment each period.
+   * @param {integer} config.limit The max amount of tokens per period.
+   * @param {integer} config.period The time in ms before tokens will increment.
+   * @param {integer} config.increment The amount of tokens that will increment each period.
    */
   constructor(config) {
     let limit     = null;
