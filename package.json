@@ -1,6 +1,6 @@
 {
   "name": "simple-limiter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "simple synchronous rate limiter using the token-bucket algorithm",
   "main": "src/index.js",
   "scripts": {
@@ -16,11 +16,10 @@
     "node": ">=4.0.0"
   },
   "keywords": [
-    "promise",
     "rate",
     "limiting",
     "throttle",
-    "promise-based"
+    "token bucket"
   ],
   "author": "Li Wren",
   "bugs": {
