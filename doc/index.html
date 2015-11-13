@@ -43,6 +43,47 @@
 <p><a href="http://endlist.github.io/simple-limiter/coverage/lcov-report/">Code Coverage Report</a><br><a href="http://endlist.github.io/simple-limiter/doc/">Documentation</a></p>
 <p>simple synchronous library to limit rate by any key using the <a href="https://en.wikipedia.org/wiki/Token_bucket">token-bucket algorithm</a></p>
 <p>made to work with <a href="http://github.com/autoric/super-router">super-router</a></p>
+<h2 id="usage">Usage</h2>
+<p>This is made to work with Super Router, but can work with any middleware.  Simple Limiter doesn&apos;t handle request headers or response for you, but it does return values to make setting the headers and body easy:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">const SuperRouter = require(&apos;super-router&apos;);
+const RateLimiter = require(&apos;simple-limiter&apos;).RateLimiter;
+
+module.exports = function() {
+  const limiter = New RateLimiter({
+    limit             : 20,
+    incrementInterval : 5000,
+    increment         : 1,
+  });
+
+  app.use({
+    path    : &apos;/thispath&apos;,
+    handler : (opts) =&gt; {
+      const request = opts.request;
+      const response = opts.response;
+      const key = `${request.yourKey}`;
+      const tokensRemaining = limiter.getTokensRemaining(key);
+
+      response.setHeader(&apos;X-Rate-Limit-Limit&apos;, `${limiter.config.limit}`);
+      response.setHeader(&apos;X-Rate-Limit-Remaining&apos;, `${tokensRemaining}`);
+
+      limiter.decrementTokens(key, 5);
+    },
+  });
+};</code>
+</code></pre>
+<p>If you change the default increment and decrement amounts to suit your project, which is recommended, you will run into situations where the user will have tokens remaining, but not enough to cover the cost of a request.</p>
+<p>In this case, Simple Limiter throws a default error, which can be caught in middleware and served to the user as-is, or can be transformed to suit your project&apos;s standards:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">try {
+  limiter.decrementTokens(ip);
+}
+catch (error) {
+  response.setBody({
+    id      : &apos;RateLimitError&apos;,
+    code    : 429,
+    message : &apos;Too Many Requests&apos;,
+  });
+}</code>
+</code></pre>
 </div>
 </div>
 

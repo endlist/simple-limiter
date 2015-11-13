@@ -45,6 +45,7 @@ const sinon      = require(&apos;sinon&apos;);
 const sinonChai  = require(&apos;sinon-chai&apos;);
 const proxyquire = require(&apos;proxyquire&apos;);
 const _          = require(&apos;lodash&apos;);
+const START_TIME = 140000;
 
 chai.use(sinonChai);
 
@@ -57,12 +58,13 @@ describe(&apos;RateLimiter&apos;, () =&gt; {
   let key;
   let TokenBucketStub;
   let sandbox;
+  let clock;
 
   beforeEach(() =&gt; {
     config = {
-      limit     : 20,
-      period    : 5000,
-      increment : 2,
+      limit             : 20,
+      incrementInterval : 5000,
+      increment         : 2,
     };
     const TokenBucket = require(&apos;../src/TokenBucket.js&apos;);
     const mockTokenBucket = sinon.createStubInstance(TokenBucket);
@@ -71,6 +73,11 @@ describe(&apos;RateLimiter&apos;, () =&gt; {
     RateLimiter = proxyquire(&apos;../src/RateLimiter.js&apos;, {
       &apos;./TokenBucket&apos;: TokenBucketStub,
     });
+    clock = sinon.useFakeTimers(START_TIME);
+  });
+
+  afterEach(() =&gt; {
+    clock.restore();
   });
 
   describe(&apos;#constructor&apos;, () =&gt; {
@@ -96,8 +103,8 @@ describe(&apos;RateLimiter&apos;, () =&gt; {
         expect(rateLimiter.config.limit).to.not.exist;
       });
 
-      it(&apos;should default config.period to null&apos;, () =&gt; {
-        expect(rateLimiter.config.period).to.not.exist;
+      it(&apos;should default config.incrementInterval to null&apos;, () =&gt; {
+        expect(rateLimiter.config.incrementInterval).to.not.exist;
       });
 
       it(&apos;should default config.increment to null&apos;, () =&gt; {
@@ -114,9 +121,9 @@ describe(&apos;RateLimiter&apos;, () =&gt; {
 
       beforeEach(() =&gt; {
         config = {
-          limit     : 200,
-          period    : 8000,
-          increment : 2,
+          limit             : 200,
+          incrementInterval : 8000,
+          increment         : 2,
         };
         rateLimiter = new RateLimiter(config);
       });
@@ -129,15 +136,15 @@ describe(&apos;RateLimiter&apos;, () =&gt; {
         expect(rateLimiter).to.be.an(&apos;object&apos;);
       });
 
-      it(&apos;should assign given period to config.limit&apos;, () =&gt; {
+      it(&apos;should assign given incrementInterval to config.limit&apos;, () =&gt; {
         expect(rateLimiter.config.limit).to.equal(config.limit);
       });
 
-      it(&apos;should assign given period to config.period&apos;, () =&gt; {
-        expect(rateLimiter.config.period).to.equal(config.period);
+      it(&apos;should assign given incrementInterval to config.incrementInterval&apos;, () =&gt; {
+        expect(rateLimiter.config.incrementInterval).to.equal(config.incrementInterval);
       });
 
-      it(&apos;should assign given period to config.increment&apos;, () =&gt; {
+      it(&apos;should assign given incrementInterval to config.increment&apos;, () =&gt; {
         expect(rateLimiter.config.increment).to.equal(config.increment);
       });
 
@@ -223,7 +230,7 @@ describe(&apos;RateLimiter&apos;, () =&gt; {
 
     it(&apos;should call TokenBucket if the key is new&apos;, () =&gt; {
       rateLimiter.decrementTokens(key);
-      expect(TokenBucketStub).to.have.been.called;
+      expect(TokenBucketStub).to.have.been.calledWith(config);
     });
 
     it(&apos;should not call TokenBucket if the key already exists&apos;, () =&gt; {
@@ -289,7 +296,7 @@ describe(&apos;RateLimiter&apos;, () =&gt; {
 
       it(&apos;should call TokenBucket if the key is new&apos;, () =&gt; {
         rateLimiter.getTokensRemaining(key);
-        expect(TokenBucketStub).to.have.been.called;
+        expect(TokenBucketStub).to.have.been.calledWith(config);
       });
 
       it(&apos;should not call TokenBucket if the key already exists&apos;, () =&gt; {
@@ -305,6 +312,28 @@ describe(&apos;RateLimiter&apos;, () =&gt; {
         expect(rateLimiter.tokenBuckets[key].getTokensRemaining).to.have.been.called;
       });
 
+    });
+
+    it(&apos;should clean up tokenBuckets every incrementInterval&apos;, () =&gt; {
+      rateLimiter = new RateLimiter(config);
+      rateLimiter.getTokensRemaining(&apos;one&apos;);
+      rateLimiter.getTokensRemaining(&apos;two&apos;);
+      rateLimiter.getTokensRemaining(&apos;three&apos;);
+      clock.tick(config.incrementInterval);
+      expect(rateLimiter.tokenBuckets).to.be.empty;
+    });
+
+    it(&apos;should not clean up tokenBuckets that are active&apos;, () =&gt; {
+      rateLimiter = new RateLimiter(config);
+      rateLimiter.tokenBuckets = {
+        &apos;one&apos; : { tokens : config.limit, limit : config.limit, destroy : () =&gt; {} },
+        &apos;two&apos; : { tokens : config.limit, limit : config.limit, destroy : () =&gt; {} },
+      };
+      rateLimiter.getTokensRemaining(&apos;three&apos;);
+      const bucketThree = rateLimiter._getTokenBucket(&apos;three&apos;);
+      bucketThree.tokens = 9;
+      clock.tick(config.incrementInterval);
+      expect(rateLimiter.tokenBuckets).to.eql({ &apos;three&apos; : bucketThree });
     });
 
   });

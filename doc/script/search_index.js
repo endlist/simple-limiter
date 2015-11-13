@@ -343,253 +343,265 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber12",
+    "test-file/test/RateLimiter.test.js.html#lineNumber13",
     "RateLimiter",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber35",
+    "test-file/test/RateLimiter.test.js.html#lineNumber42",
     "RateLimiter #constructor",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber36",
+    "test-file/test/RateLimiter.test.js.html#lineNumber43",
     "RateLimiter #constructor should not error if not given a config",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber72",
+    "test-file/test/RateLimiter.test.js.html#lineNumber79",
     "RateLimiter #constructor with config",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber99",
-    "RateLimiter #constructor with config should assign given period to config.increment",
+    "test-file/test/RateLimiter.test.js.html#lineNumber106",
+    "RateLimiter #constructor with config should assign given incrementInterval to config.increment",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber91",
-    "RateLimiter #constructor with config should assign given period to config.limit",
+    "test-file/test/RateLimiter.test.js.html#lineNumber102",
+    "RateLimiter #constructor with config should assign given incrementInterval to config.incrementInterval",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber95",
-    "RateLimiter #constructor with config should assign given period to config.period",
+    "test-file/test/RateLimiter.test.js.html#lineNumber98",
+    "RateLimiter #constructor with config should assign given incrementInterval to config.limit",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber103",
+    "test-file/test/RateLimiter.test.js.html#lineNumber110",
     "RateLimiter #constructor with config should create tokenBuckets",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber87",
+    "test-file/test/RateLimiter.test.js.html#lineNumber94",
     "RateLimiter #constructor with config should return an object",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber40",
+    "test-file/test/RateLimiter.test.js.html#lineNumber47",
     "RateLimiter #constructor without config",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber66",
+    "test-file/test/RateLimiter.test.js.html#lineNumber73",
     "RateLimiter #constructor without config should create tokenBuckets",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber62",
+    "test-file/test/RateLimiter.test.js.html#lineNumber69",
     "RateLimiter #constructor without config should default config.increment to null",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber54",
+    "test-file/test/RateLimiter.test.js.html#lineNumber65",
+    "RateLimiter #constructor without config should default config.incrementInterval to null",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RateLimiter.test.js.html#lineNumber61",
     "RateLimiter #constructor without config should default config.limit to null",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber58",
-    "RateLimiter #constructor without config should default config.period to null",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber50",
+    "test-file/test/RateLimiter.test.js.html#lineNumber57",
     "RateLimiter #constructor without config should return an object",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber142",
+    "test-file/test/RateLimiter.test.js.html#lineNumber149",
     "RateLimiter #decrementTokens",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber155",
+    "test-file/test/RateLimiter.test.js.html#lineNumber162",
     "RateLimiter #decrementTokens key validation",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber157",
+    "test-file/test/RateLimiter.test.js.html#lineNumber164",
     "RateLimiter #decrementTokens key validation should error if nothing is given",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber177",
+    "test-file/test/RateLimiter.test.js.html#lineNumber184",
     "RateLimiter #decrementTokens key validation should not error on valid key",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber161",
+    "test-file/test/RateLimiter.test.js.html#lineNumber168",
     "RateLimiter #decrementTokens key validation when key is not on an object",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber167",
+    "test-file/test/RateLimiter.test.js.html#lineNumber174",
     "RateLimiter #decrementTokens key validation when key is not on an object should error on function",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber163",
+    "test-file/test/RateLimiter.test.js.html#lineNumber170",
     "RateLimiter #decrementTokens key validation when key is not on an object should error on int",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber171",
+    "test-file/test/RateLimiter.test.js.html#lineNumber178",
     "RateLimiter #decrementTokens key validation when key is not on an object should error on object",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber183",
+    "test-file/test/RateLimiter.test.js.html#lineNumber190",
     "RateLimiter #decrementTokens should call TokenBucket if the key is new",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber196",
+    "test-file/test/RateLimiter.test.js.html#lineNumber203",
     "RateLimiter #decrementTokens should call decrementTokens on TokenBucket instance",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber201",
+    "test-file/test/RateLimiter.test.js.html#lineNumber208",
     "RateLimiter #decrementTokens should call decrementTokens with an amount if given one",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber188",
+    "test-file/test/RateLimiter.test.js.html#lineNumber195",
     "RateLimiter #decrementTokens should not call TokenBucket if the key already exists",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber111",
+    "test-file/test/RateLimiter.test.js.html#lineNumber118",
     "RateLimiter #destroy",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber128",
+    "test-file/test/RateLimiter.test.js.html#lineNumber135",
     "RateLimiter #destroy should call destroy() on each key in tokenBuckets",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber134",
+    "test-file/test/RateLimiter.test.js.html#lineNumber141",
     "RateLimiter #destroy should null out the objects",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber208",
+    "test-file/test/RateLimiter.test.js.html#lineNumber215",
     "RateLimiter #getTokensRemaining",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber210",
+    "test-file/test/RateLimiter.test.js.html#lineNumber276",
+    "RateLimiter #getTokensRemaining should clean up tokenBuckets every incrementInterval",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RateLimiter.test.js.html#lineNumber285",
+    "RateLimiter #getTokensRemaining should not clean up tokenBuckets that are active",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/RateLimiter.test.js.html#lineNumber217",
     "RateLimiter #getTokensRemaining when request within limits",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber221",
+    "test-file/test/RateLimiter.test.js.html#lineNumber228",
     "RateLimiter #getTokensRemaining when request within limits key validation",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber243",
+    "test-file/test/RateLimiter.test.js.html#lineNumber250",
     "RateLimiter #getTokensRemaining when request within limits key validation should do nothing if a key is given",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber223",
+    "test-file/test/RateLimiter.test.js.html#lineNumber230",
     "RateLimiter #getTokensRemaining when request within limits key validation should error if no key is given",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber227",
+    "test-file/test/RateLimiter.test.js.html#lineNumber234",
     "RateLimiter #getTokensRemaining when request within limits key validation when key is not a string",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber233",
+    "test-file/test/RateLimiter.test.js.html#lineNumber240",
     "RateLimiter #getTokensRemaining when request within limits key validation when key is not a string should error on function",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber229",
+    "test-file/test/RateLimiter.test.js.html#lineNumber236",
     "RateLimiter #getTokensRemaining when request within limits key validation when key is not a string should error on int",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber237",
+    "test-file/test/RateLimiter.test.js.html#lineNumber244",
     "RateLimiter #getTokensRemaining when request within limits key validation when key is not a string should error on object",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber249",
+    "test-file/test/RateLimiter.test.js.html#lineNumber256",
     "RateLimiter #getTokensRemaining when request within limits should call TokenBucket if the key is new",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber262",
+    "test-file/test/RateLimiter.test.js.html#lineNumber269",
     "RateLimiter #getTokensRemaining when request within limits should call getTokensRemaining on TokenBucket instance",
     "test"
   ],
   [
     "",
-    "test-file/test/RateLimiter.test.js.html#lineNumber254",
+    "test-file/test/RateLimiter.test.js.html#lineNumber261",
     "RateLimiter #getTokensRemaining when request within limits should not call TokenBucket if the key already exists",
     "test"
   ],
@@ -601,164 +613,170 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber130",
+    "test-file/test/TokenBucket.test.js.html#lineNumber137",
     "TokenBucket #_incrementTokens",
     "test"
   ],
   [
     "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber140",
-    "TokenBucket #_incrementTokens should increment _currentLimit if not at limit",
+    "test-file/test/TokenBucket.test.js.html#lineNumber164",
+    "TokenBucket #_incrementTokens should gain config.increment tokens at the end of the config.incrementInterval",
     "test"
   ],
   [
     "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber146",
-    "TokenBucket #_incrementTokens should not increment _currentLimit past limit",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber31",
-    "TokenBucket #constructor",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber33",
-    "TokenBucket #constructor should not error if not given a config",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber71",
-    "TokenBucket #constructor with config",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber94",
-    "TokenBucket #constructor with config should create a increment",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber90",
-    "TokenBucket #constructor with config should create limit",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber86",
-    "TokenBucket #constructor with config should create maxLimit",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber82",
-    "TokenBucket #constructor with config should return an object",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber98",
-    "TokenBucket #constructor with config should set up an interval calling _incrementTokens",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber37",
-    "TokenBucket #constructor without config",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber60",
-    "TokenBucket #constructor without config should create a increment",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber56",
-    "TokenBucket #constructor without config should create limit",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber52",
-    "TokenBucket #constructor without config should create maxLimit",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber48",
-    "TokenBucket #constructor without config should return an object",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber64",
-    "TokenBucket #constructor without config should set up an interval calling _incrementTokens",
+    "test-file/test/TokenBucket.test.js.html#lineNumber147",
+    "TokenBucket #_incrementTokens should increment tokens if not at limit",
     "test"
   ],
   [
     "",
     "test-file/test/TokenBucket.test.js.html#lineNumber153",
+    "TokenBucket #_incrementTokens should not increment tokens past limit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber158",
+    "TokenBucket #_incrementTokens should not increment tokens past limit by addition",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber37",
+    "TokenBucket #constructor",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber39",
+    "TokenBucket #constructor should not error if not given a config",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber77",
+    "TokenBucket #constructor with config",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber100",
+    "TokenBucket #constructor with config should create a increment",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber96",
+    "TokenBucket #constructor with config should create limit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber92",
+    "TokenBucket #constructor with config should create maxLimit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber88",
+    "TokenBucket #constructor with config should return an object",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber104",
+    "TokenBucket #constructor with config should set up an interval calling _incrementTokens",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber43",
+    "TokenBucket #constructor without config",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber66",
+    "TokenBucket #constructor without config should create a increment",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber62",
+    "TokenBucket #constructor without config should create limit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber58",
+    "TokenBucket #constructor without config should create maxLimit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber54",
+    "TokenBucket #constructor without config should return an object",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber70",
+    "TokenBucket #constructor without config should set up an interval calling _incrementTokens",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/TokenBucket.test.js.html#lineNumber173",
     "TokenBucket #decrementTokens",
     "test"
   ],
   [
     "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber163",
-    "TokenBucket #decrementTokens should decrement limit when below limit",
+    "test-file/test/TokenBucket.test.js.html#lineNumber183",
+    "TokenBucket #decrementTokens should decrement tokens when enough tokens are available",
     "test"
   ],
   [
     "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber168",
-    "TokenBucket #decrementTokens should not decrement limit if already at limit",
+    "test-file/test/TokenBucket.test.js.html#lineNumber193",
+    "TokenBucket #decrementTokens should take an amount and decrement that given amount of tokens",
     "test"
   ],
   [
     "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber174",
-    "TokenBucket #decrementTokens should reset at the end of the period",
+    "test-file/test/TokenBucket.test.js.html#lineNumber188",
+    "TokenBucket #decrementTokens should throw error if tokens are less than the decrement amount",
     "test"
   ],
   [
     "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber180",
-    "TokenBucket #decrementTokens should take an amount",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber110",
+    "test-file/test/TokenBucket.test.js.html#lineNumber116",
     "TokenBucket #destroy",
     "test"
   ],
   [
     "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber119",
+    "test-file/test/TokenBucket.test.js.html#lineNumber125",
     "TokenBucket #destroy should clear the interval",
     "test"
   ],
   [
     "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber124",
+    "test-file/test/TokenBucket.test.js.html#lineNumber130",
     "TokenBucket #destroy should destroy the interval",
     "test"
   ],
   [
     "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber187",
+    "test-file/test/TokenBucket.test.js.html#lineNumber200",
     "TokenBucket #getTokensRemaining",
     "test"
   ],
   [
     "",
-    "test-file/test/TokenBucket.test.js.html#lineNumber197",
-    "TokenBucket #getTokensRemaining should return the limit",
+    "test-file/test/TokenBucket.test.js.html#lineNumber210",
+    "TokenBucket #getTokensRemaining should return the tokens remaining",
     "test"
   ],
   [

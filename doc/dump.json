@@ -10,7 +10,7 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\n\nconst TokenBucket = require('./TokenBucket');\nconst _           = require('lodash');\n\n/**\n * RateLimiter Class\n *\n * Handles creation and destruction of TokenBuckets by key.\n */\nclass RateLimiter {\n\n  /**\n   * Creates a RateLimiter object.\n   *\n   * @param {object} config configuration values\n   * @param {integer} config.limit The max amount of tokens per period.\n   * @param {integer} config.period The time in ms before tokens will increment.\n   * @param {integer} config.increment The amount of tokens that will increment each period.\n   */\n  constructor(config) {\n    let limit     = null;\n    let period    = null;\n    let increment = null;\n\n    if (config != null) {\n      limit     = config.limit;\n      period    = config.period;\n      increment = config.increment;\n    }\n\n    this.config = { limit, period, increment };\n    this.tokenBuckets = {};\n  }\n\n  /**\n   * Cleans up each TokenBucket and nulls the array.\n   */\n  destroy() {\n    _.each(this.tokenBuckets, (value, key) => {\n      this.tokenBuckets[key].destroy();\n      delete this.tokenBuckets[key];\n    });\n  }\n\n  /**\n   * Helper to throw an error if the key is invalid.\n   *\n   * @param {key} key The identifier for the request\n   * @throws {Error} throw error when key is invalid\n   * @private\n   */\n  _errorCheckForKey(key) {\n    if (key == null || typeof(key) != 'string') {\n      throw new Error('Error: key is required.');\n    }\n  }\n\n  /**\n   * Helper to create a new TokenBucket if needed.\n   *\n   * @param {string} key The identifier for the request\n   * @private\n   */\n  _createTokenBucket(key) {\n    this._errorCheckForKey(key);\n\n    if (this.tokenBuckets[key] == null) {\n      const limit = this.config.limit;\n      const period = this.config.period;\n\n      this.tokenBuckets[key] = new TokenBucket({ limit, period });\n    }\n  }\n\n  /**\n   * Appropriately decrements the remaining token availability\n   * when called and returns the remainder.\n   *\n   * @param {string} key The identifier for the request\n   * @param {integer} [amount] The number to decrement by\n   * @return {integer} Remaining request count\n   */\n  decrementTokens(key, amount) {\n    this._errorCheckForKey(key);\n    this._createTokenBucket(key);\n    this.tokenBuckets[key].decrementTokens(amount);\n\n    return this.tokenBuckets[key].getTokensRemaining();\n  }\n\n  /**\n   * Returns the remaining request count for the given key.\n   * If the key doesn't already exist, it will create it.\n   *\n   * @param {string} key The identifier for the request\n   * @return {integer} Remaining request count\n   */\n  getTokensRemaining(key) {\n    this._errorCheckForKey(key);\n    this._createTokenBucket(key);\n\n    return this.tokenBuckets[key].getTokensRemaining();\n  }\n\n}\n\nmodule.exports = RateLimiter;\n"
+    "content": "'use strict';\n\nconst TokenBucket = require('./TokenBucket');\nconst _           = require('lodash');\n\n/**\n * RateLimiter Class\n *\n * Handles creation and destruction of TokenBuckets by key.\n */\nclass RateLimiter {\n\n  /**\n   * Creates a RateLimiter object.\n   *\n   * @param {object} config configuration values\n   * @param {integer} config.limit The max amount of tokens per incrementInterval.\n   * @param {integer} config.incrementInterval The time in ms before tokens will increment.\n   * @param {integer} config.increment The amount of tokens that will increment each incrementInterval.\n   */\n  constructor(config) {\n    let limit             = null;\n    let incrementInterval = null;\n    let increment         = null;\n\n    if (config != null) {\n      limit             = config.limit;\n      incrementInterval = config.incrementInterval;\n      increment         = config.increment;\n    }\n\n    this.config = { limit, incrementInterval, increment };\n    this.tokenBuckets = {};\n\n    this._interval = setInterval(() => {\n      this._cleanup();\n    }, incrementInterval);\n  }\n\n  /**\n   * Cleans up unused TokenBuckets\n   */\n  _cleanup() {\n    _.each(this.tokenBuckets, (value, key) => {\n      const tokenBucket = this.tokenBuckets[key];\n      if (tokenBucket.tokens == tokenBucket.limit) {\n        tokenBucket.destroy();\n        delete this.tokenBuckets[key];\n      }\n    });\n  }\n\n  /**\n   * Cleans up all TokenBuckets and nulls the array.\n   */\n  destroy() {\n    _.each(this.tokenBuckets, (value, key) => {\n      this.tokenBuckets[key].destroy();\n      delete this.tokenBuckets[key];\n    });\n  }\n\n  /**\n   * Helper to throw an error if the key is invalid.\n   *\n   * @param {key} key The identifier for the request\n   * @throws {Error} throw error when key is invalid\n   * @private\n   */\n  _errorCheckForKey(key) {\n    if (key == null) {\n      throw new Error('key is required');\n    }\n    else if(typeof(key) != 'string') {\n      throw new Error('key is not a string');\n    }\n  }\n\n  /**\n   * Helper to create a new TokenBucket if needed.\n   *\n   * @param {string} key The identifier for the request\n   * @private\n   */\n  _getTokenBucket(key) {\n    this._errorCheckForKey(key);\n\n    if (this.tokenBuckets[key] == null) {\n      const limit = this.config.limit;\n      const increment = this.config.increment;\n      const incrementInterval = this.config.incrementInterval;\n\n      this.tokenBuckets[key] = new TokenBucket({ limit, increment, incrementInterval });\n    }\n\n    return this.tokenBuckets[key];\n  }\n\n  /**\n   * Appropriately decrements the remaining token availability\n   * when called and returns the remainder.\n   *\n   * @param {string} key The identifier for the request\n   * @param {integer} [amount] The number to decrement by\n   * @return {integer} Remaining request count\n   */\n  decrementTokens(key, amount) {\n    const tokenBucket = this._getTokenBucket(key);\n\n    return tokenBucket.decrementTokens(amount);\n  }\n\n  /**\n   * Returns the remaining request count for the given key.\n   * If the key doesn't already exist, it will create it.\n   *\n   * @param {string} key The identifier for the request\n   * @return {integer} Remaining request count\n   */\n  getTokensRemaining(key) {\n    const tokenBucket = this._getTokenBucket(key);\n\n    return tokenBucket.getTokensRemaining();\n  }\n\n}\n\nmodule.exports = RateLimiter;\n"
   },
   {
     "__docId__": 1,
@@ -100,7 +100,7 @@
         "spread": false,
         "optional": false,
         "name": "config.limit",
-        "description": "The max amount of tokens per period."
+        "description": "The max amount of tokens per incrementInterval."
       },
       {
         "nullable": null,
@@ -109,7 +109,7 @@
         ],
         "spread": false,
         "optional": false,
-        "name": "config.period",
+        "name": "config.incrementInterval",
         "description": "The time in ms before tokens will increment."
       },
       {
@@ -120,7 +120,7 @@
         "spread": false,
         "optional": false,
         "name": "config.increment",
-        "description": "The amount of tokens that will increment each period."
+        "description": "The amount of tokens that will increment each incrementInterval."
       }
     ],
     "generator": false
@@ -163,6 +163,38 @@
   },
   {
     "__docId__": 7,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_interval",
+    "memberof": "src/RateLimiter.js~RateLimiter",
+    "longname": "src/RateLimiter.js~RateLimiter#_interval",
+    "access": null,
+    "description": null,
+    "lineNumber": 35,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 8,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "_cleanup",
+    "memberof": "src/RateLimiter.js~RateLimiter",
+    "longname": "src/RateLimiter.js~RateLimiter#_cleanup",
+    "access": null,
+    "description": "Cleans up unused TokenBuckets",
+    "lineNumber": 43,
+    "params": [],
+    "generator": false
+  },
+  {
+    "__docId__": 9,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -170,13 +202,13 @@
     "memberof": "src/RateLimiter.js~RateLimiter",
     "longname": "src/RateLimiter.js~RateLimiter#destroy",
     "access": null,
-    "description": "Cleans up each TokenBucket and nulls the array.",
-    "lineNumber": 39,
+    "description": "Cleans up all TokenBuckets and nulls the array.",
+    "lineNumber": 56,
     "params": [],
     "generator": false
   },
   {
-    "__docId__": 8,
+    "__docId__": 10,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -185,7 +217,7 @@
     "longname": "src/RateLimiter.js~RateLimiter#_errorCheckForKey",
     "access": "private",
     "description": "Helper to throw an error if the key is invalid.",
-    "lineNumber": 53,
+    "lineNumber": 70,
     "params": [
       {
         "nullable": null,
@@ -209,16 +241,16 @@
     "generator": false
   },
   {
-    "__docId__": 9,
+    "__docId__": 11,
     "kind": "method",
     "static": false,
     "variation": null,
-    "name": "_createTokenBucket",
+    "name": "_getTokenBucket",
     "memberof": "src/RateLimiter.js~RateLimiter",
-    "longname": "src/RateLimiter.js~RateLimiter#_createTokenBucket",
+    "longname": "src/RateLimiter.js~RateLimiter#_getTokenBucket",
     "access": "private",
     "description": "Helper to create a new TokenBucket if needed.",
-    "lineNumber": 65,
+    "lineNumber": 85,
     "params": [
       {
         "nullable": null,
@@ -231,10 +263,15 @@
         "description": "The identifier for the request"
       }
     ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
     "generator": false
   },
   {
-    "__docId__": 10,
+    "__docId__": 12,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -243,7 +280,7 @@
     "longname": "src/RateLimiter.js~RateLimiter#decrementTokens",
     "access": null,
     "description": "Appropriately decrements the remaining token availability\nwhen called and returns the remainder.",
-    "lineNumber": 84,
+    "lineNumber": 107,
     "params": [
       {
         "nullable": null,
@@ -277,7 +314,7 @@
     "generator": false
   },
   {
-    "__docId__": 11,
+    "__docId__": 13,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -286,7 +323,7 @@
     "longname": "src/RateLimiter.js~RateLimiter#getTokensRemaining",
     "access": null,
     "description": "Returns the remaining request count for the given key.\nIf the key doesn't already exist, it will create it.",
-    "lineNumber": 99,
+    "lineNumber": 120,
     "params": [
       {
         "nullable": null,
@@ -310,7 +347,7 @@
     "generator": false
   },
   {
-    "__docId__": 12,
+    "__docId__": 14,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -320,10 +357,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\n\nconst DEFAULT_LIMIT     = 25;\nconst DEFAULT_PERIOD    = 5000;\nconst DEFAULT_INCREMENT = 1;\n\n/**\n * TokenBucket\n *\n * Handles how many tokens are available at any given time based on\n * the configuration set and the token bucket algorithm.\n *\n * @see https://en.wikipedia.org/wiki/Token_bucket\n */\nclass TokenBucket {\n\n  /**\n   * Creates a TokenBucket object.\n   *\n   * @param {object} config configuration values\n   * @param {integer} [config.limit=25] The max amount of tokens per period.\n   * @param {integer} [config.period=5000] The time in ms before tokens will increment.\n   * @param {integer} [config.increment=1] The amount of tokens that will increment each period.\n   */\n  constructor(config) {\n    config = config || {};\n\n    const period    = config.period || DEFAULT_PERIOD;\n\n    this.limit = this.tokens = config.limit || DEFAULT_LIMIT;\n    this.increment = config.increment || DEFAULT_INCREMENT;\n\n    this._interval = setInterval(() => {\n      this._incrementTokens();\n    }, period);\n  }\n\n  /**\n   * Cleans up the interval set by the constructor.\n   */\n  destroy() {\n    clearInterval(this._interval);\n    this._interval = null;\n  }\n\n  /**\n   * Helper to increment tokens on the interval.\n   *\n   * @private\n   */\n  _incrementTokens() {\n    if (this.tokens < this.limit) {\n      this.tokens += this.increment;\n    }\n  }\n\n  /**\n   * Decrements the amount of tokens available based on amount\n   * and returns the value.\n   *\n   * @param {integer} [amount=1] The number to decrement by\n   * @return {integer} The remaining available requests for the identifier\n   */\n  decrementTokens(amount) {\n    amount = amount || 1;\n\n    if (this.tokens > 0) {\n      this.tokens -= amount;\n    }\n\n    return this.tokens; \n  }\n\n  /**\n   * Returns the currently available tokens.\n   *\n   * @return {integer} The remaining available requests for the identifier\n   */\n  getTokensRemaining() {\n    return this.tokens;\n  }\n\n};\n\nmodule.exports = TokenBucket;\n"
+    "content": "'use strict';\n\nconst DEFAULT_LIMIT              = 25;\nconst DEFAULT_INCREMENT_INTERVAL = 5000;\nconst DEFAULT_INCREMENT          = 1;\n\n/**\n * TokenBucket\n *\n * Handles how many tokens are available at any given time based on\n * the configuration set and the token bucket algorithm.\n *\n * @see https://en.wikipedia.org/wiki/Token_bucket\n */\nclass TokenBucket {\n\n  /**\n   * Creates a TokenBucket object.\n   *\n   * @param {object} config configuration values\n   * @param {integer} [config.limit=25] The max amount of tokens per incrementInterval.\n   * @param {integer} [config.incrementInterval=5000] The time in ms before tokens will increment.\n   * @param {integer} [config.increment=1] The amount of tokens that will increment each incrementInterval.\n   */\n  constructor(config) {\n    config = config || {};\n\n    const incrementInterval = config.incrementInterval || DEFAULT_INCREMENT_INTERVAL;\n\n    this.limit = this.tokens = config.limit || DEFAULT_LIMIT;\n    this.increment = config.increment || DEFAULT_INCREMENT;\n\n    this._interval = setInterval(() => {\n      this._incrementTokens();\n    }, incrementInterval);\n  }\n\n  /**\n   * Cleans up the interval set by the constructor.\n   */\n  destroy() {\n    clearInterval(this._interval);\n    this._interval = null;\n  }\n\n  /**\n   * Helper to increment tokens on the interval.\n   *\n   * @private\n   */\n  _incrementTokens() {\n    if (this.tokens < this.limit) {\n      this.tokens += this.increment;\n\n      if (this.tokens > this.limit) {\n        this.tokens = this.limit;\n      }\n    }\n  }\n\n  /**\n   * Decrements the amount of tokens available based on amount\n   * and returns the value.\n   *\n   * @param {integer} [amount=1] The number to decrement by\n   * @return {integer} The remaining available requests for the identifier\n   */\n  decrementTokens(amount) {\n    amount = amount || 1;\n\n    if (this.tokens >= amount) {\n      this.tokens -= amount;\n    }\n    else {\n      throw new Error('not enough tokens');\n    }\n\n    return this.tokens; \n  }\n\n  /**\n   * Returns the currently available tokens.\n   *\n   * @return {integer} The remaining available requests for the identifier\n   */\n  getTokensRemaining() {\n    return this.tokens;\n  }\n\n};\n\nmodule.exports = TokenBucket;\n"
   },
   {
-    "__docId__": 13,
+    "__docId__": 15,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -344,13 +381,13 @@
     }
   },
   {
-    "__docId__": 14,
+    "__docId__": 16,
     "kind": "variable",
     "static": true,
     "variation": null,
-    "name": "DEFAULT_PERIOD",
+    "name": "DEFAULT_INCREMENT_INTERVAL",
     "memberof": "src/TokenBucket.js",
-    "longname": "src/TokenBucket.js~DEFAULT_PERIOD",
+    "longname": "src/TokenBucket.js~DEFAULT_INCREMENT_INTERVAL",
     "access": null,
     "export": false,
     "importPath": "simple-limiter/src/TokenBucket.js",
@@ -365,7 +402,7 @@
     }
   },
   {
-    "__docId__": 15,
+    "__docId__": 17,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -386,7 +423,7 @@
     }
   },
   {
-    "__docId__": 16,
+    "__docId__": 18,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -405,7 +442,7 @@
     "interface": false
   },
   {
-    "__docId__": 17,
+    "__docId__": 19,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -436,7 +473,7 @@
         "defaultValue": "25",
         "defaultRaw": 25,
         "name": "config.limit",
-        "description": "The max amount of tokens per period."
+        "description": "The max amount of tokens per incrementInterval."
       },
       {
         "nullable": null,
@@ -447,7 +484,7 @@
         "optional": true,
         "defaultValue": "5000",
         "defaultRaw": 5000,
-        "name": "config.period",
+        "name": "config.incrementInterval",
         "description": "The time in ms before tokens will increment."
       },
       {
@@ -460,13 +497,13 @@
         "defaultValue": "1",
         "defaultRaw": 1,
         "name": "config.increment",
-        "description": "The amount of tokens that will increment each period."
+        "description": "The amount of tokens that will increment each incrementInterval."
       }
     ],
     "generator": false
   },
   {
-    "__docId__": 18,
+    "__docId__": 20,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -484,7 +521,7 @@
     }
   },
   {
-    "__docId__": 19,
+    "__docId__": 21,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -502,7 +539,7 @@
     }
   },
   {
-    "__docId__": 20,
+    "__docId__": 22,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -520,7 +557,7 @@
     }
   },
   {
-    "__docId__": 21,
+    "__docId__": 23,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -534,7 +571,7 @@
     "generator": false
   },
   {
-    "__docId__": 22,
+    "__docId__": 24,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -552,7 +589,7 @@
     }
   },
   {
-    "__docId__": 23,
+    "__docId__": 25,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -566,7 +603,7 @@
     "generator": false
   },
   {
-    "__docId__": 24,
+    "__docId__": 26,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -584,7 +621,25 @@
     }
   },
   {
-    "__docId__": 25,
+    "__docId__": 27,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "tokens",
+    "memberof": "src/TokenBucket.js~TokenBucket",
+    "longname": "src/TokenBucket.js~TokenBucket#tokens",
+    "access": null,
+    "description": null,
+    "lineNumber": 56,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 28,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -593,7 +648,7 @@
     "longname": "src/TokenBucket.js~TokenBucket#decrementTokens",
     "access": null,
     "description": "Decrements the amount of tokens available based on amount\nand returns the value.",
-    "lineNumber": 64,
+    "lineNumber": 68,
     "params": [
       {
         "nullable": null,
@@ -619,7 +674,7 @@
     "generator": false
   },
   {
-    "__docId__": 26,
+    "__docId__": 29,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -628,7 +683,7 @@
     "longname": "src/TokenBucket.js~TokenBucket#tokens",
     "access": null,
     "description": null,
-    "lineNumber": 68,
+    "lineNumber": 72,
     "undocument": true,
     "type": {
       "types": [
@@ -637,7 +692,7 @@
     }
   },
   {
-    "__docId__": 27,
+    "__docId__": 30,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -646,7 +701,7 @@
     "longname": "src/TokenBucket.js~TokenBucket#getTokensRemaining",
     "access": null,
     "description": "Returns the currently available tokens.",
-    "lineNumber": 79,
+    "lineNumber": 86,
     "params": [],
     "return": {
       "nullable": null,
@@ -659,7 +714,7 @@
     "generator": false
   },
   {
-    "__docId__": 28,
+    "__docId__": 31,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -672,7 +727,7 @@
     "content": "'use strict';\n\nmodule.exports.RateLimiter = require('./RateLimiter');\nmodule.exports.TokenBucket = require('./TokenBucket');\n"
   },
   {
-    "__docId__": 30,
+    "__docId__": 33,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -685,7 +740,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 31,
+    "__docId__": 34,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -698,7 +753,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 32,
+    "__docId__": 35,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -711,7 +766,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 33,
+    "__docId__": 36,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -724,7 +779,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 34,
+    "__docId__": 37,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -737,7 +792,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 35,
+    "__docId__": 38,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -750,7 +805,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 36,
+    "__docId__": 39,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -763,7 +818,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 37,
+    "__docId__": 40,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -776,7 +831,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 38,
+    "__docId__": 41,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -789,7 +844,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 39,
+    "__docId__": 42,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -802,7 +857,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 40,
+    "__docId__": 43,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -815,7 +870,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 41,
+    "__docId__": 44,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -828,7 +883,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 42,
+    "__docId__": 45,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -841,7 +896,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 43,
+    "__docId__": 46,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -854,7 +909,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 44,
+    "__docId__": 47,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -867,7 +922,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 45,
+    "__docId__": 48,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -880,7 +935,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 46,
+    "__docId__": 49,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -893,7 +948,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 47,
+    "__docId__": 50,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -906,7 +961,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 48,
+    "__docId__": 51,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -919,7 +974,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 49,
+    "__docId__": 52,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -932,7 +987,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 50,
+    "__docId__": 53,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -945,7 +1000,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 51,
+    "__docId__": 54,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -958,7 +1013,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 52,
+    "__docId__": 55,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -971,7 +1026,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 53,
+    "__docId__": 56,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -984,7 +1039,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 54,
+    "__docId__": 57,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -997,7 +1052,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 55,
+    "__docId__": 58,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1010,7 +1065,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 56,
+    "__docId__": 59,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1023,7 +1078,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 57,
+    "__docId__": 60,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1036,7 +1091,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 58,
+    "__docId__": 61,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1049,7 +1104,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 59,
+    "__docId__": 62,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1062,7 +1117,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 60,
+    "__docId__": 63,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1075,7 +1130,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 61,
+    "__docId__": 64,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1088,7 +1143,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 62,
+    "__docId__": 65,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1101,7 +1156,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 63,
+    "__docId__": 66,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1114,7 +1169,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 64,
+    "__docId__": 67,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1127,7 +1182,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 65,
+    "__docId__": 68,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1140,7 +1195,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 66,
+    "__docId__": 69,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1153,7 +1208,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 67,
+    "__docId__": 70,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1166,7 +1221,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 68,
+    "__docId__": 71,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1179,7 +1234,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 69,
+    "__docId__": 72,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1192,7 +1247,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 70,
+    "__docId__": 73,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1205,7 +1260,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 71,
+    "__docId__": 74,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1218,7 +1273,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 72,
+    "__docId__": 75,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1231,7 +1286,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 73,
+    "__docId__": 76,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1244,7 +1299,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 74,
+    "__docId__": 77,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1257,7 +1312,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 75,
+    "__docId__": 78,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1270,7 +1325,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 76,
+    "__docId__": 79,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1283,7 +1338,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 78,
+    "__docId__": 81,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1296,7 +1351,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 79,
+    "__docId__": 82,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1309,7 +1364,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 80,
+    "__docId__": 83,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1322,7 +1377,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 81,
+    "__docId__": 84,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1335,7 +1390,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 82,
+    "__docId__": 85,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1348,7 +1403,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 83,
+    "__docId__": 86,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1361,7 +1416,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 84,
+    "__docId__": 87,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1374,7 +1429,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 85,
+    "__docId__": 88,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1387,7 +1442,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 86,
+    "__docId__": 89,
     "kind": "testFile",
     "static": true,
     "variation": null,
@@ -1397,10 +1452,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nconst chai       = require('chai');\nconst sinon      = require('sinon');\nconst sinonChai  = require('sinon-chai');\nconst proxyquire = require('proxyquire');\nconst _          = require('lodash');\n\nchai.use(sinonChai);\n\nconst expect = chai.expect;\n\ndescribe('RateLimiter', () => {\n  let RateLimiter;\n  let rateLimiter;\n  let config;\n  let key;\n  let TokenBucketStub;\n  let sandbox;\n\n  beforeEach(() => {\n    config = {\n      limit     : 20,\n      period    : 5000,\n      increment : 2,\n    };\n    const TokenBucket = require('../src/TokenBucket.js');\n    const mockTokenBucket = sinon.createStubInstance(TokenBucket);\n    TokenBucketStub = sinon.stub().returns(mockTokenBucket);\n\n    RateLimiter = proxyquire('../src/RateLimiter.js', {\n      './TokenBucket': TokenBucketStub,\n    });\n  });\n\n  describe('#constructor', () => {\n    it('should not error if not given a config', () => {\n      expect(() => { return new RateLimiter(); }).not.to.throw(Error);\n    });\n\n    describe('without config', () => {\n\n      beforeEach(() => {\n        rateLimiter = new RateLimiter();\n      });\n\n      afterEach(() => {\n        rateLimiter.destroy();\n      });\n\n      it('should return an object', () => {\n        expect(rateLimiter).to.be.an('object');\n      });\n\n      it('should default config.limit to null', () => {\n        expect(rateLimiter.config.limit).to.not.exist;\n      });\n\n      it('should default config.period to null', () => {\n        expect(rateLimiter.config.period).to.not.exist;\n      });\n\n      it('should default config.increment to null', () => {\n        expect(rateLimiter.config.increment).to.not.exist;\n      });\n\n      it('should create tokenBuckets', () => {\n        expect(rateLimiter.tokenBuckets).to.exist;\n      });\n\n    });\n\n    describe('with config', () => {\n\n      beforeEach(() => {\n        config = {\n          limit     : 200,\n          period    : 8000,\n          increment : 2,\n        };\n        rateLimiter = new RateLimiter(config);\n      });\n\n      afterEach(() => {\n        rateLimiter.destroy();\n      });\n\n      it('should return an object', () => {\n        expect(rateLimiter).to.be.an('object');\n      });\n\n      it('should assign given period to config.limit', () => {\n        expect(rateLimiter.config.limit).to.equal(config.limit);\n      });\n\n      it('should assign given period to config.period', () => {\n        expect(rateLimiter.config.period).to.equal(config.period);\n      });\n\n      it('should assign given period to config.increment', () => {\n        expect(rateLimiter.config.increment).to.equal(config.increment);\n      });\n\n      it('should create tokenBuckets', () => {\n        expect(rateLimiter.tokenBuckets).to.exist;\n      });\n\n    });\n\n  });\n\n  describe('#destroy', () => {\n    let destroyOne;\n    let destroyTwo;\n    let destroyThree;\n    let sandbox;\n\n    beforeEach(() => {\n      rateLimiter = new RateLimiter(config);\n      rateLimiter.getTokensRemaining('one');\n      rateLimiter.getTokensRemaining('two');\n      rateLimiter.getTokensRemaining('three');\n      destroyOne = rateLimiter.tokenBuckets.one.destroy;\n      destroyTwo = rateLimiter.tokenBuckets.two.destroy;\n      destroyThree = rateLimiter.tokenBuckets.three.destroy;\n      rateLimiter.destroy();\n    });\n\n    it('should call destroy() on each key in tokenBuckets', () => {\n      expect(destroyOne).to.have.been.called;\n      expect(destroyTwo).to.have.been.called;\n      expect(destroyThree).to.have.been.called;\n    });\n\n    it('should null out the objects', () => {\n      expect(rateLimiter.tokenBuckets.one).to.not.exist;\n      expect(rateLimiter.tokenBuckets.two).to.not.exist;\n      expect(rateLimiter.tokenBuckets.three).to.not.exist;\n    });\n\n  });\n\n  describe('#decrementTokens', () => {\n    let amount;\n\n    beforeEach(() => {\n      rateLimiter = new RateLimiter(config);\n      key = 'testorama';\n      amount = 5;\n    });\n\n    afterEach(() => {\n      rateLimiter.destroy();\n    });\n\n    describe('key validation', () => {\n\n      it('should error if nothing is given', () => {\n        expect(() => { rateLimiter.decrementTokens(); }).to.throw(Error);\n      });\n\n      describe('when key is not on an object', () => {\n\n        it('should error on int', () => {\n          expect(() => { rateLimiter.decrementTokens(3); }).to.throw(Error);\n        });\n\n        it('should error on function', () => {\n          expect(() => { rateLimiter.decrementTokens(() => {}); }).to.throw(Error);\n        });\n\n        it('should error on object', () => {\n          expect(() => { rateLimiter.decrementTokens({ key }); }).to.throw(Error);\n        });\n\n      });\n\n      it('should not error on valid key', () => {\n        expect(() => { rateLimiter.decrementTokens(key); }).to.not.throw(Error);\n      });\n\n    });\n\n    it('should call TokenBucket if the key is new', () => {\n      rateLimiter.decrementTokens(key);\n      expect(TokenBucketStub).to.have.been.called;\n    });\n\n    it('should not call TokenBucket if the key already exists', () => {\n      rateLimiter.decrementTokens(key);\n      rateLimiter.decrementTokens(key);\n      rateLimiter.decrementTokens(key);\n      rateLimiter.decrementTokens(key);\n      expect(TokenBucketStub).to.have.been.calledOnce;\n    });\n\n    it('should call decrementTokens on TokenBucket instance', () => {\n      rateLimiter.decrementTokens(key);\n      expect(rateLimiter.tokenBuckets[key].decrementTokens).to.have.been.called;\n    });\n\n    it('should call decrementTokens with an amount if given one', () => {\n      rateLimiter.decrementTokens(key, 5);\n      expect(rateLimiter.tokenBuckets[key].decrementTokens).to.have.been.calledWith(5);\n    });\n\n  });\n\n  describe('#getTokensRemaining', () => {\n\n    describe('when request within limits', () => {\n\n      beforeEach(() => {\n        rateLimiter = new RateLimiter(config);\n        key = 'test';\n      });\n\n      afterEach(() => {\n        rateLimiter.destroy();\n      });\n\n      describe('key validation', () => {\n\n        it('should error if no key is given', () => {\n          expect(() => { rateLimiter.getTokensRemaining(); }).to.throw(Error);\n        });\n\n        describe('when key is not a string', () => {\n\n          it('should error on int', () => {\n            expect(() => { rateLimiter.getTokensRemaining(3); }).to.throw(Error);\n          });\n\n          it('should error on function', () => {\n            expect(() => { rateLimiter.getTokensRemaining(() => {}); }).to.throw(Error);\n          });\n\n          it('should error on object', () => {\n            expect(() => { rateLimiter.getTokensRemaining({ test: 'object' }) }).to.throw(Error);\n          });\n\n        });\n\n        it('should do nothing if a key is given', () => {\n          expect(() => { rateLimiter.getTokensRemaining('anything'); }).to.not.throw(Error);\n        });\n\n      });\n\n      it('should call TokenBucket if the key is new', () => {\n        rateLimiter.getTokensRemaining(key);\n        expect(TokenBucketStub).to.have.been.called;\n      });\n\n      it('should not call TokenBucket if the key already exists', () => {\n        rateLimiter.getTokensRemaining(key);\n        rateLimiter.getTokensRemaining(key);\n        rateLimiter.getTokensRemaining(key);\n        rateLimiter.getTokensRemaining(key);\n        expect(TokenBucketStub).to.have.been.calledOnce;\n      });\n\n      it('should call getTokensRemaining on TokenBucket instance', () => {\n        rateLimiter.getTokensRemaining(key);\n        expect(rateLimiter.tokenBuckets[key].getTokensRemaining).to.have.been.called;\n      });\n\n    });\n\n  });\n\n});\n"
+    "content": "'use strict';\nconst chai       = require('chai');\nconst sinon      = require('sinon');\nconst sinonChai  = require('sinon-chai');\nconst proxyquire = require('proxyquire');\nconst _          = require('lodash');\nconst START_TIME = 140000;\n\nchai.use(sinonChai);\n\nconst expect = chai.expect;\n\ndescribe('RateLimiter', () => {\n  let RateLimiter;\n  let rateLimiter;\n  let config;\n  let key;\n  let TokenBucketStub;\n  let sandbox;\n  let clock;\n\n  beforeEach(() => {\n    config = {\n      limit             : 20,\n      incrementInterval : 5000,\n      increment         : 2,\n    };\n    const TokenBucket = require('../src/TokenBucket.js');\n    const mockTokenBucket = sinon.createStubInstance(TokenBucket);\n    TokenBucketStub = sinon.stub().returns(mockTokenBucket);\n\n    RateLimiter = proxyquire('../src/RateLimiter.js', {\n      './TokenBucket': TokenBucketStub,\n    });\n    clock = sinon.useFakeTimers(START_TIME);\n  });\n\n  afterEach(() => {\n    clock.restore();\n  });\n\n  describe('#constructor', () => {\n    it('should not error if not given a config', () => {\n      expect(() => { return new RateLimiter(); }).not.to.throw(Error);\n    });\n\n    describe('without config', () => {\n\n      beforeEach(() => {\n        rateLimiter = new RateLimiter();\n      });\n\n      afterEach(() => {\n        rateLimiter.destroy();\n      });\n\n      it('should return an object', () => {\n        expect(rateLimiter).to.be.an('object');\n      });\n\n      it('should default config.limit to null', () => {\n        expect(rateLimiter.config.limit).to.not.exist;\n      });\n\n      it('should default config.incrementInterval to null', () => {\n        expect(rateLimiter.config.incrementInterval).to.not.exist;\n      });\n\n      it('should default config.increment to null', () => {\n        expect(rateLimiter.config.increment).to.not.exist;\n      });\n\n      it('should create tokenBuckets', () => {\n        expect(rateLimiter.tokenBuckets).to.exist;\n      });\n\n    });\n\n    describe('with config', () => {\n\n      beforeEach(() => {\n        config = {\n          limit             : 200,\n          incrementInterval : 8000,\n          increment         : 2,\n        };\n        rateLimiter = new RateLimiter(config);\n      });\n\n      afterEach(() => {\n        rateLimiter.destroy();\n      });\n\n      it('should return an object', () => {\n        expect(rateLimiter).to.be.an('object');\n      });\n\n      it('should assign given incrementInterval to config.limit', () => {\n        expect(rateLimiter.config.limit).to.equal(config.limit);\n      });\n\n      it('should assign given incrementInterval to config.incrementInterval', () => {\n        expect(rateLimiter.config.incrementInterval).to.equal(config.incrementInterval);\n      });\n\n      it('should assign given incrementInterval to config.increment', () => {\n        expect(rateLimiter.config.increment).to.equal(config.increment);\n      });\n\n      it('should create tokenBuckets', () => {\n        expect(rateLimiter.tokenBuckets).to.exist;\n      });\n\n    });\n\n  });\n\n  describe('#destroy', () => {\n    let destroyOne;\n    let destroyTwo;\n    let destroyThree;\n    let sandbox;\n\n    beforeEach(() => {\n      rateLimiter = new RateLimiter(config);\n      rateLimiter.getTokensRemaining('one');\n      rateLimiter.getTokensRemaining('two');\n      rateLimiter.getTokensRemaining('three');\n      destroyOne = rateLimiter.tokenBuckets.one.destroy;\n      destroyTwo = rateLimiter.tokenBuckets.two.destroy;\n      destroyThree = rateLimiter.tokenBuckets.three.destroy;\n      rateLimiter.destroy();\n    });\n\n    it('should call destroy() on each key in tokenBuckets', () => {\n      expect(destroyOne).to.have.been.called;\n      expect(destroyTwo).to.have.been.called;\n      expect(destroyThree).to.have.been.called;\n    });\n\n    it('should null out the objects', () => {\n      expect(rateLimiter.tokenBuckets.one).to.not.exist;\n      expect(rateLimiter.tokenBuckets.two).to.not.exist;\n      expect(rateLimiter.tokenBuckets.three).to.not.exist;\n    });\n\n  });\n\n  describe('#decrementTokens', () => {\n    let amount;\n\n    beforeEach(() => {\n      rateLimiter = new RateLimiter(config);\n      key = 'testorama';\n      amount = 5;\n    });\n\n    afterEach(() => {\n      rateLimiter.destroy();\n    });\n\n    describe('key validation', () => {\n\n      it('should error if nothing is given', () => {\n        expect(() => { rateLimiter.decrementTokens(); }).to.throw(Error);\n      });\n\n      describe('when key is not on an object', () => {\n\n        it('should error on int', () => {\n          expect(() => { rateLimiter.decrementTokens(3); }).to.throw(Error);\n        });\n\n        it('should error on function', () => {\n          expect(() => { rateLimiter.decrementTokens(() => {}); }).to.throw(Error);\n        });\n\n        it('should error on object', () => {\n          expect(() => { rateLimiter.decrementTokens({ key }); }).to.throw(Error);\n        });\n\n      });\n\n      it('should not error on valid key', () => {\n        expect(() => { rateLimiter.decrementTokens(key); }).to.not.throw(Error);\n      });\n\n    });\n\n    it('should call TokenBucket if the key is new', () => {\n      rateLimiter.decrementTokens(key);\n      expect(TokenBucketStub).to.have.been.calledWith(config);\n    });\n\n    it('should not call TokenBucket if the key already exists', () => {\n      rateLimiter.decrementTokens(key);\n      rateLimiter.decrementTokens(key);\n      rateLimiter.decrementTokens(key);\n      rateLimiter.decrementTokens(key);\n      expect(TokenBucketStub).to.have.been.calledOnce;\n    });\n\n    it('should call decrementTokens on TokenBucket instance', () => {\n      rateLimiter.decrementTokens(key);\n      expect(rateLimiter.tokenBuckets[key].decrementTokens).to.have.been.called;\n    });\n\n    it('should call decrementTokens with an amount if given one', () => {\n      rateLimiter.decrementTokens(key, 5);\n      expect(rateLimiter.tokenBuckets[key].decrementTokens).to.have.been.calledWith(5);\n    });\n\n  });\n\n  describe('#getTokensRemaining', () => {\n\n    describe('when request within limits', () => {\n\n      beforeEach(() => {\n        rateLimiter = new RateLimiter(config);\n        key = 'test';\n      });\n\n      afterEach(() => {\n        rateLimiter.destroy();\n      });\n\n      describe('key validation', () => {\n\n        it('should error if no key is given', () => {\n          expect(() => { rateLimiter.getTokensRemaining(); }).to.throw(Error);\n        });\n\n        describe('when key is not a string', () => {\n\n          it('should error on int', () => {\n            expect(() => { rateLimiter.getTokensRemaining(3); }).to.throw(Error);\n          });\n\n          it('should error on function', () => {\n            expect(() => { rateLimiter.getTokensRemaining(() => {}); }).to.throw(Error);\n          });\n\n          it('should error on object', () => {\n            expect(() => { rateLimiter.getTokensRemaining({ test: 'object' }) }).to.throw(Error);\n          });\n\n        });\n\n        it('should do nothing if a key is given', () => {\n          expect(() => { rateLimiter.getTokensRemaining('anything'); }).to.not.throw(Error);\n        });\n\n      });\n\n      it('should call TokenBucket if the key is new', () => {\n        rateLimiter.getTokensRemaining(key);\n        expect(TokenBucketStub).to.have.been.calledWith(config);\n      });\n\n      it('should not call TokenBucket if the key already exists', () => {\n        rateLimiter.getTokensRemaining(key);\n        rateLimiter.getTokensRemaining(key);\n        rateLimiter.getTokensRemaining(key);\n        rateLimiter.getTokensRemaining(key);\n        expect(TokenBucketStub).to.have.been.calledOnce;\n      });\n\n      it('should call getTokensRemaining on TokenBucket instance', () => {\n        rateLimiter.getTokensRemaining(key);\n        expect(rateLimiter.tokenBuckets[key].getTokensRemaining).to.have.been.called;\n      });\n\n    });\n\n    it('should clean up tokenBuckets every incrementInterval', () => {\n      rateLimiter = new RateLimiter(config);\n      rateLimiter.getTokensRemaining('one');\n      rateLimiter.getTokensRemaining('two');\n      rateLimiter.getTokensRemaining('three');\n      clock.tick(config.incrementInterval);\n      expect(rateLimiter.tokenBuckets).to.be.empty;\n    });\n\n    it('should not clean up tokenBuckets that are active', () => {\n      rateLimiter = new RateLimiter(config);\n      rateLimiter.tokenBuckets = {\n        'one' : { tokens : config.limit, limit : config.limit, destroy : () => {} },\n        'two' : { tokens : config.limit, limit : config.limit, destroy : () => {} },\n      };\n      rateLimiter.getTokensRemaining('three');\n      const bucketThree = rateLimiter._getTokenBucket('three');\n      bucketThree.tokens = 9;\n      clock.tick(config.incrementInterval);\n      expect(rateLimiter.tokenBuckets).to.eql({ 'three' : bucketThree });\n    });\n\n  });\n\n});\n"
   },
   {
-    "__docId__": 87,
+    "__docId__": 90,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1411,10 +1466,10 @@
     "longname": "test/RateLimiter.test.js~describe0",
     "access": null,
     "description": "RateLimiter",
-    "lineNumber": 12
+    "lineNumber": 13
   },
   {
-    "__docId__": 88,
+    "__docId__": 91,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1425,10 +1480,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe1",
     "access": null,
     "description": "#constructor",
-    "lineNumber": 35
+    "lineNumber": 42
   },
   {
-    "__docId__": 89,
+    "__docId__": 92,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1439,10 +1494,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe1.it2",
     "access": null,
     "description": "should not error if not given a config",
-    "lineNumber": 36
+    "lineNumber": 43
   },
   {
-    "__docId__": 90,
+    "__docId__": 93,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1453,10 +1508,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe1.describe3",
     "access": null,
     "description": "without config",
-    "lineNumber": 40
+    "lineNumber": 47
   },
   {
-    "__docId__": 91,
+    "__docId__": 94,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1467,10 +1522,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe1.describe3.it4",
     "access": null,
     "description": "should return an object",
-    "lineNumber": 50
+    "lineNumber": 57
   },
   {
-    "__docId__": 92,
+    "__docId__": 95,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1481,10 +1536,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe1.describe3.it5",
     "access": null,
     "description": "should default config.limit to null",
-    "lineNumber": 54
+    "lineNumber": 61
   },
   {
-    "__docId__": 93,
+    "__docId__": 96,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1494,11 +1549,11 @@
     "testDepth": 3,
     "longname": "test/RateLimiter.test.js~describe0.describe1.describe3.it6",
     "access": null,
-    "description": "should default config.period to null",
-    "lineNumber": 58
+    "description": "should default config.incrementInterval to null",
+    "lineNumber": 65
   },
   {
-    "__docId__": 94,
+    "__docId__": 97,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1509,10 +1564,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe1.describe3.it7",
     "access": null,
     "description": "should default config.increment to null",
-    "lineNumber": 62
+    "lineNumber": 69
   },
   {
-    "__docId__": 95,
+    "__docId__": 98,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1523,10 +1578,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe1.describe3.it8",
     "access": null,
     "description": "should create tokenBuckets",
-    "lineNumber": 66
+    "lineNumber": 73
   },
   {
-    "__docId__": 96,
+    "__docId__": 99,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1537,10 +1592,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe1.describe9",
     "access": null,
     "description": "with config",
-    "lineNumber": 72
+    "lineNumber": 79
   },
   {
-    "__docId__": 97,
+    "__docId__": 100,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1551,10 +1606,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe1.describe9.it10",
     "access": null,
     "description": "should return an object",
-    "lineNumber": 87
+    "lineNumber": 94
   },
   {
-    "__docId__": 98,
+    "__docId__": 101,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1564,11 +1619,11 @@
     "testDepth": 3,
     "longname": "test/RateLimiter.test.js~describe0.describe1.describe9.it11",
     "access": null,
-    "description": "should assign given period to config.limit",
-    "lineNumber": 91
+    "description": "should assign given incrementInterval to config.limit",
+    "lineNumber": 98
   },
   {
-    "__docId__": 99,
+    "__docId__": 102,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1578,11 +1633,11 @@
     "testDepth": 3,
     "longname": "test/RateLimiter.test.js~describe0.describe1.describe9.it12",
     "access": null,
-    "description": "should assign given period to config.period",
-    "lineNumber": 95
+    "description": "should assign given incrementInterval to config.incrementInterval",
+    "lineNumber": 102
   },
   {
-    "__docId__": 100,
+    "__docId__": 103,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1592,11 +1647,11 @@
     "testDepth": 3,
     "longname": "test/RateLimiter.test.js~describe0.describe1.describe9.it13",
     "access": null,
-    "description": "should assign given period to config.increment",
-    "lineNumber": 99
+    "description": "should assign given incrementInterval to config.increment",
+    "lineNumber": 106
   },
   {
-    "__docId__": 101,
+    "__docId__": 104,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1607,10 +1662,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe1.describe9.it14",
     "access": null,
     "description": "should create tokenBuckets",
-    "lineNumber": 103
+    "lineNumber": 110
   },
   {
-    "__docId__": 102,
+    "__docId__": 105,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1621,10 +1676,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe15",
     "access": null,
     "description": "#destroy",
-    "lineNumber": 111
+    "lineNumber": 118
   },
   {
-    "__docId__": 103,
+    "__docId__": 106,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1635,10 +1690,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe15.it16",
     "access": null,
     "description": "should call destroy() on each key in tokenBuckets",
-    "lineNumber": 128
+    "lineNumber": 135
   },
   {
-    "__docId__": 104,
+    "__docId__": 107,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1649,10 +1704,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe15.it17",
     "access": null,
     "description": "should null out the objects",
-    "lineNumber": 134
+    "lineNumber": 141
   },
   {
-    "__docId__": 105,
+    "__docId__": 108,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1663,10 +1718,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe18",
     "access": null,
     "description": "#decrementTokens",
-    "lineNumber": 142
+    "lineNumber": 149
   },
   {
-    "__docId__": 106,
+    "__docId__": 109,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1677,10 +1732,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe18.describe19",
     "access": null,
     "description": "key validation",
-    "lineNumber": 155
+    "lineNumber": 162
   },
   {
-    "__docId__": 107,
+    "__docId__": 110,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1691,10 +1746,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe18.describe19.it20",
     "access": null,
     "description": "should error if nothing is given",
-    "lineNumber": 157
+    "lineNumber": 164
   },
   {
-    "__docId__": 108,
+    "__docId__": 111,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1705,10 +1760,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe18.describe19.describe21",
     "access": null,
     "description": "when key is not on an object",
-    "lineNumber": 161
+    "lineNumber": 168
   },
   {
-    "__docId__": 109,
+    "__docId__": 112,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1719,10 +1774,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe18.describe19.describe21.it22",
     "access": null,
     "description": "should error on int",
-    "lineNumber": 163
+    "lineNumber": 170
   },
   {
-    "__docId__": 110,
+    "__docId__": 113,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1733,10 +1788,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe18.describe19.describe21.it23",
     "access": null,
     "description": "should error on function",
-    "lineNumber": 167
+    "lineNumber": 174
   },
   {
-    "__docId__": 111,
+    "__docId__": 114,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1747,10 +1802,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe18.describe19.describe21.it24",
     "access": null,
     "description": "should error on object",
-    "lineNumber": 171
+    "lineNumber": 178
   },
   {
-    "__docId__": 112,
+    "__docId__": 115,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1761,10 +1816,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe18.describe19.it25",
     "access": null,
     "description": "should not error on valid key",
-    "lineNumber": 177
+    "lineNumber": 184
   },
   {
-    "__docId__": 113,
+    "__docId__": 116,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1775,10 +1830,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe18.it26",
     "access": null,
     "description": "should call TokenBucket if the key is new",
-    "lineNumber": 183
+    "lineNumber": 190
   },
   {
-    "__docId__": 114,
+    "__docId__": 117,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1789,10 +1844,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe18.it27",
     "access": null,
     "description": "should not call TokenBucket if the key already exists",
-    "lineNumber": 188
+    "lineNumber": 195
   },
   {
-    "__docId__": 115,
+    "__docId__": 118,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1803,10 +1858,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe18.it28",
     "access": null,
     "description": "should call decrementTokens on TokenBucket instance",
-    "lineNumber": 196
+    "lineNumber": 203
   },
   {
-    "__docId__": 116,
+    "__docId__": 119,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1817,10 +1872,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe18.it29",
     "access": null,
     "description": "should call decrementTokens with an amount if given one",
-    "lineNumber": 201
+    "lineNumber": 208
   },
   {
-    "__docId__": 117,
+    "__docId__": 120,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1831,10 +1886,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe30",
     "access": null,
     "description": "#getTokensRemaining",
-    "lineNumber": 208
+    "lineNumber": 215
   },
   {
-    "__docId__": 118,
+    "__docId__": 121,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1845,10 +1900,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe30.describe31",
     "access": null,
     "description": "when request within limits",
-    "lineNumber": 210
+    "lineNumber": 217
   },
   {
-    "__docId__": 119,
+    "__docId__": 122,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1859,10 +1914,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe30.describe31.describe32",
     "access": null,
     "description": "key validation",
-    "lineNumber": 221
+    "lineNumber": 228
   },
   {
-    "__docId__": 120,
+    "__docId__": 123,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1873,10 +1928,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe30.describe31.describe32.it33",
     "access": null,
     "description": "should error if no key is given",
-    "lineNumber": 223
+    "lineNumber": 230
   },
   {
-    "__docId__": 121,
+    "__docId__": 124,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1887,10 +1942,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe30.describe31.describe32.describe34",
     "access": null,
     "description": "when key is not a string",
-    "lineNumber": 227
+    "lineNumber": 234
   },
   {
-    "__docId__": 122,
+    "__docId__": 125,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1901,10 +1956,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe30.describe31.describe32.describe34.it35",
     "access": null,
     "description": "should error on int",
-    "lineNumber": 229
+    "lineNumber": 236
   },
   {
-    "__docId__": 123,
+    "__docId__": 126,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1915,10 +1970,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe30.describe31.describe32.describe34.it36",
     "access": null,
     "description": "should error on function",
-    "lineNumber": 233
+    "lineNumber": 240
   },
   {
-    "__docId__": 124,
+    "__docId__": 127,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1929,10 +1984,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe30.describe31.describe32.describe34.it37",
     "access": null,
     "description": "should error on object",
-    "lineNumber": 237
+    "lineNumber": 244
   },
   {
-    "__docId__": 125,
+    "__docId__": 128,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1943,10 +1998,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe30.describe31.describe32.it38",
     "access": null,
     "description": "should do nothing if a key is given",
-    "lineNumber": 243
+    "lineNumber": 250
   },
   {
-    "__docId__": 126,
+    "__docId__": 129,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1957,10 +2012,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe30.describe31.it39",
     "access": null,
     "description": "should call TokenBucket if the key is new",
-    "lineNumber": 249
+    "lineNumber": 256
   },
   {
-    "__docId__": 127,
+    "__docId__": 130,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1971,10 +2026,10 @@
     "longname": "test/RateLimiter.test.js~describe0.describe30.describe31.it40",
     "access": null,
     "description": "should not call TokenBucket if the key already exists",
-    "lineNumber": 254
+    "lineNumber": 261
   },
   {
-    "__docId__": 128,
+    "__docId__": 131,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1985,10 +2040,38 @@
     "longname": "test/RateLimiter.test.js~describe0.describe30.describe31.it41",
     "access": null,
     "description": "should call getTokensRemaining on TokenBucket instance",
-    "lineNumber": 262
+    "lineNumber": 269
   },
   {
-    "__docId__": 129,
+    "__docId__": 132,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it42",
+    "testId": 42,
+    "memberof": "test/RateLimiter.test.js~describe0.describe30",
+    "testDepth": 2,
+    "longname": "test/RateLimiter.test.js~describe0.describe30.it42",
+    "access": null,
+    "description": "should clean up tokenBuckets every incrementInterval",
+    "lineNumber": 276
+  },
+  {
+    "__docId__": 133,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it43",
+    "testId": 43,
+    "memberof": "test/RateLimiter.test.js~describe0.describe30",
+    "testDepth": 2,
+    "longname": "test/RateLimiter.test.js~describe0.describe30.it43",
+    "access": null,
+    "description": "should not clean up tokenBuckets that are active",
+    "lineNumber": 285
+  },
+  {
+    "__docId__": 134,
     "kind": "testFile",
     "static": true,
     "variation": null,
@@ -1998,398 +2081,412 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nconst chai       = require('chai');\nconst sinon      = require('sinon');\nconst sinonChai  = require('sinon-chai');\nconst START_TIME = 140000;\n\nchai.use(sinonChai);\n\nconst expect = chai.expect;\n\ndescribe('TokenBucket', () => {\n  let TokenBucket;\n  let config;\n  let clock;\n  let tokenBucket;\n\n  beforeEach(() => {\n    TokenBucket = require('../src/TokenBucket.js');\n    config = { // default config\n      period    : 5000,\n      limit     : 25,\n      increment : 1,\n    };\n    clock = sinon.useFakeTimers(START_TIME);\n  });\n\n  afterEach(() => {\n    clock.restore();\n  });\n\n  describe('#constructor', () => {\n\n    it('should not error if not given a config', () => {\n      expect(() => { return new TokenBucket(); }).not.to.throw(Error);\n    });\n\n    describe('without config', () => {\n\n      beforeEach(() => {\n        tokenBucket = new TokenBucket();\n        sinon.spy(tokenBucket, '_incrementTokens');\n      });\n\n      afterEach(() => {\n        tokenBucket.destroy();\n      });\n\n      it('should return an object', () => {\n        expect(tokenBucket).to.be.an('object');\n      });\n\n      it('should create maxLimit', () => {\n        expect(tokenBucket.limit).to.exist;\n      });\n\n      it('should create limit', () => {\n        expect(tokenBucket.tokens).to.exist;\n      });\n\n      it('should create a increment', () => {\n        expect(tokenBucket.increment).to.exist;\n      });\n\n      it('should set up an interval calling _incrementTokens', () => {\n        clock.tick(config.period + 1);\n        expect(tokenBucket._incrementTokens).to.have.been.called;\n      });\n\n    });\n\n    describe('with config', () => {\n\n      beforeEach(() => {\n        tokenBucket = new TokenBucket(config);\n        sinon.spy(tokenBucket, '_incrementTokens');\n      });\n\n      afterEach(() => {\n        tokenBucket.destroy();\n      });\n\n      it('should return an object', () => {\n        expect(tokenBucket).to.be.an('object');\n      });\n\n      it('should create maxLimit', () => {\n        expect(tokenBucket.limit).to.exist;\n      });\n\n      it('should create limit', () => {\n        expect(tokenBucket.tokens).to.exist;\n      });\n\n      it('should create a increment', () => {\n        expect(tokenBucket.increment).to.exist;\n      });\n\n      it('should set up an interval calling _incrementTokens', () => {\n        clock.tick(config.period + 1);\n        expect(tokenBucket._incrementTokens).to.have.been.calledOnce;\n\n        clock.tick(config.period);\n        expect(tokenBucket._incrementTokens).to.have.been.calledTwice;\n      });\n\n    });\n\n  });\n\n  describe('#destroy', () => {\n    let destroyToken;\n\n    beforeEach(() => {\n      tokenBucket = new TokenBucket();\n      destroyToken = sinon.spy(tokenBucket, '_incrementTokens');\n      tokenBucket.destroy();\n    });\n\n    it('should clear the interval', () => {\n      clock.tick(config.period + 1);\n      expect(tokenBucket._incrementTokens).to.not.be.called;\n    });\n\n    it('should destroy the interval', () => {\n      expect(tokenBucket.interval).to.not.exist;\n    });\n\n  });\n\n  describe('#_incrementTokens', () => {\n\n    beforeEach(() => {\n      tokenBucket = new TokenBucket(config);\n    });\n\n    afterEach(() => {\n      tokenBucket.destroy();\n    });\n\n    it('should increment _currentLimit if not at limit', () => {\n      tokenBucket.tokens = 0;\n      tokenBucket._incrementTokens();\n      expect(tokenBucket.tokens).to.equal(1);\n    });\n\n    it('should not increment _currentLimit past limit', () => {\n      tokenBucket._incrementTokens();\n      expect(tokenBucket.tokens).to.equal(config.limit);\n    });\n\n  });\n\n  describe('#decrementTokens', () => {\n\n    beforeEach(() => {\n      tokenBucket = new TokenBucket(config);\n    });\n\n    afterEach(() => {\n      tokenBucket.destroy();\n    });\n\n    it('should decrement limit when below limit', () => {\n      tokenBucket.decrementTokens();\n      expect(tokenBucket.tokens).to.equal(config.limit - 1);\n    });\n\n    it('should not decrement limit if already at limit', () => {\n      tokenBucket.tokens = 0;\n      tokenBucket.decrementTokens();\n      expect(tokenBucket.tokens).to.equal(0);\n    });\n\n    it('should reset at the end of the period', () => {\n      tokenBucket.decrementTokens();\n      clock.tick(config.period + 1);\n      expect(tokenBucket.tokens).to.equal(config.limit);\n    });\n\n    it('should take an amount', () => {\n      tokenBucket.decrementTokens(5);\n      expect(tokenBucket.tokens).to.equal(config.limit - 5);\n    });\n\n  });\n\n  describe('#getTokensRemaining', () => {\n\n    beforeEach(() => {\n      tokenBucket = new TokenBucket(config);\n    });\n\n    afterEach(() => {\n      tokenBucket.destroy();\n    });\n\n    it('should return the limit', () => {\n      expect(tokenBucket.getTokensRemaining()).to.equal(tokenBucket.tokens);\n    });\n\n  });\n\n});\n"
+    "content": "'use strict';\nconst chai       = require('chai');\nconst sinon      = require('sinon');\nconst sinonChai  = require('sinon-chai');\nconst START_TIME = 140000;\n\nchai.use(sinonChai);\n\nconst expect = chai.expect;\n\ndescribe('TokenBucket', () => {\n  let TokenBucket;\n  let defaultConfig;\n  let config;\n  let clock;\n  let tokenBucket;\n\n  beforeEach(() => {\n    TokenBucket = require('../src/TokenBucket.js');\n    defaultConfig = { // default config\n      incrementInterval : 5000,\n      limit             : 25,\n      increment         : 1,\n    };\n    config = {\n      incrementInterval : 500,\n      limit             : 20,\n      increment         : 2,\n    };\n    clock = sinon.useFakeTimers(START_TIME);\n  });\n\n  afterEach(() => {\n    clock.restore();\n  });\n\n  describe('#constructor', () => {\n\n    it('should not error if not given a config', () => {\n      expect(() => { return new TokenBucket(); }).not.to.throw(Error);\n    });\n\n    describe('without config', () => {\n\n      beforeEach(() => {\n        tokenBucket = new TokenBucket();\n        sinon.spy(tokenBucket, '_incrementTokens');\n      });\n\n      afterEach(() => {\n        tokenBucket.destroy();\n      });\n\n      it('should return an object', () => {\n        expect(tokenBucket).to.be.an('object');\n      });\n\n      it('should create maxLimit', () => {\n        expect(tokenBucket.limit).to.exist;\n      });\n\n      it('should create limit', () => {\n        expect(tokenBucket.tokens).to.exist;\n      });\n\n      it('should create a increment', () => {\n        expect(tokenBucket.increment).to.exist;\n      });\n\n      it('should set up an interval calling _incrementTokens', () => {\n        clock.tick(defaultConfig.incrementInterval + 1);\n        expect(tokenBucket._incrementTokens).to.have.been.called;\n      });\n\n    });\n\n    describe('with config', () => {\n\n      beforeEach(() => {\n        tokenBucket = new TokenBucket(config);\n        sinon.spy(tokenBucket, '_incrementTokens');\n      });\n\n      afterEach(() => {\n        tokenBucket.destroy();\n      });\n\n      it('should return an object', () => {\n        expect(tokenBucket).to.be.an('object');\n      });\n\n      it('should create maxLimit', () => {\n        expect(tokenBucket.limit).to.exist;\n      });\n\n      it('should create limit', () => {\n        expect(tokenBucket.tokens).to.exist;\n      });\n\n      it('should create a increment', () => {\n        expect(tokenBucket.increment).to.exist;\n      });\n\n      it('should set up an interval calling _incrementTokens', () => {\n        clock.tick(config.incrementInterval + 1);\n        expect(tokenBucket._incrementTokens).to.have.been.calledOnce;\n\n        clock.tick(config.incrementInterval);\n        expect(tokenBucket._incrementTokens).to.have.been.calledTwice;\n      });\n\n    });\n\n  });\n\n  describe('#destroy', () => {\n    let destroyToken;\n\n    beforeEach(() => {\n      tokenBucket = new TokenBucket();\n      destroyToken = sinon.spy(tokenBucket, '_incrementTokens');\n      tokenBucket.destroy();\n    });\n\n    it('should clear the interval', () => {\n      clock.tick(config.incrementInterval + 1);\n      expect(tokenBucket._incrementTokens).to.not.be.called;\n    });\n\n    it('should destroy the interval', () => {\n      expect(tokenBucket.interval).to.not.exist;\n    });\n\n  });\n\n  // TODO : cleanup\n  describe('#_incrementTokens', () => {\n\n    beforeEach(() => {\n      tokenBucket = new TokenBucket(config);\n    });\n\n    afterEach(() => {\n      tokenBucket.destroy();\n    });\n\n    it('should increment tokens if not at limit', () => {\n      tokenBucket.tokens = 0;\n      tokenBucket._incrementTokens();\n      expect(tokenBucket.tokens).to.equal(config.increment);\n    });\n\n    it('should not increment tokens past limit', () => {\n      tokenBucket._incrementTokens();\n      expect(tokenBucket.tokens).to.equal(config.limit);\n    });\n\n    it('should not increment tokens past limit by addition', () => {\n      tokenBucket.tokens = config.limit - config.increment + 1;\n      tokenBucket._incrementTokens();\n      expect(tokenBucket.tokens).to.equal(config.limit);\n    });\n\n    it('should gain config.increment tokens at the end of the config.incrementInterval', () => {\n      tokenBucket.tokens = 0;\n      clock.tick(config.incrementInterval + 1);\n      expect(tokenBucket.tokens).to.equal(config.increment);\n    });\n\n  });\n  // END TODO: cleanup\n\n  describe('#decrementTokens', () => {\n\n    beforeEach(() => {\n      tokenBucket = new TokenBucket(config);\n    });\n\n    afterEach(() => {\n      tokenBucket.destroy();\n    });\n\n    it('should decrement tokens when enough tokens are available', () => {\n      tokenBucket.decrementTokens();\n      expect(tokenBucket.tokens).to.equal(config.limit - 1);\n    });\n\n    it('should throw error if tokens are less than the decrement amount', () => {\n      tokenBucket.tokens = 0;\n      expect(() => { tokenBucket.decrementTokens(); }).to.throw(Error);\n    });\n\n    it('should take an amount and decrement that given amount of tokens', () => {\n      tokenBucket.decrementTokens(5);\n      expect(tokenBucket.tokens).to.equal(config.limit - 5);\n    });\n\n  });\n\n  describe('#getTokensRemaining', () => {\n\n    beforeEach(() => {\n      tokenBucket = new TokenBucket(config);\n    });\n\n    afterEach(() => {\n      tokenBucket.destroy();\n    });\n\n    it('should return the tokens remaining', () => {\n      expect(tokenBucket.getTokensRemaining()).to.equal(tokenBucket.tokens);\n    });\n\n  });\n\n});\n"
   },
   {
-    "__docId__": 130,
+    "__docId__": 135,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "describe42",
-    "testId": 42,
+    "name": "describe44",
+    "testId": 44,
     "memberof": "test/TokenBucket.test.js",
     "testDepth": 0,
-    "longname": "test/TokenBucket.test.js~describe42",
+    "longname": "test/TokenBucket.test.js~describe44",
     "access": null,
     "description": "TokenBucket",
     "lineNumber": 11
   },
   {
-    "__docId__": 131,
-    "kind": "testDescribe",
-    "static": true,
-    "variation": null,
-    "name": "describe43",
-    "testId": 43,
-    "memberof": "test/TokenBucket.test.js~describe42",
-    "testDepth": 1,
-    "longname": "test/TokenBucket.test.js~describe42.describe43",
-    "access": null,
-    "description": "#constructor",
-    "lineNumber": 31
-  },
-  {
-    "__docId__": 132,
-    "kind": "testIt",
-    "static": true,
-    "variation": null,
-    "name": "it44",
-    "testId": 44,
-    "memberof": "test/TokenBucket.test.js~describe42.describe43",
-    "testDepth": 2,
-    "longname": "test/TokenBucket.test.js~describe42.describe43.it44",
-    "access": null,
-    "description": "should not error if not given a config",
-    "lineNumber": 33
-  },
-  {
-    "__docId__": 133,
+    "__docId__": 136,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
     "name": "describe45",
     "testId": 45,
-    "memberof": "test/TokenBucket.test.js~describe42.describe43",
-    "testDepth": 2,
-    "longname": "test/TokenBucket.test.js~describe42.describe43.describe45",
+    "memberof": "test/TokenBucket.test.js~describe44",
+    "testDepth": 1,
+    "longname": "test/TokenBucket.test.js~describe44.describe45",
     "access": null,
-    "description": "without config",
+    "description": "#constructor",
     "lineNumber": 37
-  },
-  {
-    "__docId__": 134,
-    "kind": "testIt",
-    "static": true,
-    "variation": null,
-    "name": "it46",
-    "testId": 46,
-    "memberof": "test/TokenBucket.test.js~describe42.describe43.describe45",
-    "testDepth": 3,
-    "longname": "test/TokenBucket.test.js~describe42.describe43.describe45.it46",
-    "access": null,
-    "description": "should return an object",
-    "lineNumber": 48
-  },
-  {
-    "__docId__": 135,
-    "kind": "testIt",
-    "static": true,
-    "variation": null,
-    "name": "it47",
-    "testId": 47,
-    "memberof": "test/TokenBucket.test.js~describe42.describe43.describe45",
-    "testDepth": 3,
-    "longname": "test/TokenBucket.test.js~describe42.describe43.describe45.it47",
-    "access": null,
-    "description": "should create maxLimit",
-    "lineNumber": 52
-  },
-  {
-    "__docId__": 136,
-    "kind": "testIt",
-    "static": true,
-    "variation": null,
-    "name": "it48",
-    "testId": 48,
-    "memberof": "test/TokenBucket.test.js~describe42.describe43.describe45",
-    "testDepth": 3,
-    "longname": "test/TokenBucket.test.js~describe42.describe43.describe45.it48",
-    "access": null,
-    "description": "should create limit",
-    "lineNumber": 56
   },
   {
     "__docId__": 137,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it49",
-    "testId": 49,
-    "memberof": "test/TokenBucket.test.js~describe42.describe43.describe45",
-    "testDepth": 3,
-    "longname": "test/TokenBucket.test.js~describe42.describe43.describe45.it49",
+    "name": "it46",
+    "testId": 46,
+    "memberof": "test/TokenBucket.test.js~describe44.describe45",
+    "testDepth": 2,
+    "longname": "test/TokenBucket.test.js~describe44.describe45.it46",
     "access": null,
-    "description": "should create a increment",
-    "lineNumber": 60
+    "description": "should not error if not given a config",
+    "lineNumber": 39
   },
   {
     "__docId__": 138,
-    "kind": "testIt",
-    "static": true,
-    "variation": null,
-    "name": "it50",
-    "testId": 50,
-    "memberof": "test/TokenBucket.test.js~describe42.describe43.describe45",
-    "testDepth": 3,
-    "longname": "test/TokenBucket.test.js~describe42.describe43.describe45.it50",
-    "access": null,
-    "description": "should set up an interval calling _incrementTokens",
-    "lineNumber": 64
-  },
-  {
-    "__docId__": 139,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "describe51",
-    "testId": 51,
-    "memberof": "test/TokenBucket.test.js~describe42.describe43",
+    "name": "describe47",
+    "testId": 47,
+    "memberof": "test/TokenBucket.test.js~describe44.describe45",
     "testDepth": 2,
-    "longname": "test/TokenBucket.test.js~describe42.describe43.describe51",
+    "longname": "test/TokenBucket.test.js~describe44.describe45.describe47",
     "access": null,
-    "description": "with config",
-    "lineNumber": 71
+    "description": "without config",
+    "lineNumber": 43
+  },
+  {
+    "__docId__": 139,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it48",
+    "testId": 48,
+    "memberof": "test/TokenBucket.test.js~describe44.describe45.describe47",
+    "testDepth": 3,
+    "longname": "test/TokenBucket.test.js~describe44.describe45.describe47.it48",
+    "access": null,
+    "description": "should return an object",
+    "lineNumber": 54
   },
   {
     "__docId__": 140,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it52",
-    "testId": 52,
-    "memberof": "test/TokenBucket.test.js~describe42.describe43.describe51",
+    "name": "it49",
+    "testId": 49,
+    "memberof": "test/TokenBucket.test.js~describe44.describe45.describe47",
     "testDepth": 3,
-    "longname": "test/TokenBucket.test.js~describe42.describe43.describe51.it52",
+    "longname": "test/TokenBucket.test.js~describe44.describe45.describe47.it49",
     "access": null,
-    "description": "should return an object",
-    "lineNumber": 82
+    "description": "should create maxLimit",
+    "lineNumber": 58
   },
   {
     "__docId__": 141,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it53",
-    "testId": 53,
-    "memberof": "test/TokenBucket.test.js~describe42.describe43.describe51",
+    "name": "it50",
+    "testId": 50,
+    "memberof": "test/TokenBucket.test.js~describe44.describe45.describe47",
     "testDepth": 3,
-    "longname": "test/TokenBucket.test.js~describe42.describe43.describe51.it53",
+    "longname": "test/TokenBucket.test.js~describe44.describe45.describe47.it50",
     "access": null,
-    "description": "should create maxLimit",
-    "lineNumber": 86
+    "description": "should create limit",
+    "lineNumber": 62
   },
   {
     "__docId__": 142,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it54",
-    "testId": 54,
-    "memberof": "test/TokenBucket.test.js~describe42.describe43.describe51",
+    "name": "it51",
+    "testId": 51,
+    "memberof": "test/TokenBucket.test.js~describe44.describe45.describe47",
     "testDepth": 3,
-    "longname": "test/TokenBucket.test.js~describe42.describe43.describe51.it54",
+    "longname": "test/TokenBucket.test.js~describe44.describe45.describe47.it51",
     "access": null,
-    "description": "should create limit",
-    "lineNumber": 90
+    "description": "should create a increment",
+    "lineNumber": 66
   },
   {
     "__docId__": 143,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it55",
-    "testId": 55,
-    "memberof": "test/TokenBucket.test.js~describe42.describe43.describe51",
+    "name": "it52",
+    "testId": 52,
+    "memberof": "test/TokenBucket.test.js~describe44.describe45.describe47",
     "testDepth": 3,
-    "longname": "test/TokenBucket.test.js~describe42.describe43.describe51.it55",
+    "longname": "test/TokenBucket.test.js~describe44.describe45.describe47.it52",
     "access": null,
-    "description": "should create a increment",
-    "lineNumber": 94
+    "description": "should set up an interval calling _incrementTokens",
+    "lineNumber": 70
   },
   {
     "__docId__": 144,
-    "kind": "testIt",
-    "static": true,
-    "variation": null,
-    "name": "it56",
-    "testId": 56,
-    "memberof": "test/TokenBucket.test.js~describe42.describe43.describe51",
-    "testDepth": 3,
-    "longname": "test/TokenBucket.test.js~describe42.describe43.describe51.it56",
-    "access": null,
-    "description": "should set up an interval calling _incrementTokens",
-    "lineNumber": 98
-  },
-  {
-    "__docId__": 145,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "describe57",
-    "testId": 57,
-    "memberof": "test/TokenBucket.test.js~describe42",
-    "testDepth": 1,
-    "longname": "test/TokenBucket.test.js~describe42.describe57",
+    "name": "describe53",
+    "testId": 53,
+    "memberof": "test/TokenBucket.test.js~describe44.describe45",
+    "testDepth": 2,
+    "longname": "test/TokenBucket.test.js~describe44.describe45.describe53",
     "access": null,
-    "description": "#destroy",
-    "lineNumber": 110
+    "description": "with config",
+    "lineNumber": 77
+  },
+  {
+    "__docId__": 145,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it54",
+    "testId": 54,
+    "memberof": "test/TokenBucket.test.js~describe44.describe45.describe53",
+    "testDepth": 3,
+    "longname": "test/TokenBucket.test.js~describe44.describe45.describe53.it54",
+    "access": null,
+    "description": "should return an object",
+    "lineNumber": 88
   },
   {
     "__docId__": 146,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it58",
-    "testId": 58,
-    "memberof": "test/TokenBucket.test.js~describe42.describe57",
-    "testDepth": 2,
-    "longname": "test/TokenBucket.test.js~describe42.describe57.it58",
+    "name": "it55",
+    "testId": 55,
+    "memberof": "test/TokenBucket.test.js~describe44.describe45.describe53",
+    "testDepth": 3,
+    "longname": "test/TokenBucket.test.js~describe44.describe45.describe53.it55",
     "access": null,
-    "description": "should clear the interval",
-    "lineNumber": 119
+    "description": "should create maxLimit",
+    "lineNumber": 92
   },
   {
     "__docId__": 147,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it59",
-    "testId": 59,
-    "memberof": "test/TokenBucket.test.js~describe42.describe57",
-    "testDepth": 2,
-    "longname": "test/TokenBucket.test.js~describe42.describe57.it59",
+    "name": "it56",
+    "testId": 56,
+    "memberof": "test/TokenBucket.test.js~describe44.describe45.describe53",
+    "testDepth": 3,
+    "longname": "test/TokenBucket.test.js~describe44.describe45.describe53.it56",
     "access": null,
-    "description": "should destroy the interval",
-    "lineNumber": 124
+    "description": "should create limit",
+    "lineNumber": 96
   },
   {
     "__docId__": 148,
-    "kind": "testDescribe",
+    "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "describe60",
-    "testId": 60,
-    "memberof": "test/TokenBucket.test.js~describe42",
-    "testDepth": 1,
-    "longname": "test/TokenBucket.test.js~describe42.describe60",
+    "name": "it57",
+    "testId": 57,
+    "memberof": "test/TokenBucket.test.js~describe44.describe45.describe53",
+    "testDepth": 3,
+    "longname": "test/TokenBucket.test.js~describe44.describe45.describe53.it57",
     "access": null,
-    "description": "#_incrementTokens",
-    "lineNumber": 130
+    "description": "should create a increment",
+    "lineNumber": 100
   },
   {
     "__docId__": 149,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it61",
-    "testId": 61,
-    "memberof": "test/TokenBucket.test.js~describe42.describe60",
-    "testDepth": 2,
-    "longname": "test/TokenBucket.test.js~describe42.describe60.it61",
+    "name": "it58",
+    "testId": 58,
+    "memberof": "test/TokenBucket.test.js~describe44.describe45.describe53",
+    "testDepth": 3,
+    "longname": "test/TokenBucket.test.js~describe44.describe45.describe53.it58",
     "access": null,
-    "description": "should increment _currentLimit if not at limit",
-    "lineNumber": 140
+    "description": "should set up an interval calling _incrementTokens",
+    "lineNumber": 104
   },
   {
     "__docId__": 150,
-    "kind": "testIt",
-    "static": true,
-    "variation": null,
-    "name": "it62",
-    "testId": 62,
-    "memberof": "test/TokenBucket.test.js~describe42.describe60",
-    "testDepth": 2,
-    "longname": "test/TokenBucket.test.js~describe42.describe60.it62",
-    "access": null,
-    "description": "should not increment _currentLimit past limit",
-    "lineNumber": 146
-  },
-  {
-    "__docId__": 151,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "describe63",
-    "testId": 63,
-    "memberof": "test/TokenBucket.test.js~describe42",
+    "name": "describe59",
+    "testId": 59,
+    "memberof": "test/TokenBucket.test.js~describe44",
     "testDepth": 1,
-    "longname": "test/TokenBucket.test.js~describe42.describe63",
+    "longname": "test/TokenBucket.test.js~describe44.describe59",
     "access": null,
-    "description": "#decrementTokens",
-    "lineNumber": 153
+    "description": "#destroy",
+    "lineNumber": 116
+  },
+  {
+    "__docId__": 151,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it60",
+    "testId": 60,
+    "memberof": "test/TokenBucket.test.js~describe44.describe59",
+    "testDepth": 2,
+    "longname": "test/TokenBucket.test.js~describe44.describe59.it60",
+    "access": null,
+    "description": "should clear the interval",
+    "lineNumber": 125
   },
   {
     "__docId__": 152,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it64",
-    "testId": 64,
-    "memberof": "test/TokenBucket.test.js~describe42.describe63",
+    "name": "it61",
+    "testId": 61,
+    "memberof": "test/TokenBucket.test.js~describe44.describe59",
     "testDepth": 2,
-    "longname": "test/TokenBucket.test.js~describe42.describe63.it64",
+    "longname": "test/TokenBucket.test.js~describe44.describe59.it61",
     "access": null,
-    "description": "should decrement limit when below limit",
-    "lineNumber": 163
+    "description": "should destroy the interval",
+    "lineNumber": 130
   },
   {
     "__docId__": 153,
-    "kind": "testIt",
+    "kind": "testDescribe",
     "static": true,
     "variation": null,
-    "name": "it65",
-    "testId": 65,
-    "memberof": "test/TokenBucket.test.js~describe42.describe63",
-    "testDepth": 2,
-    "longname": "test/TokenBucket.test.js~describe42.describe63.it65",
+    "name": "describe62",
+    "testId": 62,
+    "memberof": "test/TokenBucket.test.js~describe44",
+    "testDepth": 1,
+    "longname": "test/TokenBucket.test.js~describe44.describe62",
     "access": null,
-    "description": "should not decrement limit if already at limit",
-    "lineNumber": 168
+    "description": "#_incrementTokens",
+    "lineNumber": 137
   },
   {
     "__docId__": 154,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it66",
-    "testId": 66,
-    "memberof": "test/TokenBucket.test.js~describe42.describe63",
+    "name": "it63",
+    "testId": 63,
+    "memberof": "test/TokenBucket.test.js~describe44.describe62",
     "testDepth": 2,
-    "longname": "test/TokenBucket.test.js~describe42.describe63.it66",
+    "longname": "test/TokenBucket.test.js~describe44.describe62.it63",
     "access": null,
-    "description": "should reset at the end of the period",
-    "lineNumber": 174
+    "description": "should increment tokens if not at limit",
+    "lineNumber": 147
   },
   {
     "__docId__": 155,
     "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "it67",
-    "testId": 67,
-    "memberof": "test/TokenBucket.test.js~describe42.describe63",
+    "name": "it64",
+    "testId": 64,
+    "memberof": "test/TokenBucket.test.js~describe44.describe62",
     "testDepth": 2,
-    "longname": "test/TokenBucket.test.js~describe42.describe63.it67",
+    "longname": "test/TokenBucket.test.js~describe44.describe62.it64",
     "access": null,
-    "description": "should take an amount",
-    "lineNumber": 180
+    "description": "should not increment tokens past limit",
+    "lineNumber": 153
   },
   {
     "__docId__": 156,
-    "kind": "testDescribe",
+    "kind": "testIt",
     "static": true,
     "variation": null,
-    "name": "describe68",
-    "testId": 68,
-    "memberof": "test/TokenBucket.test.js~describe42",
-    "testDepth": 1,
-    "longname": "test/TokenBucket.test.js~describe42.describe68",
+    "name": "it65",
+    "testId": 65,
+    "memberof": "test/TokenBucket.test.js~describe44.describe62",
+    "testDepth": 2,
+    "longname": "test/TokenBucket.test.js~describe44.describe62.it65",
     "access": null,
-    "description": "#getTokensRemaining",
-    "lineNumber": 187
+    "description": "should not increment tokens past limit by addition",
+    "lineNumber": 158
   },
   {
     "__docId__": 157,
     "kind": "testIt",
     "static": true,
     "variation": null,
+    "name": "it66",
+    "testId": 66,
+    "memberof": "test/TokenBucket.test.js~describe44.describe62",
+    "testDepth": 2,
+    "longname": "test/TokenBucket.test.js~describe44.describe62.it66",
+    "access": null,
+    "description": "should gain config.increment tokens at the end of the config.incrementInterval",
+    "lineNumber": 164
+  },
+  {
+    "__docId__": 158,
+    "kind": "testDescribe",
+    "static": true,
+    "variation": null,
+    "name": "describe67",
+    "testId": 67,
+    "memberof": "test/TokenBucket.test.js~describe44",
+    "testDepth": 1,
+    "longname": "test/TokenBucket.test.js~describe44.describe67",
+    "access": null,
+    "description": "#decrementTokens",
+    "lineNumber": 173
+  },
+  {
+    "__docId__": 159,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it68",
+    "testId": 68,
+    "memberof": "test/TokenBucket.test.js~describe44.describe67",
+    "testDepth": 2,
+    "longname": "test/TokenBucket.test.js~describe44.describe67.it68",
+    "access": null,
+    "description": "should decrement tokens when enough tokens are available",
+    "lineNumber": 183
+  },
+  {
+    "__docId__": 160,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
     "name": "it69",
     "testId": 69,
-    "memberof": "test/TokenBucket.test.js~describe42.describe68",
+    "memberof": "test/TokenBucket.test.js~describe44.describe67",
     "testDepth": 2,
-    "longname": "test/TokenBucket.test.js~describe42.describe68.it69",
+    "longname": "test/TokenBucket.test.js~describe44.describe67.it69",
     "access": null,
-    "description": "should return the limit",
-    "lineNumber": 197
+    "description": "should throw error if tokens are less than the decrement amount",
+    "lineNumber": 188
+  },
+  {
+    "__docId__": 161,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it70",
+    "testId": 70,
+    "memberof": "test/TokenBucket.test.js~describe44.describe67",
+    "testDepth": 2,
+    "longname": "test/TokenBucket.test.js~describe44.describe67.it70",
+    "access": null,
+    "description": "should take an amount and decrement that given amount of tokens",
+    "lineNumber": 193
+  },
+  {
+    "__docId__": 162,
+    "kind": "testDescribe",
+    "static": true,
+    "variation": null,
+    "name": "describe71",
+    "testId": 71,
+    "memberof": "test/TokenBucket.test.js~describe44",
+    "testDepth": 1,
+    "longname": "test/TokenBucket.test.js~describe44.describe71",
+    "access": null,
+    "description": "#getTokensRemaining",
+    "lineNumber": 200
+  },
+  {
+    "__docId__": 163,
+    "kind": "testIt",
+    "static": true,
+    "variation": null,
+    "name": "it72",
+    "testId": 72,
+    "memberof": "test/TokenBucket.test.js~describe44.describe71",
+    "testDepth": 2,
+    "longname": "test/TokenBucket.test.js~describe44.describe71.it72",
+    "access": null,
+    "description": "should return the tokens remaining",
+    "lineNumber": 210
   }
 ]
