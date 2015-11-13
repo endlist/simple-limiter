@@ -1,8 +1,8 @@
 'use strict';
 
-const DEFAULT_LIMIT     = 25;
-const DEFAULT_PERIOD    = 5000;
-const DEFAULT_INCREMENT = 1;
+const DEFAULT_LIMIT              = 25;
+const DEFAULT_INCREMENT_INTERVAL = 5000;
+const DEFAULT_INCREMENT          = 1;
 
 /**
  * TokenBucket
@@ -18,21 +18,21 @@ class TokenBucket {
    * Creates a TokenBucket object.
    *
    * @param {object} config configuration values
-   * @param {integer} [config.limit=25] The max amount of tokens per period.
-   * @param {integer} [config.period=5000] The time in ms before tokens will increment.
-   * @param {integer} [config.increment=1] The amount of tokens that will increment each period.
+   * @param {integer} [config.limit=25] The max amount of tokens per incrementInterval.
+   * @param {integer} [config.incrementInterval=5000] The time in ms before tokens will increment.
+   * @param {integer} [config.increment=1] The amount of tokens that will increment each incrementInterval.
    */
   constructor(config) {
     config = config || {};
 
-    const period    = config.period || DEFAULT_PERIOD;
+    const incrementInterval = config.incrementInterval || DEFAULT_INCREMENT_INTERVAL;
 
     this.limit = this.tokens = config.limit || DEFAULT_LIMIT;
     this.increment = config.increment || DEFAULT_INCREMENT;
 
     this._interval = setInterval(() => {
       this._incrementTokens();
-    }, period);
+    }, incrementInterval);
   }
 
   /**
@@ -51,6 +51,10 @@ class TokenBucket {
   _incrementTokens() {
     if (this.tokens < this.limit) {
       this.tokens += this.increment;
+
+      if (this.tokens > this.limit) {
+        this.tokens = this.limit;
+      }
     }
   }
 
@@ -64,8 +68,11 @@ class TokenBucket {
   decrementTokens(amount) {
     amount = amount || 1;
 
-    if (this.tokens > 0) {
+    if (this.tokens >= amount) {
       this.tokens -= amount;
+    }
+    else {
+      throw new Error('not enough tokens');
     }
 
     return this.tokens; 

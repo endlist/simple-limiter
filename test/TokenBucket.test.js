@@ -10,16 +10,22 @@ const expect = chai.expect;
 
 describe('TokenBucket', () => {
   let TokenBucket;
+  let defaultConfig;
   let config;
   let clock;
   let tokenBucket;
 
   beforeEach(() => {
     TokenBucket = require('../src/TokenBucket.js');
-    config = { // default config
-      period    : 5000,
-      limit     : 25,
-      increment : 1,
+    defaultConfig = { // default config
+      incrementInterval : 5000,
+      limit             : 25,
+      increment         : 1,
+    };
+    config = {
+      incrementInterval : 500,
+      limit             : 20,
+      increment         : 2,
     };
     clock = sinon.useFakeTimers(START_TIME);
   });
@@ -62,7 +68,7 @@ describe('TokenBucket', () => {
       });
 
       it('should set up an interval calling _incrementTokens', () => {
-        clock.tick(config.period + 1);
+        clock.tick(defaultConfig.incrementInterval + 1);
         expect(tokenBucket._incrementTokens).to.have.been.called;
       });
 
@@ -96,10 +102,10 @@ describe('TokenBucket', () => {
       });
 
       it('should set up an interval calling _incrementTokens', () => {
-        clock.tick(config.period + 1);
+        clock.tick(config.incrementInterval + 1);
         expect(tokenBucket._incrementTokens).to.have.been.calledOnce;
 
-        clock.tick(config.period);
+        clock.tick(config.incrementInterval);
         expect(tokenBucket._incrementTokens).to.have.been.calledTwice;
       });
 
@@ -117,7 +123,7 @@ describe('TokenBucket', () => {
     });
 
     it('should clear the interval', () => {
-      clock.tick(config.period + 1);
+      clock.tick(config.incrementInterval + 1);
       expect(tokenBucket._incrementTokens).to.not.be.called;
     });
 
@@ -127,6 +133,7 @@ describe('TokenBucket', () => {
 
   });
 
+  // TODO : cleanup
   describe('#_incrementTokens', () => {
 
     beforeEach(() => {
@@ -137,18 +144,31 @@ describe('TokenBucket', () => {
       tokenBucket.destroy();
     });
 
-    it('should increment _currentLimit if not at limit', () => {
+    it('should increment tokens if not at limit', () => {
       tokenBucket.tokens = 0;
       tokenBucket._incrementTokens();
-      expect(tokenBucket.tokens).to.equal(1);
+      expect(tokenBucket.tokens).to.equal(config.increment);
     });
 
-    it('should not increment _currentLimit past limit', () => {
+    it('should not increment tokens past limit', () => {
       tokenBucket._incrementTokens();
       expect(tokenBucket.tokens).to.equal(config.limit);
     });
 
+    it('should not increment tokens past limit by addition', () => {
+      tokenBucket.tokens = config.limit - config.increment + 1;
+      tokenBucket._incrementTokens();
+      expect(tokenBucket.tokens).to.equal(config.limit);
+    });
+
+    it('should gain config.increment tokens at the end of the config.incrementInterval', () => {
+      tokenBucket.tokens = 0;
+      clock.tick(config.incrementInterval + 1);
+      expect(tokenBucket.tokens).to.equal(config.increment);
+    });
+
   });
+  // END TODO: cleanup
 
   describe('#decrementTokens', () => {
 
@@ -160,24 +180,17 @@ describe('TokenBucket', () => {
       tokenBucket.destroy();
     });
 
-    it('should decrement limit when below limit', () => {
+    it('should decrement tokens when enough tokens are available', () => {
       tokenBucket.decrementTokens();
       expect(tokenBucket.tokens).to.equal(config.limit - 1);
     });
 
-    it('should not decrement limit if already at limit', () => {
+    it('should throw error if tokens are less than the decrement amount', () => {
       tokenBucket.tokens = 0;
-      tokenBucket.decrementTokens();
-      expect(tokenBucket.tokens).to.equal(0);
+      expect(() => { tokenBucket.decrementTokens(); }).to.throw(Error);
     });
 
-    it('should reset at the end of the period', () => {
-      tokenBucket.decrementTokens();
-      clock.tick(config.period + 1);
-      expect(tokenBucket.tokens).to.equal(config.limit);
-    });
-
-    it('should take an amount', () => {
+    it('should take an amount and decrement that given amount of tokens', () => {
       tokenBucket.decrementTokens(5);
       expect(tokenBucket.tokens).to.equal(config.limit - 5);
     });
@@ -194,7 +207,7 @@ describe('TokenBucket', () => {
       tokenBucket.destroy();
     });
 
-    it('should return the limit', () => {
+    it('should return the tokens remaining', () => {
       expect(tokenBucket.getTokensRemaining()).to.equal(tokenBucket.tokens);
     });
 
